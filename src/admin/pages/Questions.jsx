@@ -136,7 +136,7 @@ export default function QuestionsPage() {
 
   return (
     <>
-      <Link to="/admin/games" className="ad-link ad-back">
+      <Link to="/admin/games" className="qa-link qa-back">
         <ArrowLeft size={14} /> All games
       </Link>
       <PageHead title={game ? `${game.emoji} ${game.title}` : slug} sub={game ? `${game.prompt} · answers: ${yes} / ${no}` : 'Questions'} icon={HelpCircle}>
@@ -156,12 +156,12 @@ export default function QuestionsPage() {
         </Btn>
       </PageHead>
 
-      <div className="ad-stats is-3">
-        <div className="ad-mini">
+      <div className="qa-stats is-3">
+        <div className="qa-mini">
           <b>{stats.active}</b>
           <small>active questions{game ? ` (round uses ${game.questions})` : ''}</small>
         </div>
-        <div className="ad-mini">
+        <div className="qa-mini">
           <b>
             {stats.yes} / {stats.active - stats.yes}
           </b>
@@ -169,13 +169,13 @@ export default function QuestionsPage() {
             “{yes}” / “{no}” answers {stats.active && Math.abs(stats.yes / stats.active - 0.5) > 0.2 ? '· unbalanced' : '· balanced'}
           </small>
         </div>
-        <div className="ad-mini">
+        <div className="qa-mini">
           <b>{stats.inactive}</b>
           <small>inactive (never asked)</small>
         </div>
       </div>
 
-      <div className="ad-filters">
+      <div className="qa-filters">
         <SearchBox value={f.q} onChange={(q) => setF((s) => ({ ...s, q }))} placeholder="Search question or fact" />
         <select value={f.active} onChange={(e) => setF((s) => ({ ...s, active: e.target.value }))} aria-label="Active">
           <option value="">Active and inactive</option>
@@ -188,7 +188,7 @@ export default function QuestionsPage() {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error ad-pad">{error.message}</p>
+          <p className="qa-error qa-pad">{error.message}</p>
         ) : !rows.length ? (
           <Empty icon={HelpCircle} title="No questions yet" text="Add them one by one or paste a CSV with Bulk import.">
             <Btn kind="primary" icon={Plus} onClick={() => setEdit({ ...BLANK })}>
@@ -196,8 +196,8 @@ export default function QuestionsPage() {
             </Btn>
           </Empty>
         ) : (
-          <div className="ad-table-wrap">
-            <table className="ad-table">
+          <div className="qa-table-wrap">
+            <table className="qa-table">
               <thead>
                 <tr>
                   <th>Question</th>
@@ -212,8 +212,8 @@ export default function QuestionsPage() {
                 {rows.map((r) => (
                   <tr key={r.id} className={r.active ? '' : 'is-off'}>
                     <td>
-                      <span className="ad-q-cell">
-                        <span className="ad-q-emoji">{r.emoji}</span>
+                      <span className="qa-q-cell">
+                        <span className="qa-q-emoji">{r.emoji}</span>
                         <span>
                           <b>{r.item}</b>
                           {r.fact && <small>{r.fact}</small>}
@@ -226,11 +226,11 @@ export default function QuestionsPage() {
                     <td>
                       <Toggle checked={r.active} onChange={() => toggle(r)} label="" />
                     </td>
-                    <td className="ad-right ad-nowrap">
-                      <button type="button" className="ad-icon-btn" onClick={() => setEdit(r)} aria-label="Edit">
+                    <td className="qa-right qa-nowrap">
+                      <button type="button" className="qa-icon-btn" onClick={() => setEdit(r)} aria-label="Edit">
                         <Pencil size={15} />
                       </button>
-                      <button type="button" className="ad-icon-btn is-danger" onClick={() => remove(r)} aria-label="Delete">
+                      <button type="button" className="qa-icon-btn is-danger" onClick={() => remove(r)} aria-label="Delete">
                         <Trash2 size={15} />
                       </button>
                     </td>
@@ -244,12 +244,12 @@ export default function QuestionsPage() {
 
       <Modal open={!!edit} onClose={() => setEdit(null)} title={edit?.id ? 'Edit question' : 'New question'} footer={<><Btn onClick={() => setEdit(null)}>Cancel</Btn><Btn kind="primary" busy={busy} onClick={save}>Save</Btn></>}>
         {edit && (
-          <div className="ad-form">
+          <div className="qa-form">
             <Field label="Question (the thing players judge)" span={2}>
               <input value={edit.item} onChange={(e) => setEdit({ ...edit, item: e.target.value })} placeholder="Rubik’s Cube" autoFocus />
             </Field>
             <Field label="Correct answer">
-              <div className="seg ad-seg">
+              <div className="seg qa-seg">
                 <button type="button" className={edit.answer ? 'is-on' : ''} onClick={() => setEdit({ ...edit, answer: true })}>
                   <Check size={14} /> {yes}
                 </button>
@@ -264,7 +264,7 @@ export default function QuestionsPage() {
             <Field label="Type / topic" hint="e.g. Food, Invention, Celebrity">
               <input value={edit.type} onChange={(e) => setEdit({ ...edit, type: e.target.value })} />
             </Field>
-            <div className="ad-field">
+            <div className="qa-field">
               <Toggle checked={edit.active} onChange={(v) => setEdit({ ...edit, active: v })} label="Active" hint="Inactive questions are never asked" />
             </div>
             <Field label="Fun fact (shown after answering)" span={2}>
@@ -288,31 +288,31 @@ export default function QuestionsPage() {
           </>
         }
       >
-        <p className="ad-muted">
+        <p className="qa-muted">
           Paste a CSV (from Google Sheets or Excel) with a header row: <code>item, answer, type, emoji, fact</code>. Answer can be yes/no, true/false or 1/0. A question with the same text is updated instead of duplicated. JSON arrays work too.
         </p>
-        <textarea className="ad-code" rows={9} value={text} onChange={(e) => setText(e.target.value)} placeholder={'item,answer,type,emoji,fact\nRubik\'s Cube,yes,Invention,🧊,Invented by Ernő Rubik in 1974\nCroissant,no,Food,🥐,Popularised in France'} />
-        <label className="ad-file">
+        <textarea className="qa-code" rows={9} value={text} onChange={(e) => setText(e.target.value)} placeholder={'item,answer,type,emoji,fact\nRubik\'s Cube,yes,Invention,🧊,Invented by Ernő Rubik in 1974\nCroissant,no,Food,🥐,Popularised in France'} />
+        <label className="qa-file">
           <Upload size={14} /> Or choose a .csv file
           <input type="file" accept=".csv,.txt,.json" onChange={(e) => e.target.files[0]?.text().then(setText)} />
         </label>
         {preview.error ? (
-          <p className="ad-error">{preview.error}</p>
+          <p className="qa-error">{preview.error}</p>
         ) : preview.rows?.length ? (
-          <div className="ad-table-wrap ad-import-preview">
-            <table className="ad-table is-compact">
+          <div className="qa-table-wrap qa-import-preview">
+            <table className="qa-table is-compact">
               <tbody>
                 {preview.rows.slice(0, 8).map((r, i) => (
                   <tr key={i}>
                     <td>{r.emoji}</td>
                     <td>{r.item}</td>
                     <td>{r.answer ? <Pill tone="green">{yes}</Pill> : <Pill tone="red">{no}</Pill>}</td>
-                    <td className="ad-muted">{r.type}</td>
+                    <td className="qa-muted">{r.type}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            {preview.rows.length > 8 && <p className="ad-muted small ad-pad">…and {preview.rows.length - 8} more</p>}
+            {preview.rows.length > 8 && <p className="qa-muted small qa-pad">…and {preview.rows.length - 8} more</p>}
           </div>
         ) : null}
       </Modal>

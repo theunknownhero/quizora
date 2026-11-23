@@ -36,12 +36,12 @@ export default function RoomsPage() {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error ad-pad">{error.message}</p>
+          <p className="qa-error qa-pad">{error.message}</p>
         ) : !data.length ? (
           <Empty icon={Swords} title="No rooms in the last 24 hours" />
         ) : (
-          <div className="ad-table-wrap">
-            <table className="ad-table">
+          <div className="qa-table-wrap">
+            <table className="qa-table">
               <thead>
                 <tr>
                   <th>Room</th>
@@ -57,19 +57,19 @@ export default function RoomsPage() {
                 {data.map((r) => (
                   <tr key={r.id}>
                     <td>
-                      <b className="ad-mono">{r.code}</b>
-                      <small className="ad-block ad-muted">
+                      <b className="qa-mono">{r.code}</b>
+                      <small className="qa-block qa-muted">
                         {r.mode === 'match' ? '1v1 match' : 'Party'} · {r.is_public ? <Globe size={11} /> : <Lock size={11} />} · {api.ago(r.created_at)}
                       </small>
                     </td>
                     <td>{games.find((g) => g.slug === r.game_slug)?.title || r.game_slug}</td>
                     <td>{r.host}</td>
-                    <td>{r.players.join(', ') || <span className="ad-muted">empty</span>}</td>
+                    <td>{r.players.join(', ') || <span className="qa-muted">empty</span>}</td>
                     <td>{r.total ? `${Math.min(r.current_index + 1, r.total)}/${r.total}` : '—'}</td>
                     <td>
                       <Pill tone={TONE[r.status]}>{r.status}</Pill>
                     </td>
-                    <td className="ad-right">
+                    <td className="qa-right">
                       {['lobby', 'playing'].includes(r.status) && (
                         <Btn size="sm" kind="danger" icon={XCircle} onClick={() => close(r)}>
                           Close

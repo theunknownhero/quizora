@@ -40,11 +40,11 @@ const NAV = [
 
 function Denied({ text }) {
   return (
-    <div className="ad-denied">
+    <div className="qa-denied">
       <Lock size={40} />
       <h1>Admins only</h1>
       <p>{text}</p>
-      <Link to="/" className="ad-btn is-primary">
+      <Link to="/" className="qa-btn is-primary">
         <ArrowLeft size={15} /> Back to Quizora
       </Link>
     </div>
@@ -59,18 +59,18 @@ export default function Admin() {
   if (!authReady) return <div className="admin-loading">Loading…</div>
   if (!user)
     return (
-      <div className="ad-root">
-        <div className="ad-denied">
+      <div className="qa-root">
+        <div className="qa-denied">
           <Lock size={40} />
           <h1>Admin panel</h1>
           <p>Log in with a staff account.</p>
-          <button type="button" className="ad-btn is-primary" onClick={() => openAuth('login')}>
+          <button type="button" className="qa-btn is-primary" onClick={() => openAuth('login')}>
             Log in
           </button>
         </div>
       </div>
     )
-  if (!staff) return <div className="ad-root"><Denied text="Your account doesn’t have staff access. An owner can give you a role from Staff & roles." /></div>
+  if (!staff) return <div className="qa-root"><Denied text="Your account doesn’t have staff access. An owner can give you a role from Staff & roles." /></div>
 
   const nav = NAV.filter((n, i) => {
     if (n.group) {
@@ -86,10 +86,10 @@ export default function Admin() {
   const live = site.maintenance?.enabled ? 'Maintenance mode is ON' : site.announcement?.enabled ? 'Announcement is live' : null
 
   return (
-    <div className="ad-root">
-      <aside className={`ad-side ${open ? 'is-open' : ''}`}>
-        <div className="ad-brand">
-          <Link to="/admin" className="ad-logo" onClick={() => setOpen(false)}>
+    <div className="qa-root">
+      <aside className={`qa-side ${open ? 'is-open' : ''}`}>
+        <div className="qa-brand">
+          <Link to="/admin" className="qa-logo" onClick={() => setOpen(false)}>
             <span className="nav-brand-bars" aria-hidden="true">
               <i />
               <i />
@@ -97,51 +97,51 @@ export default function Admin() {
             </span>
             Quizora <em>Admin</em>
           </Link>
-          <button type="button" className="ad-icon-btn ad-close" onClick={() => setOpen(false)} aria-label="Close menu">
+          <button type="button" className="qa-icon-btn qa-close" onClick={() => setOpen(false)} aria-label="Close menu">
             <X size={18} />
           </button>
         </div>
         <nav aria-label="Admin">
           {nav.map((n, i) =>
             n.group ? (
-              <small key={`g${i}`} className="ad-nav-group">
+              <small key={`g${i}`} className="qa-nav-group">
                 {n.group}
               </small>
             ) : (
-              <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `ad-nav-item ${isActive ? 'is-active' : ''}`} onClick={() => setOpen(false)}>
+              <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `qa-nav-item ${isActive ? 'is-active' : ''}`} onClick={() => setOpen(false)}>
                 <n.icon size={17} /> {n.label}
               </NavLink>
             )
           )}
         </nav>
-        <div className="ad-side-foot">
-          <div className="ad-me">
+        <div className="qa-side-foot">
+          <div className="qa-me">
             <span className="acct-avatar">{user.username[0].toUpperCase()}</span>
             <div>
               <b>{user.username}</b>
               <small>{staff.role}</small>
             </div>
           </div>
-          <Link to="/" className="ad-nav-item">
+          <Link to="/" className="qa-nav-item">
             <ArrowLeft size={16} /> Back to site
           </Link>
         </div>
       </aside>
-      {open && <div className="ad-scrim" onClick={() => setOpen(false)} />}
+      {open && <div className="qa-scrim" onClick={() => setOpen(false)} />}
 
-      <div className="ad-main">
-        <div className="ad-topbar">
-          <button type="button" className="ad-icon-btn ad-burger" onClick={() => setOpen(true)} aria-label="Open menu">
+      <div className="qa-main">
+        <div className="qa-topbar">
+          <button type="button" className="qa-icon-btn qa-burger" onClick={() => setOpen(true)} aria-label="Open menu">
             <Menu size={20} />
           </button>
-          <span className="ad-crumb">{NAV.find((n) => n.to && pathname.includes(`/admin/${n.to}`))?.label || 'Dashboard'}</span>
+          <span className="qa-crumb">{NAV.find((n) => n.to && pathname.includes(`/admin/${n.to}`))?.label || 'Dashboard'}</span>
           {live && (
-            <Link to="/admin/settings" className={`ad-live ${site.maintenance?.enabled ? 'is-warn' : ''}`}>
+            <Link to="/admin/settings" className={`qa-live ${site.maintenance?.enabled ? 'is-warn' : ''}`}>
               <Megaphone size={14} /> {live}
             </Link>
           )}
         </div>
-        <div className="ad-content">
+        <div className="qa-content">
           <Routes>
             <Route index element={guard('dash', <Dashboard />)} />
             <Route path="users" element={guard('users.view', <UsersPage />)} />

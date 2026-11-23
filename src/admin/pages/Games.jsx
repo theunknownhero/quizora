@@ -51,8 +51,8 @@ export function GameEditor({ game, categories, onClose, onSaved }) {
         </>
       }
     >
-      <div className="ad-editor">
-        <div className="ad-form">
+      <div className="qa-editor">
+        <div className="qa-form">
           <Field label="Title" span={2}>
             <input value={g.title} onChange={(e) => setG((s) => ({ ...s, title: e.target.value, ...(isNew ? { slug: slugify(e.target.value) } : {}) }))} placeholder="Italy or Not?" autoFocus />
           </Field>
@@ -103,12 +103,12 @@ export function GameEditor({ game, categories, onClose, onSaved }) {
           <Field label="Sort order" hint="Lower shows first">
             <input type="number" value={g.sort} onChange={(e) => set('sort')(Number(e.target.value))} />
           </Field>
-          <div className="ad-field span-2 ad-toggles">
+          <div className="qa-field span-2 qa-toggles">
             <Toggle checked={g.featured} onChange={set('featured')} label="Featured" hint="Hero spot on the home page (only one)" />
             <Toggle checked={g.age_rating >= 18} onChange={(v) => set('age_rating')(v ? 18 : 0)} label="18+ only" hint="Hidden from minors, enforced by the server" />
           </div>
           <Field label="Categories" span={2}>
-            <div className="ad-chips">
+            <div className="qa-chips">
               {categories.map((c) => (
                 <button key={c.id} type="button" className={g.categories.includes(c.id) ? 'is-on' : ''} onClick={() => toggleIn('categories', c.id)}>
                   {c.emoji} {c.name}
@@ -117,7 +117,7 @@ export function GameEditor({ game, categories, onClose, onSaved }) {
             </div>
           </Field>
           <Field label="Country badges (optional)" span={2} hint="Shows a flag badge and boosts it for players from these countries">
-            <div className="ad-chips">
+            <div className="qa-chips">
               {countries
                 .filter((c) => c.code !== 'ALL')
                 .map((c) => (
@@ -128,10 +128,10 @@ export function GameEditor({ game, categories, onClose, onSaved }) {
             </div>
           </Field>
         </div>
-        <div className="ad-preview">
+        <div className="qa-preview">
           <small>Card preview</small>
-          <div className="ad-game-preview">
-            <div className="ad-game-thumb" style={{ background: `linear-gradient(135deg, ${g.gradient[0]}, ${g.gradient[1]})` }}>
+          <div className="qa-game-preview">
+            <div className="qa-game-thumb" style={{ background: `linear-gradient(135deg, ${g.gradient[0]}, ${g.gradient[1]})` }}>
               <span>{g.emoji}</span>
               <Pill tone={STATUS_TONE[g.status]}>{g.status}</Pill>
               {g.age_rating >= 18 && <em className="game-age">18+</em>}
@@ -142,7 +142,7 @@ export function GameEditor({ game, categories, onClose, onSaved }) {
               {g.questions} Qs · ~{g.minutes} min · {g.difficulty}
             </small>
           </div>
-          <div className="ad-q-preview">
+          <div className="qa-q-preview">
             <small>Question preview</small>
             <b>Pizza Margherita</b>
             <p>{g.prompt}</p>
@@ -196,7 +196,7 @@ export default function GamesPage() {
           New quiz
         </Btn>
       </PageHead>
-      <div className="ad-filters">
+      <div className="qa-filters">
         <SearchBox value={q} onChange={setQ} placeholder="Search quizzes" />
         <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
           <option value="">All statuses</option>
@@ -208,29 +208,29 @@ export default function GamesPage() {
       {loading && !data ? (
         <Loading />
       ) : error ? (
-        <p className="ad-error">{error.message}</p>
+        <p className="qa-error">{error.message}</p>
       ) : !list.length ? (
         <Empty icon={Gamepad2} title="No quizzes match" />
       ) : (
-        <div className="ad-game-grid">
+        <div className="qa-game-grid">
           {list.map((g) => {
             const enough = g.question_count >= g.questions
             return (
-              <article key={g.slug} className="ad-game">
-                <div className="ad-game-thumb" style={{ background: `linear-gradient(135deg, ${g.gradient[0]}, ${g.gradient[1]})` }}>
+              <article key={g.slug} className="qa-game">
+                <div className="qa-game-thumb" style={{ background: `linear-gradient(135deg, ${g.gradient[0]}, ${g.gradient[1]})` }}>
                   <span>{g.emoji}</span>
                   <Pill tone={STATUS_TONE[g.status]}>{g.status}</Pill>
                   {g.featured && (
-                    <em className="ad-feat">
+                    <em className="qa-feat">
                       <Star size={12} fill="currentColor" /> Featured
                     </em>
                   )}
                   {g.age_rating >= 18 && <em className="game-age">18+</em>}
                 </div>
-                <div className="ad-game-body">
+                <div className="qa-game-body">
                   <b>{g.title}</b>
                   <small>/{g.slug}</small>
-                  <div className="ad-game-stats">
+                  <div className="qa-game-stats">
                     <span className={enough ? '' : 'warn'} title={enough ? '' : `Needs at least ${g.questions} active questions for a full round`}>
                       <HelpCircle size={13} /> {g.question_count} questions
                     </span>
@@ -238,10 +238,10 @@ export default function GamesPage() {
                       <Clock size={13} /> {g.rounds_30d} rounds / 30d
                     </span>
                   </div>
-                  {g.status === 'live' && !enough && <p className="ad-warn-text">Not enough questions for a full {g.questions}-question round.</p>}
+                  {g.status === 'live' && !enough && <p className="qa-warn-text">Not enough questions for a full {g.questions}-question round.</p>}
                 </div>
-                <div className="ad-game-actions">
-                  <Link to={`/admin/games/${g.slug}`} className="ad-btn is-primary is-sm">
+                <div className="qa-game-actions">
+                  <Link to={`/admin/games/${g.slug}`} className="qa-btn is-primary is-sm">
                     <HelpCircle size={14} /> Questions
                   </Link>
                   <Btn size="sm" icon={Pencil} onClick={() => setEdit(g)}>
@@ -261,10 +261,10 @@ export default function GamesPage() {
                       Feature
                     </Btn>
                   )}
-                  <a href={`/play/${g.slug}`} target="_blank" rel="noopener noreferrer" className="ad-icon-btn" title="Open on site" aria-label="Open on site">
+                  <a href={`/play/${g.slug}`} target="_blank" rel="noopener noreferrer" className="qa-icon-btn" title="Open on site" aria-label="Open on site">
                     <ExternalLink size={15} />
                   </a>
-                  <button type="button" className="ad-icon-btn is-danger" onClick={() => remove(g)} title="Delete" aria-label={`Delete ${g.title}`}>
+                  <button type="button" className="qa-icon-btn is-danger" onClick={() => remove(g)} title="Delete" aria-label={`Delete ${g.title}`}>
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -274,7 +274,7 @@ export default function GamesPage() {
         </div>
       )}
       {data?.orphan_questions?.length > 0 && (
-        <p className="ad-muted small">
+        <p className="qa-muted small">
           <Lock size={12} /> Questions exist for unknown games: {data.orphan_questions.join(', ')}. Create a quiz with that slug to use them.
         </p>
       )}

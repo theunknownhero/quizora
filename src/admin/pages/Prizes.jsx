@@ -21,8 +21,8 @@ export default function PrizesPage() {
   return (
     <>
       <PageHead title="Prize claims" sub="Real-world prizes from tournaments (tiers marked “External”). Send them, then mark them as sent." icon={Gift} />
-      <div className="ad-filters">
-        <div className="seg ad-seg">
+      <div className="qa-filters">
+        <div className="seg qa-seg">
           {[
             ['pending', 'To send'],
             ['sent', 'Sent'],
@@ -38,12 +38,12 @@ export default function PrizesPage() {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error ad-pad">{error.message}</p>
+          <p className="qa-error qa-pad">{error.message}</p>
         ) : !data.length ? (
           <Empty icon={Gift} title={status === 'pending' ? 'Nothing to send' : 'No prizes here'} text="Winners of external prizes show up here when a tournament’s results are final." />
         ) : (
-          <div className="ad-table-wrap">
-            <table className="ad-table">
+          <div className="qa-table-wrap">
+            <table className="qa-table">
               <thead>
                 <tr>
                   <th>Winner</th>
@@ -60,28 +60,28 @@ export default function PrizesPage() {
                     <td>
                       <b>{p.username}</b>
                       {p.email ? (
-                        <small className="ad-block">
-                          <a href={`mailto:${p.email}?subject=${encodeURIComponent(`Your Quizora prize: ${p.title}`)}`} className="ad-link">
+                        <small className="qa-block">
+                          <a href={`mailto:${p.email}?subject=${encodeURIComponent(`Your Quizora prize: ${p.title}`)}`} className="qa-link">
                             <Mail size={12} /> {p.email}
                           </a>{' '}
-                          <button type="button" className="ad-icon-btn is-xs" onClick={() => navigator.clipboard.writeText(p.email)} aria-label="Copy email">
+                          <button type="button" className="qa-icon-btn is-xs" onClick={() => navigator.clipboard.writeText(p.email)} aria-label="Copy email">
                             <Copy size={11} />
                           </button>
                         </small>
                       ) : (
-                        <small className="ad-block ad-muted">email hidden for your role</small>
+                        <small className="qa-block qa-muted">email hidden for your role</small>
                       )}
                     </td>
                     <td>
                       {p.title}
-                      <small className="ad-block ad-muted">ended {api.fmtDay(p.ended)}</small>
+                      <small className="qa-block qa-muted">ended {api.fmtDay(p.ended)}</small>
                     </td>
                     <td>#{p.rank}</td>
                     <td>{p.prize}</td>
                     <td>
                       <Pill tone={p.status === 'sent' ? 'green' : 'gold'}>{p.status}</Pill>
                     </td>
-                    <td className="ad-right">
+                    <td className="qa-right">
                       {can('prizes') &&
                         (p.status === 'pending' ? (
                           <Btn size="sm" kind="primary" icon={CheckCircle2} onClick={() => mark(p, 'sent')}>

@@ -12,19 +12,19 @@ export default function AuditPage() {
   return (
     <>
       <PageHead title="Audit log" sub="Every change made in the admin panel." icon={ScrollText} />
-      <div className="ad-filters">
+      <div className="qa-filters">
         <SearchBox value={q} onChange={setQ} placeholder="Filter by action (e.g. user.ban, game.save)" />
       </div>
       <Card pad={false}>
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error ad-pad">{error.message}</p>
+          <p className="qa-error qa-pad">{error.message}</p>
         ) : !data.length ? (
           <Empty icon={ScrollText} title="Nothing logged yet" />
         ) : (
-          <div className="ad-table-wrap">
-            <table className="ad-table">
+          <div className="qa-table-wrap">
+            <table className="qa-table">
               <thead>
                 <tr>
                   <th />
@@ -44,10 +44,10 @@ export default function AuditPage() {
                       <td>
                         <code>{a.action}</code>
                       </td>
-                      <td>{a.target_user || <span className="ad-muted">{a.target?.slice(0, 40)}</span>}</td>
+                      <td>{a.target_user || <span className="qa-muted">{a.target?.slice(0, 40)}</span>}</td>
                     </tr>
                     {open === a.id && (
-                      <tr className="ad-detail-row">
+                      <tr className="qa-detail-row">
                         <td colSpan={5}>
                           <pre>{JSON.stringify(a.details, null, 2)}</pre>
                         </td>
@@ -61,7 +61,7 @@ export default function AuditPage() {
         )}
       </Card>
       {data?.length === limit && (
-        <div className="ad-pager">
+        <div className="qa-pager">
           <Btn onClick={() => setLimit((l) => l + 100)}>Load more</Btn>
         </div>
       )}

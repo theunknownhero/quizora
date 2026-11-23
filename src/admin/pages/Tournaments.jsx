@@ -55,7 +55,7 @@ function Editor({ t, onClose, onSaved }) {
   const hours = Math.round((new Date(f.ends_at) - new Date(f.starts_at)) / 3600000)
   return (
     <Modal open wide onClose={onClose} title={t?.id ? `Edit ${t.title}` : 'New tournament'} footer={<><Btn onClick={onClose}>Cancel</Btn><Btn kind="primary" busy={busy} onClick={save}>{t?.id ? 'Save changes' : 'Create tournament'}</Btn></>}>
-      <div className="ad-form">
+      <div className="qa-form">
         <Field label="Title" span={2}>
           <input value={f.title} onChange={(e) => set('title')(e.target.value)} placeholder="Christmas Cup 2026" autoFocus />
         </Field>
@@ -97,13 +97,13 @@ function Editor({ t, onClose, onSaved }) {
         <Field label="Questions per attempt" hint="20 fits the Hungary map">
           <input type="number" min={5} max={50} value={f.question_count} onChange={(e) => set('question_count')(Number(e.target.value))} />
         </Field>
-        <div className="ad-field">
+        <div className="qa-field">
           <Toggle checked={f.is_public} onChange={set('is_public')} label="Listed publicly" hint="Off = only people with the link" />
         </div>
         <Field label="Description" span={2}>
           <textarea rows={2} value={f.description} onChange={(e) => set('description')(e.target.value)} placeholder="What makes this one special?" />
         </Field>
-        <div className="ad-field span-2">
+        <div className="qa-field span-2">
           <span>Prizes</span>
           <PrizeEditor value={f.prizes} onChange={set('prizes')} />
           <small>XP is paid automatically when results are final. Tick “External” for real-world prizes (gift cards). They appear in Prize claims with the winner’s email.</small>
@@ -140,14 +140,14 @@ function Templates() {
   }
   return (
     <Card title="Automatic tournaments" icon={Wand2} actions={<Btn kind="primary" size="sm" icon={Save} busy={busy} disabled={!tpl} onClick={save}>Save templates</Btn>}>
-      <p className="ad-muted small">These are created automatically: a Daily Challenge every UTC day and a Weekly Masters every Monday. Changes apply to the next one; edit the current one from the calendar.</p>
-      <div className="ad-grid-2">
+      <p className="qa-muted small">These are created automatically: a Daily Challenge every UTC day and a Weekly Masters every Monday. Changes apply to the next one; edit the current one from the calendar.</p>
+      <div className="qa-grid-2">
         {['daily', 'weekly'].map((kind) => {
           const t = cur[kind]
           return (
-            <div key={kind} className="ad-tpl">
+            <div key={kind} className="qa-tpl">
               <Toggle checked={t.enabled !== false} onChange={set(kind, 'enabled')} label={kind === 'daily' ? 'Daily Challenge' : 'Weekly Masters'} hint={kind === 'daily' ? 'Every day at 00:00 UTC' : 'Every Monday at 00:00 UTC'} />
-              <div className="ad-form">
+              <div className="qa-form">
                 <Field label="Title prefix">
                   <input value={t.title || ''} onChange={(e) => set(kind, 'title')(e.target.value)} />
                 </Field>
@@ -172,7 +172,7 @@ function Templates() {
                 <Field label="Description" span={2}>
                   <input value={t.description || ''} onChange={(e) => set(kind, 'description')(e.target.value)} />
                 </Field>
-                <div className="ad-field span-2">
+                <div className="qa-field span-2">
                   <span>Prizes</span>
                   <PrizeEditor value={t.prizes || []} onChange={set(kind, 'prizes')} />
                 </div>
@@ -252,9 +252,9 @@ export default function TournamentsPage() {
           </>
         }
       >
-        <div className="ad-legend">
+        <div className="qa-legend">
           {Object.entries(KIND).map(([k, v]) => (
-            <span key={k} className={`ad-ev tone-${v.tone}`}>
+            <span key={k} className={`qa-ev tone-${v.tone}`}>
               {v.label}
             </span>
           ))}
@@ -262,11 +262,11 @@ export default function TournamentsPage() {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error">{error.message}</p>
+          <p className="qa-error">{error.message}</p>
         ) : (
-          <div className="ad-cal">
+          <div className="qa-cal">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-              <b key={d} className="ad-cal-dow">
+              <b key={d} className="qa-cal-dow">
                 {d}
               </b>
             ))}
@@ -274,17 +274,17 @@ export default function TournamentsPage() {
               const evs = byDay[dayKey(d)] || []
               const out = d.getMonth() !== month.getMonth()
               return (
-                <div key={d.toISOString()} className={`ad-cal-day ${out ? 'is-out' : ''} ${dayKey(d) === today ? 'is-today' : ''}`}>
-                  <span className="ad-cal-n">{d.getDate()}</span>
-                  <div className="ad-cal-evs">
+                <div key={d.toISOString()} className={`qa-cal-day ${out ? 'is-out' : ''} ${dayKey(d) === today ? 'is-today' : ''}`}>
+                  <span className="qa-cal-n">{d.getDate()}</span>
+                  <div className="qa-cal-evs">
                     {evs.slice(0, 4).map((t) => (
-                      <button key={t.id} type="button" className={`ad-ev tone-${KIND[t.kind].tone} ${t.is_public ? '' : 'is-hidden'}`} onClick={() => setSel(t)} title={t.title}>
+                      <button key={t.id} type="button" className={`qa-ev tone-${KIND[t.kind].tone} ${t.is_public ? '' : 'is-hidden'}`} onClick={() => setSel(t)} title={t.title}>
                         {t.title}
                       </button>
                     ))}
                     {evs.length > 4 && <small>+{evs.length - 4} more</small>}
                   </div>
-                  <button type="button" className="ad-cal-add" onClick={() => setEdit({ starts_at: new Date(d.getFullYear(), d.getMonth(), d.getDate(), 18).toISOString(), ends_at: new Date(d.getFullYear(), d.getMonth(), d.getDate() + 2, 18).toISOString() })} aria-label={`New tournament on ${d.toDateString()}`}>
+                  <button type="button" className="qa-cal-add" onClick={() => setEdit({ starts_at: new Date(d.getFullYear(), d.getMonth(), d.getDate(), 18).toISOString(), ends_at: new Date(d.getFullYear(), d.getMonth(), d.getDate() + 2, 18).toISOString() })} aria-label={`New tournament on ${d.toDateString()}`}>
                     <Plus size={12} />
                   </button>
                 </div>
@@ -295,8 +295,8 @@ export default function TournamentsPage() {
       </Card>
 
       <Card title={`This view (${list.length})`} icon={Medal} pad={false}>
-        <div className="ad-table-wrap">
-          <table className="ad-table is-click">
+        <div className="qa-table-wrap">
+          <table className="qa-table is-click">
             <thead>
               <tr>
                 <th>Tournament</th>
@@ -313,7 +313,7 @@ export default function TournamentsPage() {
                   <tr key={t.id} onClick={() => setSel(t)}>
                     <td>
                       <b>{t.title}</b>
-                      <small className="ad-block ad-muted">
+                      <small className="qa-block qa-muted">
                         {t.code}
                         {t.creator ? ` · by ${t.creator}` : ''}
                         {!t.is_public ? ' · hidden' : ''}
@@ -322,12 +322,12 @@ export default function TournamentsPage() {
                     <td>
                       <Pill tone={KIND[t.kind].tone}>{KIND[t.kind].label}</Pill>
                     </td>
-                    <td className="ad-nowrap">
+                    <td className="qa-nowrap">
                       {api.fmt(t.starts_at)}
-                      <small className="ad-block ad-muted">→ {api.fmt(t.ends_at)}</small>
+                      <small className="qa-block qa-muted">→ {api.fmt(t.ends_at)}</small>
                     </td>
                     <td>
-                      {t.players} <small className="ad-muted">· {t.attempts} attempts</small>
+                      {t.players} <small className="qa-muted">· {t.attempts} attempts</small>
                     </td>
                     <td>
                       <Pill tone={STATE_TONE[st]}>{st}</Pill>
@@ -349,7 +349,7 @@ export default function TournamentsPage() {
         footer={
           sel && (
             <>
-              <a href={`/tournament/${sel.code}`} target="_blank" rel="noopener noreferrer" className="ad-btn">
+              <a href={`/tournament/${sel.code}`} target="_blank" rel="noopener noreferrer" className="qa-btn">
                 <ExternalLink size={15} /> Open
               </a>
               {!sel.finalized_at && (
@@ -373,7 +373,7 @@ export default function TournamentsPage() {
         }
       >
         {sel && (
-          <div className="ad-kv">
+          <div className="qa-kv">
             <span>Code</span>
             <b>{sel.code}</b>
             <span>Type</span>

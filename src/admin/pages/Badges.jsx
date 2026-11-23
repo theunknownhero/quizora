@@ -47,28 +47,28 @@ export default function BadgesPage() {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error">{error.message}</p>
+          <p className="qa-error">{error.message}</p>
         ) : !data.badges.length ? (
           <Empty icon={Award} title="No custom badges yet" text="Make one for an event, your beta testers or a community champion." />
         ) : (
-          <div className="ad-badge-grid">
+          <div className="qa-badge-grid">
             {data.badges.map((b) => (
-              <div key={b.id} className="ad-badge-card" style={{ '--tier': tiersStyle[b.tier].color }}>
-                <span className="ad-badge-big">{b.emoji}</span>
+              <div key={b.id} className="qa-badge-card" style={{ '--tier': tiersStyle[b.tier].color }}>
+                <span className="qa-badge-big">{b.emoji}</span>
                 <b>{b.name}</b>
                 <small>{b.description}</small>
-                <div className="ad-pills">
+                <div className="qa-pills">
                   <Pill tone="gold">{tiersStyle[b.tier].label}</Pill>
                   <Pill>{b.holders} holders</Pill>
                 </div>
-                <div className="ad-badge-actions">
-                  <Link to="/admin/users" className="ad-icon-btn" title="Award from a player’s profile" aria-label="Award">
+                <div className="qa-badge-actions">
+                  <Link to="/admin/users" className="qa-icon-btn" title="Award from a player’s profile" aria-label="Award">
                     <UserPlus size={15} />
                   </Link>
-                  <button type="button" className="ad-icon-btn" onClick={() => setEdit(b)} aria-label="Edit">
+                  <button type="button" className="qa-icon-btn" onClick={() => setEdit(b)} aria-label="Edit">
                     <Pencil size={15} />
                   </button>
-                  <button type="button" className="ad-icon-btn is-danger" onClick={() => remove(b)} aria-label="Delete">
+                  <button type="button" className="qa-icon-btn is-danger" onClick={() => remove(b)} aria-label="Delete">
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -78,11 +78,11 @@ export default function BadgesPage() {
         )}
       </Card>
       <Card title={`Built-in achievements (${builtIn.length})`} icon={Lock}>
-        <p className="ad-muted small">Unlocked automatically by playing. Their rules live in the database functions.</p>
-        <div className="ad-badge-grid is-small">
+        <p className="qa-muted small">Unlocked automatically by playing. Their rules live in the database functions.</p>
+        <div className="qa-badge-grid is-small">
           {builtIn.map((a) => (
-            <div key={a.id} className="ad-badge-card" style={{ '--tier': tiersStyle[a.tier].color }}>
-              <span className="ad-badge-big">{a.emoji}</span>
+            <div key={a.id} className="qa-badge-card" style={{ '--tier': tiersStyle[a.tier].color }}>
+              <span className="qa-badge-big">{a.emoji}</span>
               <b>{a.name}</b>
               <small>{a.desc}</small>
             </div>
@@ -91,7 +91,7 @@ export default function BadgesPage() {
       </Card>
       <Modal open={!!edit} onClose={() => setEdit(null)} title={edit?.id ? `Edit ${edit.name}` : 'New badge'} footer={<><Btn onClick={() => setEdit(null)}>Cancel</Btn><Btn kind="primary" busy={busy} onClick={save}>Save</Btn></>}>
         {edit && (
-          <div className="ad-form">
+          <div className="qa-form">
             <Field label="Name" span={2}>
               <input value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} placeholder="Launch Week Hero" autoFocus disabled={!!edit.id} />
             </Field>

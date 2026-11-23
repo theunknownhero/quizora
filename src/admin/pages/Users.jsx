@@ -30,8 +30,8 @@ function BanModal({ user, onClose, onDone }) {
   }
   return (
     <Modal open onClose={onClose} title={`Ban ${user.username}`} footer={<><Btn onClick={onClose}>Cancel</Btn><Btn kind="danger" icon={Ban} busy={busy} onClick={submit}>Ban player</Btn></>}>
-      <p className="ad-muted">Banned players can still browse, but can’t play rounds, join rooms, add friends or create tournaments. They’re removed from any open room.</p>
-      <div className="ad-form">
+      <p className="qa-muted">Banned players can still browse, but can’t play rounds, join rooms, add friends or create tournaments. They’re removed from any open room.</p>
+      <div className="qa-form">
         <Field label="Duration">
           <select value={days} onChange={(e) => setDays(e.target.value)}>
             <option value="1">1 day</option>
@@ -46,7 +46,7 @@ function BanModal({ user, onClose, onDone }) {
           <input value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} placeholder="e.g. Offensive username" />
         </Field>
       </div>
-      {err && <p className="ad-error">{err}</p>}
+      {err && <p className="qa-error">{err}</p>}
     </Modal>
   )
 }
@@ -75,14 +75,14 @@ function Drawer({ id, onClose, onChanged }) {
   const owned = new Set((u?.achievements || []).map((a) => a.id))
 
   return (
-    <motion.aside className="ad-drawer" initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }}>
+    <motion.aside className="qa-drawer" initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }}>
       <header>
-        <button type="button" className="ad-icon-btn" onClick={onClose} aria-label="Close">
+        <button type="button" className="qa-icon-btn" onClick={onClose} aria-label="Close">
           <X size={18} />
         </button>
         <span>Player</span>
         {u && (
-          <a href={`/u/${u.username}`} target="_blank" rel="noopener noreferrer" className="ad-link">
+          <a href={`/u/${u.username}`} target="_blank" rel="noopener noreferrer" className="qa-link">
             Public profile <ExternalLink size={13} />
           </a>
         )}
@@ -90,10 +90,10 @@ function Drawer({ id, onClose, onChanged }) {
       {loading && !u ? (
         <Loading />
       ) : error ? (
-        <p className="ad-error">{error.message}</p>
+        <p className="qa-error">{error.message}</p>
       ) : (
-        <div className="ad-drawer-body">
-          <div className="ad-user-head">
+        <div className="qa-drawer-body">
+          <div className="qa-user-head">
             <span className="acct-avatar lg">{u.username[0].toUpperCase()}</span>
             <div>
               <h2>{u.username}</h2>
@@ -101,7 +101,7 @@ function Drawer({ id, onClose, onChanged }) {
                 <Mail size={13} /> {u.email}{' '}
                 {u.verified ? <CheckCircle2 size={13} className="ok" aria-label="Verified" /> : <AlertCircle size={13} className="warn" aria-label="Not verified" />}
               </p>
-              <div className="ad-pills">
+              <div className="qa-pills">
                 <Pill tone={ROLE_TONE[u.role]}>{u.role}</Pill>
                 <Pill>Level {u.level}</Pill>
                 <Pill>{u.xp.toLocaleString()} XP</Pill>
@@ -112,7 +112,7 @@ function Drawer({ id, onClose, onChanged }) {
           </div>
 
           {banned && (
-            <div className="ad-alert is-red">
+            <div className="qa-alert is-red">
               <Ban size={16} />
               <div>
                 <b>Banned {new Date(u.banned_until).getFullYear() > 9000 ? 'permanently' : `until ${api.fmt(u.banned_until)}`}</b>
@@ -121,7 +121,7 @@ function Drawer({ id, onClose, onChanged }) {
             </div>
           )}
 
-          <div className="ad-kv">
+          <div className="qa-kv">
             <span>Joined</span>
             <b>{api.fmt(u.created_at)}</b>
             <span>Last sign-in</span>
@@ -144,7 +144,7 @@ function Drawer({ id, onClose, onChanged }) {
             <b>{u.birth_date || 'not set'}</b>
           </div>
 
-          <div className="ad-actions">
+          <div className="qa-actions">
             {can('users.moderate') &&
               (banned ? (
                 <Btn icon={ShieldCheck} onClick={() => act('unban', {}, `${u.username} is unbanned`)}>
@@ -172,7 +172,7 @@ function Drawer({ id, onClose, onChanged }) {
             )}
             {can('staff') && (
               <select
-                className="ad-select"
+                className="qa-select"
                 value={u.role}
                 onChange={(e) => window.confirm(`Change ${u.username}’s role to ${e.target.value}?`) && act('role', { role: e.target.value }, `Role set to ${e.target.value}`)}
                 aria-label="Role"
@@ -187,11 +187,11 @@ function Drawer({ id, onClose, onChanged }) {
           </div>
 
           <Card title={`Badges (${u.achievements.length})`} icon={Award}>
-            <div className="ad-badges">
+            <div className="qa-badges">
               {u.achievements.map((a) => {
                 const def = achievementById(a.id)
                 return (
-                  <span key={a.id} className="ad-badge" style={{ '--tier': tiersStyle[def?.tier || 'bronze'].color }} title={`${def?.name || a.id} · ${api.fmtDay(a.at)}`}>
+                  <span key={a.id} className="qa-badge" style={{ '--tier': tiersStyle[def?.tier || 'bronze'].color }} title={`${def?.name || a.id} · ${api.fmtDay(a.at)}`}>
                     {def?.emoji || '🏅'} <small>{def?.name || a.id}</small>
                     {can('users.manage') && (
                       <button type="button" onClick={() => window.confirm(`Remove “${def?.name || a.id}”?`) && act('revoke_badge', { id: a.id }, 'Badge removed')} aria-label="Remove badge">
@@ -203,7 +203,7 @@ function Drawer({ id, onClose, onChanged }) {
               })}
             </div>
             {can('badges') && (
-              <div className="ad-inline">
+              <div className="qa-inline">
                 <select value={badge} onChange={(e) => setBadge(e.target.value)} aria-label="Badge to grant">
                   <option value="">Grant a badge…</option>
                   {achievements
@@ -224,7 +224,7 @@ function Drawer({ id, onClose, onChanged }) {
 
           <Card title="Recent rounds" pad={false}>
             {u.plays.length ? (
-              <table className="ad-table is-compact">
+              <table className="qa-table is-compact">
                 <tbody>
                   {u.plays.map((p) => (
                     <tr key={p.id}>
@@ -234,19 +234,19 @@ function Drawer({ id, onClose, onChanged }) {
                       </td>
                       <td>{p.won ? <Pill tone="green">win</Pill> : <Pill>loss</Pill>}</td>
                       <td>+{p.xp}</td>
-                      <td className="ad-muted">{api.ago(p.finished_at)}</td>
+                      <td className="qa-muted">{api.ago(p.finished_at)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <p className="ad-muted ad-pad">No rounds yet.</p>
+              <p className="qa-muted qa-pad">No rounds yet.</p>
             )}
           </Card>
 
           {u.tournaments.length > 0 && (
             <Card title="Tournament results" pad={false}>
-              <table className="ad-table is-compact">
+              <table className="qa-table is-compact">
                 <tbody>
                   {u.tournaments.map((t) => (
                     <tr key={t.code}>
@@ -263,10 +263,10 @@ function Drawer({ id, onClose, onChanged }) {
 
           {u.audit.length > 0 && (
             <Card title="Admin history" pad={false}>
-              <ul className="ad-list">
+              <ul className="qa-list">
                 {u.audit.map((a, i) => (
                   <li key={i}>
-                    <span className="ad-list-row">
+                    <span className="qa-list-row">
                       <b>{a.action}</b>
                       <small>
                         {a.actor} · {api.ago(a.at)}
@@ -308,7 +308,7 @@ export default function UsersPage() {
   return (
     <>
       <PageHead title="Users" sub={data ? `${data.total.toLocaleString()} matching players` : 'All players'} icon={UsersIcon} />
-      <div className="ad-filters">
+      <div className="qa-filters">
         <SearchBox value={f.q} onChange={set('q')} placeholder="Search username or email" />
         <select value={f.status} onChange={(e) => set('status')(e.target.value)} aria-label="Status">
           <option value="">Everyone</option>
@@ -336,12 +336,12 @@ export default function UsersPage() {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <p className="ad-error ad-pad">{error.message}</p>
+          <p className="qa-error qa-pad">{error.message}</p>
         ) : data.rows.length === 0 ? (
           <Empty icon={UsersIcon} title="No players found" />
         ) : (
-          <div className="ad-table-wrap">
-            <table className="ad-table is-click">
+          <div className="qa-table-wrap">
+            <table className="qa-table is-click">
               <thead>
                 <tr>
                   <th>Player</th>
@@ -357,7 +357,7 @@ export default function UsersPage() {
                 {data.rows.map((u) => (
                   <tr key={u.id} onClick={() => navigate(`/admin/users/${u.id}`)} className={id === u.id ? 'is-sel' : ''}>
                     <td>
-                      <span className="ad-user-cell">
+                      <span className="qa-user-cell">
                         <span className="acct-avatar">{u.username[0].toUpperCase()}</span>
                         <span>
                           <b>{u.username}</b>
@@ -369,7 +369,7 @@ export default function UsersPage() {
                       <Pill tone={ROLE_TONE[u.role]}>{u.role}</Pill>
                     </td>
                     <td>
-                      {u.level} <small className="ad-muted">· {u.xp.toLocaleString()} XP</small>
+                      {u.level} <small className="qa-muted">· {u.xp.toLocaleString()} XP</small>
                     </td>
                     <td>{u.games}</td>
                     <td>{api.fmtDay(u.created_at)}</td>
@@ -385,7 +385,7 @@ export default function UsersPage() {
         )}
       </Card>
       {data && data.total > PAGE && (
-        <div className="ad-pager">
+        <div className="qa-pager">
           <Btn icon={ChevronLeft} disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
             Previous
           </Btn>
@@ -399,7 +399,7 @@ export default function UsersPage() {
       )}
 
       <AnimatePresence>{id && <Drawer key={id} id={id} onClose={() => navigate('/admin/users')} onChanged={reload} />}</AnimatePresence>
-      {id && <div className="ad-scrim is-drawer" onClick={() => navigate('/admin/users')} />}
+      {id && <div className="qa-scrim is-drawer" onClick={() => navigate('/admin/users')} />}
     </>
   )
 }

@@ -47,17 +47,17 @@ export default function StaffPage() {
   return (
     <>
       <PageHead title="Staff & roles" sub="Give trusted people access to parts of the admin panel." icon={ShieldCheck} />
-      <div className="ad-grid-2">
+      <div className="qa-grid-2">
         <Card title="Team" icon={ShieldCheck} pad={false}>
           {team.loading && !team.data ? (
             <Loading />
           ) : (
-            <table className="ad-table">
+            <table className="qa-table">
               <tbody>
                 {team.data?.rows.map((u) => (
                   <tr key={u.id}>
                     <td>
-                      <Link to={`/admin/users/${u.id}`} className="ad-user-cell">
+                      <Link to={`/admin/users/${u.id}`} className="qa-user-cell">
                         <span className="acct-avatar">{u.username[0].toUpperCase()}</span>
                         <span>
                           <b>{u.username}</b>
@@ -68,7 +68,7 @@ export default function StaffPage() {
                     <td>
                       <Pill tone={TONE[u.role]}>{u.role}</Pill>
                     </td>
-                    <td className="ad-right">
+                    <td className="qa-right">
                       {(staff.role === 'owner' || !['admin', 'owner'].includes(u.role)) && (
                         <Btn size="sm" onClick={() => assign(u, 'user')}>
                           Remove access
@@ -82,7 +82,7 @@ export default function StaffPage() {
           )}
         </Card>
         <Card title="Add a staff member" icon={UserPlus}>
-          <div className="ad-inline">
+          <div className="qa-inline">
             <SearchBox value={q} onChange={setQ} placeholder="Find player by username or email" />
             <select value={role} onChange={(e) => setRole(e.target.value)} aria-label="Role to give">
               {assignable.map((r) => (
@@ -92,11 +92,11 @@ export default function StaffPage() {
               ))}
             </select>
           </div>
-          <p className="ad-muted small">{api.ROLE_INFO[role]}</p>
-          <ul className="ad-list">
+          <p className="qa-muted small">{api.ROLE_INFO[role]}</p>
+          <ul className="qa-list">
             {found.data?.rows.map((u) => (
               <li key={u.id}>
-                <span className="ad-list-row">
+                <span className="qa-list-row">
                   <span className="acct-avatar">{u.username[0].toUpperCase()}</span>
                   <b>{u.username}</b>
                   <Pill tone={TONE[u.role]}>{u.role}</Pill>
@@ -110,8 +110,8 @@ export default function StaffPage() {
         </Card>
       </div>
       <Card title="What each role can do" pad={false}>
-        <div className="ad-table-wrap">
-          <table className="ad-table ad-matrix">
+        <div className="qa-table-wrap">
+          <table className="qa-table qa-matrix">
             <thead>
               <tr>
                 <th>Permission</th>
@@ -127,7 +127,7 @@ export default function StaffPage() {
                 <tr key={label}>
                   <td>{label}</td>
                   {COLS.map((c) => (
-                    <td key={c}>{roles.includes(c) ? <Check size={16} className="ok" /> : <X size={16} className="ad-muted" />}</td>
+                    <td key={c}>{roles.includes(c) ? <Check size={16} className="ok" /> : <X size={16} className="qa-muted" />}</td>
                   ))}
                 </tr>
               ))}

@@ -48,27 +48,27 @@ export default function CategoriesPage() {
           New category
         </Btn>
       </PageHead>
-      <div className="ad-filters">
+      <div className="qa-filters">
         <SearchBox value={q} onChange={setQ} placeholder="Search categories" />
       </div>
       {loading && !data ? (
         <Loading />
       ) : error ? (
-        <p className="ad-error">{error.message}</p>
+        <p className="qa-error">{error.message}</p>
       ) : (
         groups.map((gr) => {
           const list = cats.filter((c) => c.grp === gr.id)
           if (!list.length) return null
           return (
             <Card key={gr.id} title={`${gr.emoji} ${gr.id[0].toUpperCase() + gr.id.slice(1)} (${list.length})`} pad={false}>
-              <div className="ad-table-wrap">
-                <table className="ad-table">
+              <div className="qa-table-wrap">
+                <table className="qa-table">
                   <tbody>
                     {list.map((c) => (
                       <tr key={c.id} className={c.visible ? '' : 'is-off'}>
                         <td>
-                          <span className="ad-cat-cell">
-                            <span className="ad-cat-swatch" style={{ background: c.color }}>
+                          <span className="qa-cat-cell">
+                            <span className="qa-cat-swatch" style={{ background: c.color }}>
                               {c.emoji}
                             </span>
                             <span>
@@ -77,22 +77,22 @@ export default function CategoriesPage() {
                             </span>
                           </span>
                         </td>
-                        <td className="ad-muted">/{c.id}</td>
+                        <td className="qa-muted">/{c.id}</td>
                         <td>
                           <Pill>{c.games} games</Pill>
                         </td>
                         <td>{c.visible ? <Pill tone="green">visible</Pill> : <Pill>hidden</Pill>}</td>
-                        <td className="ad-right ad-nowrap">
-                          <a className="ad-icon-btn" href={`/category/${c.id}`} target="_blank" rel="noopener noreferrer" aria-label="Open page">
+                        <td className="qa-right qa-nowrap">
+                          <a className="qa-icon-btn" href={`/category/${c.id}`} target="_blank" rel="noopener noreferrer" aria-label="Open page">
                             <ExternalLink size={15} />
                           </a>
-                          <button type="button" className="ad-icon-btn" onClick={() => save({ ...c, visible: !c.visible })} aria-label={c.visible ? 'Hide' : 'Show'}>
+                          <button type="button" className="qa-icon-btn" onClick={() => save({ ...c, visible: !c.visible })} aria-label={c.visible ? 'Hide' : 'Show'}>
                             {c.visible ? <EyeOff size={15} /> : <Eye size={15} />}
                           </button>
-                          <button type="button" className="ad-icon-btn" onClick={() => setEdit(c)} aria-label="Edit">
+                          <button type="button" className="qa-icon-btn" onClick={() => setEdit(c)} aria-label="Edit">
                             <Pencil size={15} />
                           </button>
-                          <button type="button" className="ad-icon-btn is-danger" onClick={() => remove(c)} aria-label="Delete">
+                          <button type="button" className="qa-icon-btn is-danger" onClick={() => remove(c)} aria-label="Delete">
                             <Trash2 size={15} />
                           </button>
                         </td>
@@ -108,7 +108,7 @@ export default function CategoriesPage() {
 
       <Modal open={!!edit} onClose={() => setEdit(null)} title={edit?.id && data?.categories.some((c) => c.id === edit.id) ? `Edit ${edit.name}` : 'New category'} footer={<><Btn onClick={() => setEdit(null)}>Cancel</Btn><Btn kind="primary" busy={busy} onClick={() => save()}>Save</Btn></>}>
         {edit && (
-          <div className="ad-form">
+          <div className="qa-form">
             <Field label="Name" span={2}>
               <input value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} autoFocus />
             </Field>
@@ -136,7 +136,7 @@ export default function CategoriesPage() {
             <Field label="Sort order" hint="Lower shows first">
               <input type="number" value={edit.sort} onChange={(e) => setEdit({ ...edit, sort: Number(e.target.value) })} />
             </Field>
-            <div className="ad-field">
+            <div className="qa-field">
               <Toggle checked={edit.visible} onChange={(v) => setEdit({ ...edit, visible: v })} label="Visible on site" />
             </div>
           </div>

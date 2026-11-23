@@ -14,7 +14,7 @@ export default function Dashboard() {
   const { can } = useApp()
   const { data, loading, error, reload } = useAsync(() => api.overview(), [])
   if (loading && !data) return <Loading />
-  if (error) return <p className="ad-error">{error.message}</p>
+  if (error) return <p className="qa-error">{error.message}</p>
   const k = data.kpis
   const s = data.series
   const sum = (key) => s.reduce((a, d) => a + (d[key] || 0), 0)
@@ -27,35 +27,35 @@ export default function Dashboard() {
         </Btn>
       </PageHead>
 
-      <div className="ad-quick">
+      <div className="qa-quick">
         {can('tournaments') && (
-          <Link to="/admin/tournaments" className="ad-quick-item">
+          <Link to="/admin/tournaments" className="qa-quick-item">
             <Plus size={16} /> New tournament
           </Link>
         )}
         {can('content') && (
-          <Link to="/admin/games" className="ad-quick-item">
+          <Link to="/admin/games" className="qa-quick-item">
             <Gamepad2 size={16} /> New quiz
           </Link>
         )}
         {can('settings') && (
-          <Link to="/admin/settings" className="ad-quick-item">
+          <Link to="/admin/settings" className="qa-quick-item">
             <Megaphone size={16} /> Announcement
           </Link>
         )}
         {can('settings') && (
-          <Link to="/admin/settings#xp" className="ad-quick-item">
+          <Link to="/admin/settings#xp" className="qa-quick-item">
             <Zap size={16} /> XP event
           </Link>
         )}
         {can('users.view') && (
-          <Link to="/admin/users" className="ad-quick-item">
+          <Link to="/admin/users" className="qa-quick-item">
             <Users size={16} /> Find a player
           </Link>
         )}
       </div>
 
-      <div className="ad-stats">
+      <div className="qa-stats">
         <Stat label="Players" value={k.users.toLocaleString()} icon={Users} delta={k.users_7d - k.users_prev_7d} sub={`${k.users_7d} new this week`} />
         <Stat label="Active today" value={k.active_today} icon={Activity} tone="green" sub={`${k.active_7d} this week`} />
         <Stat label="Rounds today" value={k.rounds_today} icon={Gamepad2} tone="cyan" sub={`${k.rounds_7d} this week · ${k.guest_rounds_7d} by guests`} />
@@ -66,7 +66,7 @@ export default function Dashboard() {
         <Stat label="Banned" value={k.banned} icon={ShieldAlert} tone={k.banned ? 'red' : 'muted'} sub={k.xp_multiplier > 1 ? `XP event ×${k.xp_multiplier} live` : ''} />
       </div>
 
-      <div className="ad-grid-2">
+      <div className="qa-grid-2">
         <Card title={`Rounds played · last 30 days (${sum('rounds')})`} icon={Gamepad2}>
           <Bars data={s} keyName="rounds" label="Rounds per day" color="linear-gradient(180deg, #22d3ee, #8b5cf6)" />
         </Card>
@@ -81,10 +81,10 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="ad-grid-3">
+      <div className="qa-grid-3">
         <Card title="Top games · 30 days" icon={Trophy} pad={false}>
           {data.top_games.length ? (
-            <table className="ad-table">
+            <table className="qa-table">
               <thead>
                 <tr>
                   <th>Game</th>
@@ -107,11 +107,11 @@ export default function Dashboard() {
               </tbody>
             </table>
           ) : (
-            <p className="ad-muted ad-pad">No rounds yet.</p>
+            <p className="qa-muted qa-pad">No rounds yet.</p>
           )}
         </Card>
-        <Card title="Newest players" icon={UserPlus} pad={false} actions={<Link to="/admin/users" className="ad-link">All users</Link>}>
-          <ul className="ad-list">
+        <Card title="Newest players" icon={UserPlus} pad={false} actions={<Link to="/admin/users" className="qa-link">All users</Link>}>
+          <ul className="qa-list">
             {data.recent_users.map((u) => (
               <li key={u.id}>
                 <Link to={`/admin/users/${u.id}`}>
@@ -124,12 +124,12 @@ export default function Dashboard() {
             ))}
           </ul>
         </Card>
-        <Card title="Recent admin activity" icon={ScrollText} pad={false} actions={can('audit') && <Link to="/admin/audit" className="ad-link">Audit log</Link>}>
+        <Card title="Recent admin activity" icon={ScrollText} pad={false} actions={can('audit') && <Link to="/admin/audit" className="qa-link">Audit log</Link>}>
           {data.recent_audit.length ? (
-            <ul className="ad-list">
+            <ul className="qa-list">
               {data.recent_audit.map((a, i) => (
                 <li key={i}>
-                  <span className="ad-list-row">
+                  <span className="qa-list-row">
                     <Settings size={14} />
                     <b>{a.action}</b>
                     <small>
@@ -140,7 +140,7 @@ export default function Dashboard() {
               ))}
             </ul>
           ) : (
-            <p className="ad-muted ad-pad">No admin actions yet.</p>
+            <p className="qa-muted qa-pad">No admin actions yet.</p>
           )}
         </Card>
       </div>

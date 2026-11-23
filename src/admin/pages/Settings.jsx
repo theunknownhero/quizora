@@ -28,7 +28,7 @@ function Section({ k, title, icon, sub, data, render, onSaved, id }) {
   return (
     <div id={id}>
       <Card title={title} icon={icon} actions={<Btn kind="primary" size="sm" icon={Save} busy={busy} disabled={!dirty} onClick={save}>{dirty ? 'Save' : 'Saved'}</Btn>}>
-        {sub && <p className="ad-muted small">{sub}</p>}
+        {sub && <p className="qa-muted small">{sub}</p>}
         {v && render(v, set)}
       </Card>
     </div>
@@ -48,12 +48,12 @@ export default function SettingsPage() {
     if (data && window.location.hash) document.querySelector(window.location.hash)?.scrollIntoView({ behavior: 'smooth' })
   }, [data])
   if (loading && !data) return <Loading />
-  if (error) return <p className="ad-error">{error.message}</p>
+  if (error) return <p className="qa-error">{error.message}</p>
 
   return (
     <>
       <PageHead title="Site settings" sub="Changes go live immediately for everyone (visitors pick them up on their next page load)." icon={SettingsIcon} />
-      <div className="ad-grid-2 is-start">
+      <div className="qa-grid-2 is-start">
         <Section
           k="announcement"
           title="Announcement bar"
@@ -62,8 +62,8 @@ export default function SettingsPage() {
           data={data}
           onSaved={reload}
           render={(v, set) => (
-            <div className="ad-form">
-              <div className="ad-field span-2">
+            <div className="qa-form">
+              <div className="qa-field span-2">
                 <Toggle checked={v.enabled} onChange={set('enabled')} label="Show announcement" />
               </div>
               <Field label="Message" span={2}>
@@ -76,7 +76,7 @@ export default function SettingsPage() {
                 <input value={v.link_label} onChange={(e) => set('link_label')(e.target.value)} placeholder="Join now" />
               </Field>
               <Field label="Style" span={2}>
-                <div className="seg ad-seg">
+                <div className="seg qa-seg">
                   {TONES.map(([k, l, I]) => (
                     <button key={k} type="button" className={v.tone === k ? 'is-on' : ''} onClick={() => set('tone')(k)}>
                       <I size={14} /> {l}
@@ -85,7 +85,7 @@ export default function SettingsPage() {
                 </div>
               </Field>
               {v.text && (
-                <div className={`sc-bar is-${v.tone} ad-ann-preview span-2`}>
+                <div className={`sc-bar is-${v.tone} qa-ann-preview span-2`}>
                   <Megaphone size={18} />
                   <span>{v.text}</span>
                   {v.link && <span className="sc-link">{v.link_label || 'Learn more'}</span>}
@@ -102,7 +102,7 @@ export default function SettingsPage() {
           data={data}
           onSaved={reload}
           render={(v, set) => (
-            <div className="ad-toggle-list">
+            <div className="qa-toggle-list">
               <Toggle checked={v.signups !== false} onChange={set('signups')} label="New sign-ups" hint="Off: the sign-up form is closed (existing players can log in)" />
               <Toggle checked={v.multiplayer !== false} onChange={set('multiplayer')} label="Multiplayer" hint="Quick match, parties and rooms" />
               <Toggle checked={v.tournaments !== false} onChange={set('tournaments')} label="Tournaments" hint="Tournament pages and the Compete section" />
@@ -121,7 +121,7 @@ export default function SettingsPage() {
           data={data}
           onSaved={reload}
           render={(v, set) => (
-            <div className="ad-form">
+            <div className="qa-form">
               <Field label="Multiplier">
                 <select value={v.multiplier || 1} onChange={(e) => set('multiplier')(Number(e.target.value))}>
                   <option value={1}>Off (1×)</option>
@@ -150,7 +150,7 @@ export default function SettingsPage() {
           data={data}
           onSaved={reload}
           render={(v, set) => (
-            <div className="ad-form">
+            <div className="qa-form">
               <Field label="Link" span={2}>
                 <input value={v.url} onChange={(e) => set('url')(e.target.value)} placeholder="https://…" />
               </Field>
@@ -168,7 +168,7 @@ export default function SettingsPage() {
           data={data}
           onSaved={reload}
           render={(v, set) => (
-            <div className="ad-form">
+            <div className="qa-form">
               <Field label="Hero headline" span={2}>
                 <input value={v.hero_title || ''} onChange={(e) => set('hero_title')(e.target.value)} placeholder="Play smarter quizzes" />
               </Field>
@@ -186,8 +186,8 @@ export default function SettingsPage() {
           data={data}
           onSaved={reload}
           render={(v, set) => (
-            <div className="ad-form">
-              <div className="ad-field span-2">
+            <div className="qa-form">
+              <div className="qa-field span-2">
                 <Toggle checked={v.enabled} onChange={set('enabled')} label="Maintenance mode" hint={v.enabled ? 'ON: players see the maintenance page' : 'Off'} />
               </div>
               <Field label="Message" span={2}>
