@@ -12,6 +12,9 @@ import Profile from './pages/Profile.jsx'
 import Friends from './pages/Friends.jsx'
 import PlayTogether from './pages/PlayTogether.jsx'
 import Room from './pages/Room.jsx'
+import Leaderboards from './pages/Leaderboards.jsx'
+import Tournaments from './pages/Tournaments.jsx'
+import TournamentPage from './pages/TournamentPage.jsx'
 import PublicProfile from './pages/PublicProfile.jsx'
 import QuizListPage from './pages/QuizListPage.jsx'
 
@@ -29,6 +32,9 @@ export default function App() {
       <Route path="/friends" element={<Friends />} />
       <Route path="/play-together" element={<PlayTogether />} />
       <Route path="/room/:code" element={<Room />} />
+      <Route path="/leaderboards" element={<Leaderboards />} />
+      <Route path="/tournaments" element={<Tournaments />} />
+      <Route path="/tournament/:code" element={<TournamentPage />} />
       <Route path="/u/:username" element={<PublicProfile />} />
       <Route path="/quizlist/:code" element={<QuizListPage />} />
       <Route path="/playlist/:code" element={<QuizListPage />} />

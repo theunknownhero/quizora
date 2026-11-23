@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Sprite, { spriteUrl } from './Sprite.jsx'
 import Terrain from './Terrain.jsx'
 import { spriteSizes } from './spriteSizes.js'
@@ -17,7 +17,7 @@ import ShinyText from '../../components/ShinyText.jsx'
 import Aurora from '../../components/Aurora.jsx'
 import CountUp from '../../components/CountUp.jsx'
 import './hungary.css'
-import { ArrowRight, ArrowLeft, Check, X, PartyPopper, Play, Star, Flame, Gift, RotateCcw, Share2, Trophy, Target, Users } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Check, X, PartyPopper, Play, Star, Flame, Gift, RotateCcw, Share2, Trophy, Target, Users, Medal } from 'lucide-react'
 
 const TOTAL = ROUND_SIZE
 
@@ -224,7 +224,7 @@ function QuestionCard({ q, index, picked, result, error, onPick, onNext, onClose
   )
 }
 
-function Intro({ onStart, best, loading, error }) {
+function Intro({ onStart, best, loading, error, tournament }) {
   return (
     <motion.div className="g-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <motion.div
@@ -260,17 +260,22 @@ function Intro({ onStart, best, loading, error }) {
             </span>
           ))}
         </div>
+        {tournament && (
+          <p className="intro-tourney">
+            <Medal size={16} /> Tournament attempt · <Link to={`/tournament/${tournament}`}>see standings</Link>
+          </p>
+        )}
         {error && (
           <p className="q-error" role="alert">
             {error}
           </p>
         )}
         <button className="btn btn-primary btn-lg g-full" onClick={onStart} autoFocus disabled={loading}>
-          {loading ? <span className="auth-spinner" aria-label="Loading" /> : 'Start the journey'} {!loading && <span className="btn-icon"><Play size={12} fill="currentColor" /></span>}
+          {loading ? <span className="auth-spinner" aria-label="Loading" /> : tournament ? 'Start my attempt' : 'Start the journey'} {!loading && <span className="btn-icon"><Play size={12} fill="currentColor" /></span>}
         </button>
-        <Link to="/play-together" className="btn btn-ghost g-full intro-multi">
+        {!tournament && <Link to="/play-together" className="btn btn-ghost g-full intro-multi">
           <Users size={17} /> Play with friends
-        </Link>
+        </Link>}
         {best > 0 && (
           <span className="intro-best">
             Your best: <b>{best}</b>/{TOTAL}
@@ -338,7 +343,7 @@ function XpPanel({ outcome }) {
   )
 }
 
-function Results({ round, results, outcome, prevBest, onReplay }) {
+function Results({ round, results, outcome, prevBest, onReplay, tournament }) {
   const score = outcome.correct
   const won = outcome.won
   const rank = [...ranks].reverse().find((r) => score >= r.min)
@@ -419,14 +424,19 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
         <XpPanel outcome={outcome} />
 
         <div className="results-actions">
-          {won && (
+          {tournament && (
+            <Link className="btn btn-lg btn-primary g-full" to={`/tournament/${tournament.code}`}>
+              <Medal size={18} /> See tournament standings
+            </Link>
+          )}
+          {won && !tournament && (
             <a className="btn btn-lg btn-prize g-full" href={PRIZE_URL} target="_blank" rel="noopener noreferrer">
               <span className="btn-prize-shine" aria-hidden="true" />
               <Gift size={18} /> Claim the Prize
             </a>
           )}
           <div className="results-row">
-            <button className={`btn btn-lg ${won ? 'btn-ghost' : 'btn-primary'}`} onClick={onReplay}>
+            <button className={`btn btn-lg ${won || tournament ? 'btn-ghost' : 'btn-primary'}`} onClick={onReplay}>
               <RotateCcw size={17} /> Play again
             </button>
             <button className="btn btn-lg btn-ghost" onClick={share}>
@@ -479,6 +489,8 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
 }
 
 export default function HungaryOrNot() {
+  const [searchParams] = useSearchParams()
+  const tcode = searchParams.get('t')
   const s = useWorldScale()
   const scroller = useRef(null)
   const { reloadUser } = useApp()
@@ -543,7 +555,7 @@ export default function HungaryOrNot() {
     setLoading(true)
     setStartError('')
     try {
-      const g = await startRound('hungary-or-not', { count: TOTAL, localPick: pickRound })
+      const g = await startRound('hungary-or-not', { count: TOTAL, localPick: tcode ? undefined : pickRound, tournament: tcode })
       setGame(g)
       setAnswers(Array(TOTAL).fill(null))
       setResults(Array(TOTAL).fill(null))
@@ -783,7 +795,7 @@ export default function HungaryOrNot() {
       )}
 
       <AnimatePresence>
-        {phase === 'intro' && <Intro key="intro" onStart={begin} best={best} loading={loading} error={startError} />}
+        {phase === 'intro' && <Intro key="intro" onStart={begin} best={best} loading={loading} error={startError} tournament={tcode} />}
         {phase === 'question' && round[current] && (
           <QuestionCard
             key={`q${current}`}
@@ -799,7 +811,7 @@ export default function HungaryOrNot() {
           />
         )}
       </AnimatePresence>
-      {phase === 'done' && outcome && <Results round={round} results={results} outcome={outcome} prevBest={prevBest} onReplay={replay} />}
+      {phase === 'done' && outcome && <Results round={round} results={results} outcome={outcome} prevBest={prevBest} onReplay={replay} tournament={game?.tournament} />}
     </div>
   )
 }

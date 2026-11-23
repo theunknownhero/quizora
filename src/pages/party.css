@@ -151,3 +151,26 @@
   .rm-podium { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .rm-res-table th:nth-child(5), .rm-res-table td:nth-child(5) { display: none; }
 }
+
+/* Layout fixes: two balanced columns, equal control heights, no overflow */
+.pt-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); grid-template-areas: 'qm party' 'join party'; align-items: stretch; }
+.pt-card-qm { grid-area: qm; }
+.pt-card-party { grid-area: party; }
+.pt-card-join { grid-area: join; }
+.pt-card-party .pt-go { margin-top: auto; }
+.pt-seg { display: flex; flex-wrap: nowrap; padding: 3px; }
+.pt-seg button { flex: 1 1 0; min-width: 0; height: 36px; padding: 0 8px; white-space: nowrap; font-size: 13.5px; }
+.pt-select { height: 44px; width: 100%; }
+.pt-row { align-items: end; }
+.pt-code input { height: 52px; font-size: 22px; letter-spacing: 0.2em; }
+.pt-code .btn { flex: none; height: 52px; padding: 0 20px; }
+.pt-online { align-items: flex-start; line-height: 1.45; }
+.pt-online .dot-on { flex: none; margin-top: 6px; }
+@media (max-width: 1000px) {
+  .pt-grid { grid-template-columns: 1fr 1fr; grid-template-areas: 'party party' 'qm join'; }
+  .pt-card-party { order: 0; }
+}
+@media (max-width: 680px) {
+  .pt-grid { grid-template-columns: 1fr; grid-template-areas: 'party' 'qm' 'join'; }
+  .pt-row { grid-template-columns: 1fr; }
+}

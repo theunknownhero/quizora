@@ -15,6 +15,9 @@ export default function SiteFooter() {
           <Link to="/categories">{t('nav.categories')}</Link>
           <Link to="/#games">{t('nav.games')}</Link>
           <Link to="/#how">{t('nav.how')}</Link>
+          <Link to="/tournaments">Tournaments</Link>
+          <Link to="/leaderboards">Leaderboards</Link>
+          <Link to="/play-together">Play together</Link>
         </nav>
         <a className="powered" href="https://fortunejack.com" target="_blank" rel="noopener noreferrer">
           <span>{t('footer.powered')}</span>

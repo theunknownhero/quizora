@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowRight, UserRound, Users, Swords } from 'lucide-react'
+import { ArrowRight, UserRound, Users, Swords, Trophy, Medal } from 'lucide-react'
 import GooeyNav from './rb/GooeyNav.jsx'
 import StarBorder from './rb/StarBorder.jsx'
 import CountrySelector from './CountrySelector.jsx'
@@ -184,6 +184,12 @@ export default function Navbar() {
               </Link>
               <Link to="/play-together" className="nav-sheet-link" onClick={() => setOpen(false)}>
                 <Swords size={15} className="ico" /> Play together
+              </Link>
+              <Link to="/tournaments" className="nav-sheet-link" onClick={() => setOpen(false)}>
+                <Medal size={15} className="ico" /> Tournaments
+              </Link>
+              <Link to="/leaderboards" className="nav-sheet-link" onClick={() => setOpen(false)}>
+                <Trophy size={15} className="ico" /> Leaderboards
               </Link>
               <Link to="/friends" className="nav-sheet-link" onClick={() => setOpen(false)}>
                 <Users size={15} className="ico" /> Friends

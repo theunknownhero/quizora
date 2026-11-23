@@ -203,7 +203,7 @@ export default function PlayTogether() {
             </button>
           </motion.section>
 
-          <motion.section className="pf-card pt-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
+          <motion.section className="pf-card pt-card pt-card-join" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
             <span className="pt-ico">
               <KeyRound size={24} />
             </span>

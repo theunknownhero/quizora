@@ -35,6 +35,9 @@ export const achievements = [
   { id: 'party_first', emoji: '🎉', tier: 'bronze', name: 'Party Starter', desc: 'Finish a game in a party room.' },
   { id: 'party_win', emoji: '🥇', tier: 'silver', name: 'Crowd Pleaser', desc: 'Win a multiplayer room.' },
   { id: 'party_crowd', emoji: '🎪', tier: 'gold', name: 'Full House', desc: 'Finish a room with 4 or more players.' },
+  { id: 'tourney_first', emoji: '🎟️', tier: 'bronze', name: 'Contender', desc: 'Finish a tournament.' },
+  { id: 'tourney_podium', emoji: '🥉', tier: 'silver', name: 'On the Podium', desc: 'Finish a tournament in the top 3.' },
+  { id: 'tourney_champion', emoji: '🏆', tier: 'platinum', name: 'Champion', desc: 'Win a daily or weekly tournament.' },
 ]
 
 export const achievementById = (id) => achievements.find((a) => a.id === id)

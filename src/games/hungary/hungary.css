@@ -242,3 +242,4 @@
 .xp-guest b { display: block; font-family: var(--font-display); }
 .xp-guest small { color: var(--muted); font-size: 12.5px; }
 .intro-multi { margin-top: 10px; }
+.intro-tourney { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 4px 0 10px; font-size: 14px; font-weight: 600; color: #fcd34d; } .intro-tourney a { color: #fde68a; text-decoration: underline; }

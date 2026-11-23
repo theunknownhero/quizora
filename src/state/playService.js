@@ -23,6 +23,11 @@ const friendly = (error) => {
   const m = error?.message || ''
   if (/rate_limited/.test(m)) return 'You’re starting games very fast. Wait a moment and try again.'
   if (/too_fast/.test(m)) return 'Slow down a little!'
+  if (/no_attempts_left/.test(m)) return 'You’ve used all your attempts in this tournament.'
+  if (/tournament_over/.test(m)) return 'This tournament has ended.'
+  if (/tournament_not_started/.test(m)) return 'This tournament hasn’t started yet.'
+  if (/level_too_low/.test(m)) return 'Your level is too low for this tournament.'
+  if (/not_signed_in/.test(m)) return 'Log in to play tournaments.'
   if (/age_restricted/.test(m)) return 'This quiz is 18+. Log in and confirm your age to play.'
   if (/session_closed|no_session|not_yours/.test(m)) return 'This round has expired. Start a new one.'
   if (/fetch|network|Failed/i.test(m)) return 'Connection problem. Check your internet and try again.'
@@ -34,7 +39,13 @@ const fail = (error) => Object.assign(new Error(friendly(error)), { raw: error?.
  * @param {string} slug game slug
  * @param {{ localPick?: () => Array }} opts localPick returns full questions (with answer + fact) for offline mode
  */
-export async function startRound(slug, { count = 20, localPick } = {}) {
+export async function startRound(slug, { count = 20, localPick, tournament } = {}) {
+  if (tournament) {
+    if (!supabaseConfigured) throw new Error('Tournaments need accounts, which aren’t set up here.')
+    const { data, error } = await supabase.rpc('start_tournament_round', { p_code: tournament })
+    if (error) throw fail(error)
+    return { mode: 'server', slug, sessionId: data.session_id, guestToken: null, questions: data.questions, tournament: data.tournament, startedAt: Date.now() }
+  }
   if (supabaseConfigured) {
     const { data, error } = await supabase.rpc('start_session', { p_game: slug, p_count: count, p_guest_token: readGuest() })
     if (!error && data?.questions?.length) {
