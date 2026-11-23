@@ -15,6 +15,7 @@ import { countryByCode } from '../data/countries.js'
 import { useApp } from '../state/AppState.jsx'
 import { useT } from '../i18n/useT.js'
 import './categories.css'
+import { ArrowLeft, SearchX, Play, Search } from 'lucide-react'
 
 function CategoryTile({ c, i = 0 }) {
   const t = useT()
@@ -66,7 +67,7 @@ export function CategoriesPage() {
             <h1 className="cat-hero-title">{t('allcats.title')}</h1>
             <p className="cat-hero-sub">{t('allcats.sub')}</p>
             <label className="search cat-search">
-              <span aria-hidden="true">⌕</span>
+              <Search size={17} aria-hidden="true" />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('allcats.search')} aria-label={t('allcats.search')} autoFocus />
             </label>
           </div>
@@ -128,10 +129,10 @@ export function CategoryPage() {
         <Navbar />
         <main className="placeholder">
           <div className="placeholder-card">
-            <span className="placeholder-emoji">🔎</span>
+            <span className="placeholder-emoji"><SearchX size={60} /></span>
             <h1>{t('catpage.notFound')}</h1>
             <Link to="/categories" className="btn btn-primary btn-lg">
-              ← {t('catpage.back')}
+              <ArrowLeft size={16} /> {t('catpage.back')}
             </Link>
           </div>
         </main>
@@ -181,7 +182,7 @@ export function CategoryPage() {
             </div>
             {liveGame && (
               <Link to={`/play/${liveGame.slug}`} className="btn btn-primary btn-lg">
-                {t('catpage.play')} <span className="btn-icon">▶</span>
+                {t('catpage.play')} <span className="btn-icon"><Play size={12} fill="currentColor" /></span>
               </Link>
             )}
           </div>

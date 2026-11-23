@@ -17,6 +17,7 @@ import ShinyText from '../../components/ShinyText.jsx'
 import Aurora from '../../components/Aurora.jsx'
 import CountUp from '../../components/CountUp.jsx'
 import './hungary.css'
+import { ArrowRight, ArrowLeft, Check, X, PartyPopper, Play, Star, Flame, Gift, RotateCcw, Share2, Trophy, Target } from 'lucide-react'
 
 const TOTAL = ROUND_SIZE
 
@@ -155,7 +156,7 @@ function QuestionCard({ q, index, picked, result, error, onPick, onNext, onClose
           </span>
           {!answered && !pending && (
             <button className="g-icon-btn" onClick={onClose} aria-label="Close question">
-              ✕
+              <X size={18} />
             </button>
           )}
         </div>
@@ -186,7 +187,7 @@ function QuestionCard({ q, index, picked, result, error, onPick, onNext, onClose
                   {pending && picked === true ? <span className="auth-spinner" aria-label="Checking" /> : <span className="flag-chip" aria-hidden="true" />} Hungary
                 </button>
                 <button className={`btn btn-lg btn-not ${pending && picked === false ? 'is-picked' : ''}`} disabled={pending} onClick={() => onPick(false)}>
-                  {pending && picked === false ? <span className="auth-spinner" aria-label="Checking" /> : <span aria-hidden="true">✕</span>} Not
+                  {pending && picked === false ? <span className="auth-spinner" aria-label="Checking" /> : <X size={20} strokeWidth={2.6} aria-hidden="true" />} Not
                 </button>
               </div>
               {error && (
@@ -204,7 +205,7 @@ function QuestionCard({ q, index, picked, result, error, onPick, onNext, onClose
           ) : (
             <motion.div key="reveal" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <div className={`q-verdict ${correct ? 'ok' : 'bad'}`}>
-                <span className="q-verdict-icon">{correct ? '★' : '✕'}</span>
+                <span className="q-verdict-icon">{correct ? <Star size={18} fill="currentColor" /> : <X size={18} strokeWidth={3} />}</span>
                 <div>
                   <strong>{correct ? 'Correct!' : 'Not quite!'}</strong>
                   <span>{result.answer ? 'It’s Hungarian 🇭🇺' : 'Not Hungarian'}</span>
@@ -213,7 +214,7 @@ function QuestionCard({ q, index, picked, result, error, onPick, onNext, onClose
               <p className="q-fact">{result.fact}</p>
               <button className="btn btn-primary btn-lg g-full" onClick={onNext} autoFocus disabled={error === 'finishing'}>
                 {error === 'finishing' ? <span className="auth-spinner" aria-label="Saving" /> : index + 1 < TOTAL ? 'Fly to the next stop' : 'See results'}{' '}
-                {error !== 'finishing' && <span className="btn-icon">→</span>}
+                {error !== 'finishing' && <span className="btn-icon"><ArrowRight size={14} /></span>}
               </button>
             </motion.div>
           )}
@@ -265,7 +266,7 @@ function Intro({ onStart, best, loading, error }) {
           </p>
         )}
         <button className="btn btn-primary btn-lg g-full" onClick={onStart} autoFocus disabled={loading}>
-          {loading ? <span className="auth-spinner" aria-label="Loading" /> : 'Start the journey'} {!loading && <span className="btn-icon">▶</span>}
+          {loading ? <span className="auth-spinner" aria-label="Loading" /> : 'Start the journey'} {!loading && <span className="btn-icon"><Play size={12} fill="currentColor" /></span>}
         </button>
         {best > 0 && (
           <span className="intro-best">
@@ -282,7 +283,9 @@ function XpPanel({ outcome }) {
   if (!outcome.saved) {
     return (
       <div className="xp-panel xp-guest">
-        <span>⭐</span>
+        <span>
+          <Star size={26} fill="currentColor" />
+        </span>
         <div>
           <b>Save your progress</b>
           <small>Log in to earn XP, level up and unlock achievements.</small>
@@ -313,7 +316,7 @@ function XpPanel({ outcome }) {
       <small className="xp-next">{p.toNext} XP to level {p.level + 1}</small>
       {leveled && (
         <motion.div className="xp-levelup" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.2 }}>
-          🎉 Level up! You reached level {outcome.level_after}
+          <PartyPopper size={18} className="ico" /> Level up! You reached level {outcome.level_after}
         </motion.div>
       )}
       {outcome.new_achievements?.length > 0 && (
@@ -379,7 +382,7 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
           transition={{ type: 'spring', stiffness: 260, damping: 12, delay: 0.15 }}
           aria-hidden="true"
         >
-          {won ? '🏆' : '🎈'}
+          {won ? <Trophy size={64} /> : <Target size={64} />}
         </motion.div>
 
         <h2 className="results-title" id="res-title">
@@ -396,7 +399,7 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.35 + i * 0.18, type: 'spring', stiffness: 300, damping: 12 }}
             >
-              ★
+              <Star size={34} fill="currentColor" />
             </motion.span>
           ))}
         </div>
@@ -416,15 +419,23 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
           {won && (
             <a className="btn btn-lg btn-prize g-full" href={PRIZE_URL} target="_blank" rel="noopener noreferrer">
               <span className="btn-prize-shine" aria-hidden="true" />
-              🎁 Claim the Prize
+              <Gift size={18} /> Claim the Prize
             </a>
           )}
           <div className="results-row">
             <button className={`btn btn-lg ${won ? 'btn-ghost' : 'btn-primary'}`} onClick={onReplay}>
-              ↻ Play again
+              <RotateCcw size={17} /> Play again
             </button>
             <button className="btn btn-lg btn-ghost" onClick={share}>
-              {copied ? '✓ Copied' : '↗ Share score'}
+              {copied ? (
+                <>
+                  <Check size={17} /> Copied
+                </>
+              ) : (
+                <>
+                  <Share2 size={17} /> Share score
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -440,7 +451,7 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
                 const ok = !!r?.correct
                 return (
                   <li key={q.item} className={ok ? 'ok' : 'bad'}>
-                    <span className="rl-icon">{ok ? '✓' : '✕'}</span>
+                    <span className="rl-icon">{ok ? <Check size={14} strokeWidth={3} /> : <X size={14} strokeWidth={3} />}</span>
                     <span className="rl-item">{q.item}</span>
                     <span className="rl-ans">{r?.answer ? '🇭🇺 Hungarian' : 'Not Hungarian'}</span>
                   </li>
@@ -451,7 +462,9 @@ function Results({ round, results, outcome, prevBest, onReplay }) {
         </AnimatePresence>
 
         <div className="results-foot">
-          <Link to="/#games">← All games</Link>
+          <Link to="/#games">
+            <ArrowLeft size={15} className="ico" /> All games
+          </Link>
           <a className="powered" href="https://fortunejack.com" target="_blank" rel="noopener noreferrer">
             <span>Powered by</span>
             <img src="/brand/fortunejack.svg" alt="FortuneJack" />
@@ -659,12 +672,12 @@ export default function HungaryOrNot() {
           </div>
           <div className="g-nav-stats">
             <span className="g-stat" title="Correct answers">
-              <i className="g-star">★</i> {score}
+              <Star size={16} fill="currentColor" className="g-star" /> {score}
             </span>
             <AnimatePresence>
               {streak >= 2 && (
                 <motion.span className="g-stat g-stat-streak" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} title="Streak">
-                  🔥 {streak}
+                  <Flame size={15} className="ico" /> {streak}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -672,7 +685,7 @@ export default function HungaryOrNot() {
               {Math.min(current + 1, TOTAL)}/{TOTAL}
             </span>
             <Link to="/#games" className="g-exit" aria-label="Exit to all games">
-              ✕
+              <X size={18} />
             </Link>
           </div>
           <span className="g-nav-progress" aria-hidden="true">
@@ -719,7 +732,7 @@ export default function HungaryOrNot() {
                   disabled={!clickable}
                   aria-label={`Level ${i + 1}${st === 'ok' ? ', correct' : st === 'bad' ? ', wrong' : st === 'locked' ? ', locked' : ''}`}
                 >
-                  <span className="disc-face">{st === 'ok' ? '★' : st === 'bad' ? '✕' : i === TOTAL - 1 && st === 'locked' ? '🏆' : i + 1}</span>
+                  <span className="disc-face">{st === 'ok' ? <Star size={20} fill="currentColor" /> : st === 'bad' ? <X size={20} strokeWidth={3} /> : i === TOTAL - 1 && st === 'locked' ? <Trophy size={20} /> : i + 1}</span>
                 </button>
               )
             })}
@@ -762,7 +775,7 @@ export default function HungaryOrNot() {
 
       {phase === 'map' && !flying && answers[current] === null && (
         <motion.button className="tap-hint btn btn-primary btn-lg" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} onClick={() => setPhase('question')}>
-          Play level {current + 1} <span className="btn-icon">▶</span>
+          Play level {current + 1} <span className="btn-icon"><Play size={12} fill="currentColor" /></span>
         </motion.button>
       )}
 

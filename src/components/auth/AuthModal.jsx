@@ -3,19 +3,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useApp } from '../../state/AppState.jsx'
 import { forgotPassword, passwordStrength, resendVerification, rules } from '../../state/authStore.js'
 import './auth.css'
+import { ArrowRight, ArrowLeft, X, Mail, MailCheck, UserRound, Lock, Eye, EyeOff } from 'lucide-react'
+import BirthDateInput from '../BirthDateInput.jsx'
+import { validBirthDate } from '../../lib/age.js'
 
-const Icon = ({ d }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d={d} />
-  </svg>
-)
-const ICONS = {
-  user: 'M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
-  mail: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm0 1 8 7 8-7',
-  lock: 'M6 11h12v9H6zM8 11V8a4 4 0 1 1 8 0v3',
-  eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
-  eyeOff: 'M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7a9.6 9.6 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2',
-}
+const ICONS = { user: UserRound, mail: Mail, lock: Lock }
 const STRENGTH = ['Too weak', 'Weak', 'Okay', 'Strong', 'Very strong']
 
 function Field({ id, label, icon, error, type = 'text', value, onChange, autoComplete, autoFocus, children, hint }) {
@@ -23,7 +15,7 @@ function Field({ id, label, icon, error, type = 'text', value, onChange, autoCom
     <label className={`af-field ${error ? 'has-error' : ''}`} htmlFor={id}>
       <span className="af-label">{label}</span>
       <span className="af-input">
-        <Icon d={ICONS[icon]} />
+        {(() => { const I = ICONS[icon]; return <I size={18} aria-hidden="true" /> })()}
         <input
           id={id}
           type={type}
@@ -50,7 +42,7 @@ function Field({ id, label, icon, error, type = 'text', value, onChange, autoCom
 export default function AuthModal() {
   const { authView, openAuth, closeAuth, login, register, pendingEmail, accountsEnabled } = useApp()
   const view = authView
-  const [form, setForm] = useState({ identifier: '', username: '', email: '', password: '' })
+  const [form, setForm] = useState({ identifier: '', username: '', email: '', password: '', birthDate: '' })
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [showPw, setShowPw] = useState(false)
@@ -103,7 +95,7 @@ export default function AuthModal() {
       return
     }
     if (view === 'register') {
-      const errs = { username: rules.username(form.username), email: rules.email(form.email), password: rules.password(form.password) }
+      const errs = { username: rules.username(form.username), email: rules.email(form.email), birthDate: validBirthDate(form.birthDate), password: rules.password(form.password) }
       setErrors(errs)
       if (Object.values(errs).some(Boolean)) return
     } else {
@@ -113,9 +105,9 @@ export default function AuthModal() {
     }
     setBusy(true)
     try {
-      if (view === 'register') await register({ username: form.username.trim(), email: form.email.trim(), password: form.password })
+      if (view === 'register') await register({ username: form.username.trim(), email: form.email.trim(), password: form.password, birthDate: form.birthDate })
       else await login({ identifier: form.identifier, password: form.password })
-      setForm({ identifier: '', username: '', email: '', password: '' })
+      setForm({ identifier: '', username: '', email: '', password: '', birthDate: '' })
     } catch (err) {
       setErrors(err.fields || {})
       setFormError(err.message || 'Something went wrong')
@@ -134,7 +126,7 @@ export default function AuthModal() {
       setResendState(e.message)
     }
   }
-  const resendLabel = resendState === 'sending' ? 'Sending…' : resendState === 'sent' ? '✓ Link sent' : 'Resend confirmation link'
+  const resendLabel = resendState === 'sending' ? 'Sending…' : resendState === 'sent' ? 'Link sent' : 'Resend confirmation link'
 
   const strength = passwordStrength(form.password)
   const isReg = view === 'register'
@@ -163,7 +155,7 @@ export default function AuthModal() {
           >
             <span className="auth-glow" aria-hidden="true" />
             <button type="button" className="auth-close" onClick={closeAuth} aria-label="Close">
-              ✕
+              <X size={18} />
             </button>
             <div className="auth-brand" aria-hidden="true">
               <i />
@@ -184,7 +176,7 @@ export default function AuthModal() {
             )}
             {isCheck ? (
               <div className="auth-sent" role="status">
-                <span className="auth-sent-icon">📧</span>
+                <span className="auth-sent-icon"><Mail size={30} /></span>
                 <p>
                   We sent a confirmation link to <b>{pendingEmail}</b>. Open it to activate your account, then you’ll pick your interests. Check spam too.
                 </p>
@@ -199,7 +191,7 @@ export default function AuthModal() {
             ) : isForgot ? (
               sentTo ? (
                 <div className="auth-sent" role="status">
-                  <span className="auth-sent-icon">📬</span>
+                  <span className="auth-sent-icon"><MailCheck size={30} /></span>
                   <p>
                     If an account exists for <b>{sentTo}</b>, a reset link is on its way. It’s valid for 1 hour. Check your spam folder too.
                   </p>
@@ -219,7 +211,7 @@ export default function AuthModal() {
                     {busy ? <span className="auth-spinner" aria-label="Please wait" /> : 'Send reset link'}
                   </button>
                   <button type="button" className="auth-back" onClick={() => openAuth('login')}>
-                    ← Back to log in
+                    <ArrowLeft size={15} className="ico" /> Back to log in
                   </button>
                 </form>
               )
@@ -242,6 +234,7 @@ export default function AuthModal() {
                 <>
                   <Field id="reg-user" label="Username" icon="user" value={form.username} onChange={set('username')} error={errors.username} autoComplete="username" autoFocus hint="3–20 characters: letters, numbers, _ or ." />
                   <Field id="reg-mail" label="Email" icon="mail" type="email" value={form.email} onChange={set('email')} error={errors.email} autoComplete="email" />
+                  <BirthDateInput id="reg-dob" value={form.birthDate} onChange={set('birthDate')} error={errors.birthDate} hint="Some quizzes are 18+. We never show your birthday to anyone." />
                 </>
               ) : (
                 <Field id="log-id" label="Email" icon="mail" type="email" value={form.identifier} onChange={set('identifier')} error={errors.identifier} autoComplete="email" autoFocus />
@@ -257,7 +250,7 @@ export default function AuthModal() {
                 autoComplete={isReg ? 'new-password' : 'current-password'}
               >
                 <button type="button" className="af-eye" onClick={() => setShowPw((s) => !s)} aria-label={showPw ? 'Hide password' : 'Show password'}>
-                  <Icon d={showPw ? ICONS.eyeOff : ICONS.eye} />
+                  {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </Field>
               {!isReg && (
@@ -291,7 +284,7 @@ export default function AuthModal() {
 
               <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={busy}>
                 {busy ? <span className="auth-spinner" aria-label="Please wait" /> : isReg ? 'Create account' : 'Log in'}
-                {!busy && <span className="btn-icon">→</span>}
+                {!busy && <span className="btn-icon"><ArrowRight size={14} /></span>}
               </button>
             </form>
 

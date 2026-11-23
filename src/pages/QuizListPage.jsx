@@ -1,4 +1,4 @@
-// Public shared playlist: /playlist/:code
+// Public shared QuizList: /quizlist/:code (old /playlist/:code links still work)
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
@@ -8,9 +8,10 @@ import GameCard from '../components/GameCard.jsx'
 import { useApp } from '../state/AppState.jsx'
 import * as udata from '../state/userData.js'
 import { games } from '../data/games.js'
+import { ListMusic, Share2, Pencil, Play, SearchX, Loader2 } from 'lucide-react'
 import './profile.css'
 
-export default function PlaylistPage() {
+export default function QuizListPage() {
   const { code } = useParams()
   const { pushToast } = useApp()
   const [pl, setPl] = useState(undefined) // undefined = loading, null = not found
@@ -42,11 +43,11 @@ export default function PlaylistPage() {
         <Navbar />
         <main className="placeholder">
           <div className="placeholder-card">
-            <span className="placeholder-emoji">{pl === undefined ? '⏳' : '🔍'}</span>
-            <h1>{pl === undefined ? 'Loading…' : 'Playlist not found'}</h1>
+            <span className="placeholder-emoji">{pl === undefined ? <Loader2 size={56} className="spin" /> : <SearchX size={56} />}</span>
+            <h1>{pl === undefined ? 'Loading…' : 'QuizList not found'}</h1>
             {pl === null && (
               <>
-                <p>This link may be wrong, or the owner deleted the playlist.</p>
+                <p>This link may be wrong, or the owner deleted the QuizList.</p>
                 <Link to="/" className="btn btn-primary btn-lg">
                   Explore quizzes
                 </Link>
@@ -67,10 +68,12 @@ export default function PlaylistPage() {
       <main className="profile playlist-page">
         <section className="pl-hero container">
           <motion.span className="pl-hero-emoji" initial={{ scale: 0.5, rotate: -12, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }}>
-            {pl.emoji}
+            <ListMusic size={64} />
           </motion.span>
           <div>
-            <span className="pf-tier">🎵 Playlist</span>
+            <span className="pf-tier">
+              <ListMusic size={14} /> QuizList
+            </span>
             <h1>{pl.title}</h1>
             {pl.description && <p className="muted">{pl.description}</p>}
             <p className="pl-by">
@@ -79,15 +82,15 @@ export default function PlaylistPage() {
             <div className="pl-hero-actions">
               {first && (
                 <Link to={`/play/${first.slug}`} className="btn btn-primary">
-                  ▶ Play first game
+                  <Play size={16} fill="currentColor" /> Play first game
                 </Link>
               )}
               <button type="button" className="btn btn-ghost" onClick={share}>
-                🔗 Share
+                <Share2 size={16} /> Share
               </button>
               {pl.is_owner && (
-                <Link to="/profile?tab=playlists" className="btn btn-ghost">
-                  ✏️ Edit
+                <Link to="/profile?tab=quizlists" className="btn btn-ghost">
+                  <Pencil size={16} /> Edit
                 </Link>
               )}
             </div>
@@ -101,7 +104,7 @@ export default function PlaylistPage() {
               ))}
             </div>
           ) : (
-            <p className="muted">This playlist is empty for now.</p>
+            <p className="muted">This QuizList is empty for now.</p>
           )}
         </section>
       </main>

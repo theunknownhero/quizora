@@ -8,10 +8,15 @@ import CountryBadge from './CountryBadge.jsx'
 import GameActions from './GameActions.jsx'
 import { useApp } from '../state/AppState.jsx'
 import { useT } from '../i18n/useT.js'
+import { ArrowRight, Lock } from 'lucide-react'
+import { isAdultOnly, playableBy, visibleTo } from '../lib/age.js'
 
 const GameCard = forwardRef(function GameCard({ game }, ref) {
-  const { country } = useApp()
+  const { country, user, openAuth, openAgeCheck } = useApp()
   const t = useT()
+  if (!visibleTo(game, user)) return null
+  const adult = isAdultOnly(game)
+  const locked = adult && !playableBy(game, user)
   const live = game.status === 'live'
   const [a, b] = game.gradient
   const cats = game.categories.map((id) => categories.find((c) => c.id === id)).filter(Boolean)
@@ -21,6 +26,11 @@ const GameCard = forwardRef(function GameCard({ game }, ref) {
         <span className="game-thumb-emoji">{game.emoji}</span>
         <span className="game-thumb-grid" />
         {game.countries && <CountryBadge codes={game.countries} highlight={isForCountry(game, country)} className="game-country" />}
+        {adult && (
+          <span className="game-age" title="18+ only">
+            {locked && <Lock size={11} strokeWidth={2.6} />}18+
+          </span>
+        )}
         <span className={`game-status ${live ? 'is-live' : ''}`}>
           {live ? (
             <>
@@ -47,7 +57,7 @@ const GameCard = forwardRef(function GameCard({ game }, ref) {
           <span>{t('card.min', { n: game.minutes })}</span>
           <span>{t(`diff.${game.difficulty}`)}</span>
           <span className="game-arrow" aria-hidden="true">
-            →
+            <ArrowRight size={16} />
           </span>
         </div>
       </div>
@@ -63,7 +73,11 @@ const GameCard = forwardRef(function GameCard({ game }, ref) {
       transition={{ duration: 0.35 }}
     >
       <TiltCard max={6}>
-        {live ? (
+        {live && locked ? (
+          <button type="button" className="game-link" aria-label={`${game.title} is 18+. ${user ? 'Confirm your age' : 'Log in'} to play`} onClick={() => (user ? openAgeCheck() : openAuth('login'))}>
+            {body}
+          </button>
+        ) : live ? (
           <Link to={`/play/${game.slug}`} className="game-link" aria-label={`Play ${game.title}`}>
             {body}
           </Link>

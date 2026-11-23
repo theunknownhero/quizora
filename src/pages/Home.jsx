@@ -24,6 +24,7 @@ import { interests, topics } from '../data/preferences.js'
 import { useApp } from '../state/AppState.jsx'
 import CountryBadge from '../components/CountryBadge.jsx'
 import Flag from '../components/Flag.jsx'
+import { ArrowRight, X, Play, Trophy, Sparkles, Gamepad2, Zap, Search } from 'lucide-react'
 
 const auroraColors = ['#7c3aed', '#22d3ee', '#ec4899']
 
@@ -72,7 +73,7 @@ function Hero() {
         >
           <span className="pill-badge-new">{t('hero.new')}</span>
           <ShinyText>{t('hero.badge', { game: featuredGame.title })}</ShinyText>
-          <span aria-hidden="true">→</span>
+          <ArrowRight size={16} aria-hidden="true" />
         </motion.a>
 
         <h1 className="hero-title">
@@ -99,7 +100,7 @@ function Hero() {
           <Magnet strength={0.25}>
             <Link to={`/play/${featuredGame.slug}`} className="btn btn-primary btn-lg">
               <span>{t('hero.start')}</span>
-              <span className="btn-icon">▶</span>
+              <span className="btn-icon"><Play size={12} fill="currentColor" /></span>
             </Link>
           </Magnet>
           <Magnet strength={0.2}>
@@ -178,7 +179,7 @@ function TeaserStack() {
               <span className="teaser-q">Hungarian origin?</span>
               <div className="teaser-btns">
                 <span className={`tb tb-yes ${k === 0 && reveal && q.hu ? 'on' : ''}`}>🇭🇺 Hungary</span>
-                <span className={`tb tb-no ${k === 0 && reveal && !q.hu ? 'on' : ''}`}>✕ Not</span>
+                <span className={`tb tb-no ${k === 0 && reveal && !q.hu ? 'on' : ''}`}><X size={13} strokeWidth={3} className="ico" /> Not</span>
               </div>
             </motion.div>
           ))
@@ -239,7 +240,7 @@ function Featured() {
             </div>
             <Magnet strength={0.2}>
               <Link to={`/play/${g.slug}`} className="btn btn-light btn-lg">
-                {t('featured.play', { game: g.title })} <span className="btn-icon">→</span>
+                {t('featured.play', { game: g.title })} <span className="btn-icon"><ArrowRight size={14} /></span>
               </Link>
             </Magnet>
           </div>
@@ -284,7 +285,7 @@ function Categories() {
             <p className="section-sub">{t('cats.sub')}</p>
           </div>
           <Link to="/categories" className="btn btn-ghost btn-sm">
-            {t('cats.seeAll', { n: categories.length })} <span className="btn-icon">→</span>
+            {t('cats.seeAll', { n: categories.length })} <span className="btn-icon"><ArrowRight size={14} /></span>
           </Link>
         </div>
         <div className="bento">
@@ -308,7 +309,7 @@ function Categories() {
                       {i === 0 && <p>{c.blurb}</p>}
                     </div>
                     <span className="bento-count">
-                      {n ? (n === 1 ? t('cats.game') : t('cats.games', { n })) : t('cats.soon')} <span aria-hidden="true">→</span>
+                      {n ? (n === 1 ? t('cats.game') : t('cats.games', { n })) : t('cats.soon')} <ArrowRight size={16} aria-hidden="true" />
                     </span>
                     <span className="bento-glow" />
                   </SpotlightCard>
@@ -325,7 +326,7 @@ function Categories() {
                   ))}
                 </span>
                 <h3>{t('cats.seeAll', { n: categories.length })}</h3>
-                <span className="bento-count">→</span>
+                <span className="bento-count"><ArrowRight size={18} /></span>
               </SpotlightCard>
             </Link>
           </motion.div>
@@ -367,7 +368,7 @@ function Library({ filter, setFilter }) {
             <BlurText text={t('lib.title')} className="section-title" />
           </div>
           <label className="search">
-            <span aria-hidden="true">⌕</span>
+            <Search size={17} aria-hidden="true" />
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('lib.search')} aria-label={t('lib.search')} />
           </label>
         </div>
@@ -469,12 +470,12 @@ function ForYou() {
             <div className="foryou-cta-btns">
               {user ? (
                 <button className="btn btn-primary btn-lg" onClick={openOnboarding}>
-                  {t('foryou.choose')} <span className="btn-icon">→</span>
+                  {t('foryou.choose')} <span className="btn-icon"><ArrowRight size={14} /></span>
                 </button>
               ) : (
                 <>
                   <button className="btn btn-primary btn-lg" onClick={() => openAuth('register')}>
-                    {t('foryou.signup')} <span className="btn-icon">→</span>
+                    {t('foryou.signup')} <span className="btn-icon"><ArrowRight size={14} /></span>
                   </button>
                   <button className="btn btn-ghost btn-lg" onClick={() => openAuth('login')}>
                     {t('nav.login')}
@@ -497,7 +498,7 @@ function ForYou() {
             <BlurText text={t('foryou.hey', { name: user.username })} className="section-title" />
           </div>
           <button className="btn btn-ghost btn-sm" onClick={openOnboarding}>
-            ✨ {t('foryou.edit')}
+            <Sparkles size={15} /> {t('foryou.edit')}
           </button>
         </div>
         {picks.length ? (
@@ -517,9 +518,9 @@ function ForYou() {
 function How() {
   const t = useT()
   const steps = [
-    { n: '01', k: 's1', e: '🎮' },
-    { n: '02', k: 's2', e: '⚡' },
-    { n: '03', k: 's3', e: '🏆' },
+    { n: '01', k: 's1', e: <Gamepad2 size={28} /> },
+    { n: '02', k: 's2', e: <Zap size={28} /> },
+    { n: '03', k: 's3', e: <Trophy size={28} /> },
   ]
   return (
     <section className="section" id="how">
@@ -573,7 +574,7 @@ function CTA() {
           <p>{t('cta.sub')}</p>
           <Magnet strength={0.25}>
             <Link to={`/play/${g.slug}`} className="btn btn-light btn-lg">
-              {t('cta.btn')} <span className="btn-icon">→</span>
+              {t('cta.btn')} <span className="btn-icon"><ArrowRight size={14} /></span>
             </Link>
           </Magnet>
         </motion.div>

@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar.jsx'
 import { useApp } from '../state/AppState.jsx'
 import { passwordStrength, resetPassword, rules } from '../state/authStore.js'
 import '../components/auth/auth.css'
+import { ArrowRight, Eye, EyeOff, CheckCircle2, AlertTriangle, KeyRound } from 'lucide-react'
 
 const STRENGTH = ['Too weak', 'Weak', 'Okay', 'Strong', 'Very strong']
 
@@ -65,23 +66,23 @@ export function VerifyEmailPage() {
       )}
       {status === 'ok' && (
         <>
-          <div className="account-emoji">✅</div>
+          <div className="account-emoji"><CheckCircle2 size={52} /></div>
           <h1 className="auth-title">Email confirmed</h1>
           <p className="auth-sub">Welcome to Quizora, {user.username}!</p>
           {user.profile.onboarded ? (
             <Link to="/" className="btn btn-primary btn-lg auth-submit">
-              Go to Quizora <span className="btn-icon">→</span>
+              Go to Quizora <span className="btn-icon"><ArrowRight size={14} /></span>
             </Link>
           ) : (
             <button type="button" className="btn btn-primary btn-lg auth-submit" onClick={() => (navigate('/'), openOnboarding())}>
-              Pick your interests <span className="btn-icon">→</span>
+              Pick your interests <span className="btn-icon"><ArrowRight size={14} /></span>
             </button>
           )}
         </>
       )}
       {status === 'error' && (
         <>
-          <div className="account-emoji">⚠️</div>
+          <div className="account-emoji"><AlertTriangle size={52} /></div>
           <h1 className="auth-title">Link didn’t work</h1>
           <p className="auth-sub">{error} Try logging in. If your email isn’t confirmed yet, you can ask for a new link there.</p>
           <button type="button" className="btn btn-primary btn-lg auth-submit" onClick={() => (navigate('/'), openAuth('login'))}>
@@ -133,7 +134,7 @@ export function ResetPasswordPage() {
   if (status === 'error' && !done) {
     return (
       <Shell>
-        <div className="account-emoji">⚠️</div>
+        <div className="account-emoji"><AlertTriangle size={52} /></div>
         <h1 className="auth-title">Link didn’t work</h1>
         <p className="auth-sub">{linkErr} Reset links work once and expire after 1 hour.</p>
         <button type="button" className="btn btn-primary btn-lg auth-submit" onClick={() => (navigate('/'), openAuth('forgot'))}>
@@ -147,7 +148,7 @@ export function ResetPasswordPage() {
     <Shell>
       {done ? (
         <>
-          <div className="account-emoji">🔐</div>
+          <div className="account-emoji"><KeyRound size={52} /></div>
           <h1 className="auth-title">Password updated</h1>
           <p className="auth-sub">You’re logged in. Taking you home…</p>
         </>
@@ -169,7 +170,7 @@ export function ResetPasswordPage() {
                   aria-invalid={!!error}
                 />
                 <button type="button" className="af-eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
-                  {show ? '🙈' : '👁'}
+                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </span>
               {error && <span className="af-error">{error}</span>}

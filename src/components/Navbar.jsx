@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { ArrowRight, UserRound, Users } from 'lucide-react'
 import GooeyNav from './rb/GooeyNav.jsx'
 import StarBorder from './rb/StarBorder.jsx'
 import CountrySelector from './CountrySelector.jsx'
@@ -144,7 +145,7 @@ export default function Navbar() {
             <AccountMenu />
           </span>
           <StarBorder as={Link} to={CTA_TO} radius={999} className="nav-cta" color="#c4b5fd" backgroundColor="rgba(255,255,255,0.06)">
-            {t('nav.play')} <span aria-hidden="true">→</span>
+            {t('nav.play')} <ArrowRight size={16} aria-hidden="true" />
           </StarBorder>
           <button
             type="button"
@@ -179,7 +180,10 @@ export default function Navbar() {
                 {user.username}
               </span>
               <Link to="/profile" className="nav-sheet-link" onClick={() => setOpen(false)}>
-                👤 My profile
+                <UserRound size={15} className="ico" /> Profile
+              </Link>
+              <Link to="/friends" className="nav-sheet-link" onClick={() => setOpen(false)}>
+                <Users size={15} className="ico" /> Friends
               </Link>
               <button type="button" onClick={() => (setOpen(false), openOnboarding())}>
                 {t('nav.editInterests')}
@@ -200,7 +204,7 @@ export default function Navbar() {
           )}
         </div>
         <Link to={CTA_TO} className="nav-sheet-cta" onClick={() => setOpen(false)}>
-          {t('nav.play')} →
+          {t('nav.play')} <ArrowRight size={16} aria-hidden="true" />
         </Link>
       </nav>
     </header>

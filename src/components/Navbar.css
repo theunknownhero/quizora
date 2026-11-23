@@ -94,3 +94,9 @@
 .acct-level i { display: block; height: 6px; margin-top: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .acct-level b { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #8b5cf6, #22d3ee); }
 .nav-sheet-acct .nav-sheet-link { flex: 1; padding: 11px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.05); color: #fff; font-weight: 600; font-size: 14px; text-align: center; text-decoration: none; }
+.acct-menu button[role="menuitem"] { display: flex; align-items: center; gap: 10px; }
+.acct-menu button[role="menuitem"] svg { color: #a78bfa; flex-shrink: 0; }
+.acct-menu button.danger svg { color: #f87171; }
+.acct-req { position: absolute; left: -4px; top: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; color: #fff; background: #ef4444; border: 2px solid #0b0a12; }
+.acct-menu-badge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center; font-style: normal; font-size: 11px; font-weight: 800; color: #fff; background: #ef4444; }
+.acct-menu-on { margin-left: auto; font-size: 11.5px; color: #86efac; }

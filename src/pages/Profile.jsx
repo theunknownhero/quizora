@@ -14,16 +14,27 @@ import { games } from '../data/games.js'
 import { achievements, achievementById, tiersStyle } from '../data/achievements.js'
 import { levelProgress, tierFor, xpRules } from '../lib/levels.js'
 import { computeStats, insightsFrom, fmtDuration } from '../lib/stats.js'
+import {
+  LayoutDashboard, History as HistoryIcon, BarChart3, Award, Library as LibraryIcon, ListMusic, Gamepad2, Trophy, Target, Flame,
+  Zap, Timer, Sparkles, Gem, CalendarDays, CalendarCheck, Check, X, ChevronRight, Pin, Lock, Share2, Pencil, Trash2,
+  Star, Heart, Bookmark, Lightbulb, TrendingUp, TrendingDown, Clock, Brain, Dumbbell, Sunrise, Plus, Play, UserRound, Users,
+} from 'lucide-react'
 import './profile.css'
 
 const TABS = [
-  ['overview', 'Overview', '🏠'],
-  ['history', 'History', '🕘'],
-  ['stats', 'Stats & records', '📊'],
-  ['achievements', 'Achievements', '🏅'],
-  ['library', 'Library', '📚'],
-  ['playlists', 'Playlists', '🎵'],
+  ['overview', 'Overview', LayoutDashboard],
+  ['history', 'History', HistoryIcon],
+  ['stats', 'Stats & records', BarChart3],
+  ['achievements', 'Achievements', Award],
+  ['library', 'Library', LibraryIcon],
+  ['quizlists', 'QuizLists', ListMusic],
 ]
+// Insight emoji from stats.js → Lucide icon
+const INSIGHT_ICON = { '💪': Dumbbell, '🎯': Target, '🕒': Clock, '📅': CalendarDays, '⚡': Zap, '🧘': Brain, '📈': TrendingUp, '🔄': TrendingDown }
+const InsightIcon = ({ e }) => {
+  const I = INSIGHT_ICON[e] || Lightbulb
+  return <I size={18} aria-hidden="true" />
+}
 const gameBySlug = (slug) => games.find((g) => g.slug === slug)
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 const fmtWhen = (d) => {
@@ -38,7 +49,7 @@ const fmtWhen = (d) => {
 function Badge({ a, size = 'md', locked }) {
   return (
     <span className={`badge badge-${size} ${locked ? 'is-locked' : ''}`} style={{ '--tier': tiersStyle[a.tier].color }} title={`${a.name}: ${a.desc}`}>
-      <span className="badge-emoji">{locked ? '🔒' : a.emoji}</span>
+      <span className="badge-emoji">{locked ? <Lock size={size === 'sm' ? 14 : 20} /> : a.emoji}</span>
     </span>
   )
 }
@@ -75,10 +86,12 @@ function Sparkline({ values }) {
   )
 }
 
-function StatTile({ label, value, sub, emoji }) {
+function StatTile({ label, value, sub, icon: Icon }) {
   return (
     <div className="stat-tile">
-      <span className="stat-emoji">{emoji}</span>
+      <span className="stat-emoji">
+        <Icon size={18} aria-hidden="true" />
+      </span>
       <b>{value}</b>
       <span>{label}</span>
       {sub && <small>{sub}</small>}
@@ -110,10 +123,10 @@ function PlayRow({ p, open, onToggle }) {
           <motion.ol className="play-answers" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
             {(p.answers || []).map((a, i) => (
               <li key={i} className={a.correct ? 'ok' : 'bad'}>
-                <span className="pa-icon">{a.correct ? '✓' : '✕'}</span>
+                <span className="pa-icon">{a.correct ? <Check size={15} /> : <X size={15} />}</span>
                 <span className="pa-item">{a.item}</span>
                 <span className="pa-type">{a.type}</span>
-                <span className="pa-ans">{a.answer ? '🇭🇺 Hungarian' : 'Not Hungarian'}</span>
+                <span className="pa-ans">{a.answer ? 'Hungarian' : 'Not Hungarian'}</span>
               </li>
             ))}
           </motion.ol>
@@ -132,10 +145,10 @@ function Overview({ user, stats, plays, unlocked, setTab }) {
       <section className="pf-card pf-span2">
         <h3>Quick stats</h3>
         <div className="stat-grid">
-          <StatTile emoji="🎮" label="Games played" value={stats.games} />
-          <StatTile emoji="🏆" label="Win rate" value={`${stats.winRate}%`} sub={`${stats.wins} wins`} />
-          <StatTile emoji="🎯" label="Accuracy" value={`${stats.accuracy}%`} sub={`${stats.correct}/${stats.answered}`} />
-          <StatTile emoji="🔥" label="Best streak" value={stats.bestStreak} sub="answers in a row" />
+          <StatTile icon={Gamepad2} label="Games played" value={stats.games} />
+          <StatTile icon={Trophy} label="Win rate" value={`${stats.winRate}%`} sub={`${stats.wins} wins`} />
+          <StatTile icon={Target} label="Accuracy" value={`${stats.accuracy}%`} sub={`${stats.correct}/${stats.answered}`} />
+          <StatTile icon={Flame} label="Best streak" value={stats.bestStreak} sub="answers in a row" />
         </div>
       </section>
       <section className="pf-card">
@@ -144,7 +157,9 @@ function Overview({ user, stats, plays, unlocked, setTab }) {
           <ul className="insights">
             {insights.map((x) => (
               <li key={x.title}>
-                <span>{x.emoji}</span>
+                <span className="ins-ico">
+                  <InsightIcon e={x.emoji} />
+                </span>
                 <div>
                   <b>{x.title}</b>
                   <small>{x.text}</small>
@@ -161,7 +176,7 @@ function Overview({ user, stats, plays, unlocked, setTab }) {
           <h3>Last plays</h3>
           {plays.length > 0 && (
             <button type="button" className="link-btn" onClick={() => setTab('history')}>
-              See all →
+              See all <ChevronRight size={15} className="ico" />
             </button>
           )}
         </div>
@@ -173,7 +188,9 @@ function Overview({ user, stats, plays, unlocked, setTab }) {
           </ul>
         ) : (
           <div className="pf-empty">
-            <span>🎈</span>
+            <span>
+              <Gamepad2 size={36} />
+            </span>
             <p>No games yet.</p>
             <Link to="/play/hungary-or-not" className="btn btn-primary btn-sm">
               Play your first round
@@ -185,7 +202,7 @@ function Overview({ user, stats, plays, unlocked, setTab }) {
         <div className="pf-card-head">
           <h3>Achievements</h3>
           <button type="button" className="link-btn" onClick={() => setTab('achievements')}>
-            {unlocked.size}/{achievements.length} →
+            {unlocked.size}/{achievements.length} <ChevronRight size={15} className="ico" />
           </button>
         </div>
         <div className="mini-badges">
@@ -250,34 +267,46 @@ function Stats({ user, stats }) {
       <section className="pf-card pf-span3">
         <h3>Statistics</h3>
         <div className="stat-grid stat-grid-6">
-          <StatTile emoji="🎮" label="Games" value={stats.games} />
-          <StatTile emoji="🏆" label="Wins" value={stats.wins} sub={`${stats.winRate}% win rate`} />
-          <StatTile emoji="🎯" label="Accuracy" value={`${stats.accuracy}%`} />
-          <StatTile emoji="⚡" label="Avg answer" value={stats.avgAnswerSec ? `${stats.avgAnswerSec.toFixed(1)}s` : '—'} />
-          <StatTile emoji="⏱️" label="Time played" value={`${stats.totalMinutes} min`} />
-          <StatTile emoji="✨" label="XP earned" value={user.xp.toLocaleString()} />
+          <StatTile icon={Gamepad2} label="Games" value={stats.games} />
+          <StatTile icon={Trophy} label="Wins" value={stats.wins} sub={`${stats.winRate}% win rate`} />
+          <StatTile icon={Target} label="Accuracy" value={`${stats.accuracy}%`} />
+          <StatTile icon={Zap} label="Avg answer" value={stats.avgAnswerSec ? `${stats.avgAnswerSec.toFixed(1)}s` : '—'} />
+          <StatTile icon={Timer} label="Time played" value={`${stats.totalMinutes} min`} />
+          <StatTile icon={Sparkles} label="XP earned" value={user.xp.toLocaleString()} />
         </div>
       </section>
       <section className="pf-card">
         <h3>Records</h3>
         <ul className="records">
           <li>
-            <span>💯</span> Best score <b>{stats.bestScore ? `${stats.bestScore}/20` : '—'}</b>
+            <span>
+              <Target size={17} />
+            </span> Best score <b>{stats.bestScore ? `${stats.bestScore}/20` : '—'}</b>
           </li>
           <li>
-            <span>💎</span> Perfect rounds <b>{stats.perfects}</b>
+            <span>
+              <Gem size={17} />
+            </span> Perfect rounds <b>{stats.perfects}</b>
           </li>
           <li>
-            <span>🔥</span> Longest answer streak <b>{stats.bestStreak}</b>
+            <span>
+              <Flame size={17} />
+            </span> Longest answer streak <b>{stats.bestStreak}</b>
           </li>
           <li>
-            <span>⏱️</span> Fastest win <b>{fmtDuration(stats.fastestWin)}</b>
+            <span>
+              <Timer size={17} />
+            </span> Fastest win <b>{fmtDuration(stats.fastestWin)}</b>
           </li>
           <li>
-            <span>📅</span> Current day streak <b>{user.dayStreak}</b>
+            <span>
+              <CalendarCheck size={17} />
+            </span> Current day streak <b>{user.dayStreak}</b>
           </li>
           <li>
-            <span>🗓️</span> Best day streak <b>{user.bestDayStreak}</b>
+            <span>
+              <CalendarDays size={17} />
+            </span> Best day streak <b>{user.bestDayStreak}</b>
           </li>
         </ul>
       </section>
@@ -346,7 +375,9 @@ function Stats({ user, stats }) {
           <ul className="insights">
             {insights.map((x) => (
               <li key={x.title}>
-                <span>{x.emoji}</span>
+                <span className="ins-ico">
+                  <InsightIcon e={x.emoji} />
+                </span>
                 <div>
                   <b>{x.title}</b>
                   <small>{x.text}</small>
@@ -393,7 +424,7 @@ function Achievements({ user, unlockedMap, onShowcase }) {
               </div>
               {at && (
                 <button type="button" className={`pin ${pinned ? 'is-on' : ''}`} aria-pressed={pinned} onClick={() => toggle(a.id)} title={pinned ? 'Unpin from profile' : 'Pin to profile'}>
-                  📌
+                  <Pin size={16} fill={pinned ? 'currentColor' : 'none'} />
                 </button>
               )}
             </div>
@@ -409,18 +440,18 @@ function Library() {
   const [sub, setSub] = useState('favorite')
   const list = games.filter((g) => flags[sub]?.has(g.slug))
   const tabs = [
-    ['favorite', '⭐ Favorites'],
-    ['like', '❤️ Liked'],
-    ['save', '🔖 Saved'],
+    ['favorite', 'Favorites', Star],
+    ['like', 'Liked', Heart],
+    ['save', 'Saved', Bookmark],
   ]
   return (
     <section className="pf-card">
       <div className="pf-card-head">
         <h3>Your library</h3>
         <div className="seg">
-          {tabs.map(([k, l]) => (
+          {tabs.map(([k, l, I]) => (
             <button key={k} type="button" className={sub === k ? 'is-on' : ''} onClick={() => setSub(k)}>
-              {l} <em>{flags[k]?.size || 0}</em>
+              <I size={14} className="ico" /> {l} <em>{flags[k]?.size || 0}</em>
             </button>
           ))}
         </div>
@@ -433,7 +464,7 @@ function Library() {
         </div>
       ) : (
         <div className="pf-empty">
-          <span>{sub === 'favorite' ? '⭐' : sub === 'like' ? '❤️' : '🔖'}</span>
+          <span>{(() => { const I = tabs.find((t) => t[0] === sub)[2]; return <I size={36} /> })()}</span>
           <p>Use the buttons on any game card to add games here.</p>
           <Link to="/#games" className="btn btn-ghost btn-sm">
             Browse games
@@ -444,7 +475,7 @@ function Library() {
   )
 }
 
-function Playlists({ user }) {
+function QuizLists({ user }) {
   const { pushToast } = useApp()
   const announce = useAnnounce()
   const [lists, setLists] = useState(null)
@@ -465,7 +496,7 @@ function Playlists({ user }) {
       setTitle('')
       announce(await udata.refreshAchievements())
     } catch {
-      pushToast({ emoji: '⚠️', title: 'Playlists', text: 'Couldn’t create the playlist' })
+      pushToast({ emoji: '⚠️', title: 'QuizLists', text: 'Couldn’t create the QuizList' })
     }
   }
   const save = async (pl, patch) => {
@@ -473,7 +504,7 @@ function Playlists({ user }) {
     try {
       await udata.updatePlaylist(pl.id, patch)
     } catch {
-      pushToast({ emoji: '⚠️', title: 'Playlists', text: 'Couldn’t save changes' })
+      pushToast({ emoji: '⚠️', title: 'QuizLists', text: 'Couldn’t save changes' })
       load()
     }
   }
@@ -491,9 +522,9 @@ function Playlists({ user }) {
     await udata.removeFromPlaylist(pl.id, slug).catch(load)
   }
   const share = async (pl) => {
-    const url = `${window.location.origin}/playlist/${pl.share_code}`
+    const url = `${window.location.origin}/quizlist/${pl.share_code}`
     try {
-      if (navigator.share) await navigator.share({ title: pl.title, text: `Play my Quizora playlist “${pl.title}”`, url })
+      if (navigator.share) await navigator.share({ title: pl.title, text: `Play my Quizora QuizList “${pl.title}”`, url })
       else {
         await navigator.clipboard.writeText(url)
         pushToast({ emoji: '🔗', title: 'Link copied', text: 'Send it to your friends!' })
@@ -506,11 +537,11 @@ function Playlists({ user }) {
   return (
     <section className="pf-card">
       <div className="pf-card-head">
-        <h3>Playlists</h3>
+        <h3>QuizLists</h3>
         <form className="pl-new" onSubmit={create}>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="New playlist name" aria-label="New playlist name" />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="New QuizList name" aria-label="New QuizList name" />
           <button type="submit" className="btn btn-primary btn-sm" disabled={!title.trim()}>
-            Create
+            <Plus size={15} /> Create
           </button>
         </form>
       </div>
@@ -518,8 +549,10 @@ function Playlists({ user }) {
         <p className="muted">Loading…</p>
       ) : lists.length === 0 ? (
         <div className="pf-empty">
-          <span>🎵</span>
-          <p>Bundle your favourite quizzes into a playlist and share it with friends.</p>
+          <span>
+            <ListMusic size={36} />
+          </span>
+          <p>Bundle your favourite quizzes into a QuizList and share it with friends.</p>
         </div>
       ) : (
         <div className="pl-list">
@@ -529,11 +562,13 @@ function Playlists({ user }) {
             return (
               <article key={pl.id} className="pl-card">
                 <header>
-                  <span className="pl-emoji">{pl.emoji}</span>
+                  <span className="pl-emoji">
+                    <ListMusic size={22} />
+                  </span>
                   <div className="pl-titles">
                     {isEdit ? (
                       <>
-                        <input defaultValue={pl.title} maxLength={60} onBlur={(e) => e.target.value.trim() && save(pl, { title: e.target.value.trim() })} aria-label="Playlist name" />
+                        <input defaultValue={pl.title} maxLength={60} onBlur={(e) => e.target.value.trim() && save(pl, { title: e.target.value.trim() })} aria-label="QuizList name" />
                         <input defaultValue={pl.description} maxLength={200} placeholder="Description (optional)" onBlur={(e) => save(pl, { description: e.target.value.trim() })} aria-label="Description" />
                       </>
                     ) : (
@@ -548,13 +583,21 @@ function Playlists({ user }) {
                   </div>
                   <div className="pl-actions">
                     <button type="button" onClick={() => share(pl)} title="Share link">
-                      🔗 Share
+                      <Share2 size={14} /> Share
                     </button>
                     <button type="button" onClick={() => setEditing(isEdit ? null : pl.id)}>
-                      {isEdit ? 'Done' : '✏️ Edit'}
+                      {isEdit ? (
+                        <>
+                          <Check size={14} /> Done
+                        </>
+                      ) : (
+                        <>
+                          <Pencil size={14} /> Edit
+                        </>
+                      )}
                     </button>
-                    <button type="button" className="danger" onClick={() => remove(pl)} title="Delete playlist">
-                      🗑
+                    <button type="button" className="danger" onClick={() => remove(pl)} title="Delete QuizList" aria-label="Delete QuizList">
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </header>
@@ -575,7 +618,7 @@ function Playlists({ user }) {
                           <span>{g?.title || i.game_slug}</span>
                           {isEdit && (
                             <button type="button" onClick={() => removeGame(pl, i.game_slug)} aria-label={`Remove ${g?.title}`}>
-                              ✕
+                              <X size={14} />
                             </button>
                           )}
                         </li>
@@ -583,7 +626,7 @@ function Playlists({ user }) {
                     })}
                   </ul>
                 ) : (
-                  <p className="muted small">Add games with the ➕ button on any game card.</p>
+                  <p className="muted small">Add games with the add-to-QuizList button on any game card.</p>
                 )}
               </article>
             )
@@ -605,7 +648,8 @@ function AuroraMemo({ colors }) {
 export default function Profile() {
   const { user, authReady, accountsEnabled, openAuth, openOnboarding, setUser, country, pushToast } = useApp()
   const [params, setParams] = useSearchParams()
-  const tab = TABS.some(([k]) => k === params.get('tab')) ? params.get('tab') : 'overview'
+  const rawTab = params.get('tab') === 'playlists' ? 'quizlists' : params.get('tab')
+  const tab = TABS.some(([k]) => k === rawTab) ? rawTab : 'overview'
   const setTab = (k) => setParams(k === 'overview' ? {} : { tab: k }, { replace: true })
   const [plays, setPlays] = useState(null)
   const [unlocked, setUnlocked] = useState(new Map())
@@ -640,9 +684,11 @@ export default function Profile() {
         <Navbar />
         <main className="placeholder">
           <div className="placeholder-card">
-            <span className="placeholder-emoji">👤</span>
+            <span className="placeholder-emoji">
+              <UserRound size={64} />
+            </span>
             <h1>Your profile</h1>
-            <p>Log in to see your levels, history, stats, achievements and playlists.</p>
+            <p>Log in to see your levels, history, stats, achievements and QuizLists.</p>
             {accountsEnabled && (
               <button type="button" className="btn btn-primary btn-lg" onClick={() => openAuth('login')}>
                 Log in
@@ -685,17 +731,22 @@ export default function Profile() {
             </motion.div>
             <div className="pf-id">
               <span className="pf-tier" style={{ '--tier': tier.color }}>
-                {tier.emoji} {tier.title}
+                <tier.icon size={14} /> {tier.title}
               </span>
               <h1>{user.username}</h1>
               <div className="pf-meta">
                 <span>
                   <Flag code={country} size={16} /> Joined {fmtDate(user.joinedAt)}
                 </span>
-                <span>🔥 {user.dayStreak}-day streak</span>
+                <span>
+                  <Flame size={15} /> {user.dayStreak}-day streak
+                </span>
                 <button type="button" className="link-btn" onClick={openOnboarding}>
-                  ✨ Edit interests
+                  <Sparkles size={14} className="ico" /> Edit interests
                 </button>
+                <Link to={`/u/${user.username}`} className="link-btn">
+                  <Users size={14} className="ico" /> Public profile
+                </Link>
               </div>
               <div className="pf-level">
                 <div className="pf-level-row">
@@ -719,7 +770,7 @@ export default function Profile() {
                 ))
               ) : (
                 <button type="button" className="pf-pin-empty" onClick={() => setTab('achievements')}>
-                  📌 Pin your best badges
+                  <Pin size={15} className="ico" /> Pin your best badges
                 </button>
               )}
             </div>
@@ -728,18 +779,18 @@ export default function Profile() {
 
         <div className="container">
           <nav className="pf-tabs" role="tablist" aria-label="Profile sections">
-            {TABS.map(([k, label, emoji]) => (
+            {TABS.map(([k, label, Icon]) => (
               <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)}>
                 {tab === k && <motion.span layoutId="pf-tab" className="pf-tab-pill" transition={{ type: 'spring', stiffness: 400, damping: 34 }} />}
                 <span className="pf-tab-label">
-                  {emoji} {label}
+                  <Icon size={16} className="ico" /> {label}
                 </span>
               </button>
             ))}
           </nav>
 
           <div className="pf-body">
-            {plays === null && tab !== 'library' && tab !== 'playlists' ? (
+            {plays === null && tab !== 'library' && tab !== 'quizlists' ? (
               <p className="muted">Loading your data…</p>
             ) : (
               <>
@@ -748,7 +799,7 @@ export default function Profile() {
                 {tab === 'stats' && <Stats user={user} stats={stats} />}
                 {tab === 'achievements' && <Achievements user={user} unlockedMap={unlocked} onShowcase={onShowcase} />}
                 {tab === 'library' && <Library />}
-                {tab === 'playlists' && <Playlists user={user} />}
+                {tab === 'quizlists' && <QuizLists user={user} />}
               </>
             )}
           </div>

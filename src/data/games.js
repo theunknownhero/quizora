@@ -2,6 +2,8 @@
 // status: 'live' | 'soon'
 // countries: optional list of country codes (see countries.js). If set, the quiz is about / made for
 //            those countries and gets a flag badge. Leave it out for quizzes that work everywhere.
+// ageRating: optional. Set 18 for adult quizzes: minors never see them, guests see them locked, and the
+//            server refuses to start them unless the player is 18+ (also add the slug to public.game_settings).
 
 import { ALL } from './countries.js'
 

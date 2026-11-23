@@ -32,7 +32,7 @@ export function passwordStrength(v = '') {
 // Combine the Supabase auth user with their profile row into the shape the app uses
 export async function loadUser(authUser) {
   if (!authUser) return null
-  const { data: p, error } = await supabase.from('profiles').select('username, interests, topics, countries, onboarded, xp, day_streak, best_day_streak, last_played_on, showcase, created_at').eq('id', authUser.id).maybeSingle()
+  const { data: p, error } = await supabase.from('profiles').select('username, interests, topics, countries, onboarded, xp, day_streak, best_day_streak, last_played_on, showcase, birth_date, created_at').eq('id', authUser.id).maybeSingle()
   if (error) console.error('[profiles]', error.message)
   return {
     id: authUser.id,
@@ -45,6 +45,7 @@ export async function loadUser(authUser) {
     lastPlayedOn: p?.last_played_on || null,
     showcase: p?.showcase || [],
     joinedAt: p?.created_at || authUser.created_at,
+    birthDate: p?.birth_date || null,
     profile: {
       interests: p?.interests || [],
       topics: p?.topics || [],
@@ -60,7 +61,7 @@ export async function currentUser() {
   return data.session ? loadUser(data.session.user) : null
 }
 
-export async function register({ username, email, password }) {
+export async function register({ username, email, password, birthDate }) {
   need()
   const { data: free, error: rpcErr } = await supabase.rpc('username_available', { candidate: username })
   if (rpcErr) throw fail('Couldn’t check that username. Try again.')
@@ -69,7 +70,7 @@ export async function register({ username, email, password }) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { username }, emailRedirectTo: `${origin()}/verify-email` },
+    options: { data: { username, birth_date: birthDate }, emailRedirectTo: `${origin()}/verify-email` },
   })
   if (error) {
     if (/already registered/i.test(error.message)) throw fail('An account with this email already exists', { email: 'Already registered — try logging in' })
@@ -125,4 +126,15 @@ export async function resetPassword(password) {
   const { data, error } = await supabase.auth.updateUser({ password })
   if (error) throw fail(/session|expired|jwt/i.test(error.message) ? 'This reset link is invalid or has expired. Request a new one.' : error.message, { password: error.message })
   return loadUser(data.user)
+}
+
+// Players who signed up before birth dates were required add it once. It can't be changed afterwards.
+export async function setBirthDate(birthDate) {
+  need()
+  const { error } = await supabase.rpc('set_birth_date', { p_birth_date: birthDate })
+  if (error) {
+    if (/too_young/.test(error.message)) throw fail('You need to be at least 13 to use an account')
+    if (/already_set/.test(error.message)) throw fail('Your date of birth is already saved')
+    throw fail('Couldn’t save your date of birth. Try again.')
+  }
 }

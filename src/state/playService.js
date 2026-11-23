@@ -23,6 +23,7 @@ const friendly = (error) => {
   const m = error?.message || ''
   if (/rate_limited/.test(m)) return 'You’re starting games very fast. Wait a moment and try again.'
   if (/too_fast/.test(m)) return 'Slow down a little!'
+  if (/age_restricted/.test(m)) return 'This quiz is 18+. Log in and confirm your age to play.'
   if (/session_closed|no_session|not_yours/.test(m)) return 'This round has expired. Start a new one.'
   if (/fetch|network|Failed/i.test(m)) return 'Connection problem. Check your internet and try again.'
   return 'Something went wrong. Please try again.'

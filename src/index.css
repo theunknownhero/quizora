@@ -420,3 +420,18 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .pl-menu-new input:focus { border-color: rgba(139, 92, 246, 0.7); }
 .pl-menu-new button { padding: 8px 12px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #22d3ee); color: #fff; font-weight: 600; font-size: 13px; }
 .pl-menu-new button:disabled { opacity: 0.5; }
+
+/* Lucide icons */
+.gact-btn { color: #cfc9e4; }
+.gact-btn.is-on[aria-label="Like"] { color: #fb7185; background: rgba(251, 113, 133, 0.14); border-color: rgba(251, 113, 133, 0.45); }
+.gact-btn.is-on[aria-label="Favorite"] { color: #fcd34d; background: rgba(252, 211, 77, 0.13); border-color: rgba(252, 211, 77, 0.45); }
+.gact-btn.is-on[aria-label="Save for later"] { color: #67e8f9; background: rgba(103, 232, 249, 0.12); border-color: rgba(103, 232, 249, 0.45); }
+.pl-menu-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pl-menu li button i { display: inline-flex; }
+.ico { display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+.btn svg, .link-btn svg { flex-shrink: 0; }
+.toast-action { display: inline-block; margin-top: 6px; padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #120c22; background: linear-gradient(135deg, #a78bfa, #22d3ee); }
+@keyframes qz-spin { to { transform: rotate(360deg); } }
+.spin { animation: qz-spin 0.9s linear infinite; }
+.game-age { position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.02em; color: #fff; background: rgba(220, 38, 38, 0.85); box-shadow: 0 4px 14px -4px rgba(220, 38, 38, 0.8); }
+button.game-link { display: block; width: 100%; text-align: left; padding: 0; background: none; border: 0; color: inherit; font: inherit; cursor: pointer; }

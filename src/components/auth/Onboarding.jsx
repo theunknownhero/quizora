@@ -8,6 +8,7 @@ import { interests, topics } from '../../data/preferences.js'
 import { ALL, countries } from '../../data/countries.js'
 import { recommend } from '../../data/games.js'
 import './auth.css'
+import { ArrowRight, Check, PartyPopper } from 'lucide-react'
 
 function ChipGrid({ options, value, onToggle, label }) {
   return (
@@ -21,7 +22,7 @@ function ChipGrid({ options, value, onToggle, label }) {
             </span>
             {o.label}
             <span className="ob-chip-check" aria-hidden="true">
-              ✓
+              <Check size={14} strokeWidth={3} />
             </span>
           </button>
         )
@@ -120,7 +121,7 @@ export default function Onboarding() {
               completedContent={
                 <div className="ob-done">
                   <motion.div className="ob-done-emoji" initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 12 }}>
-                    🎉
+                    <PartyPopper size={44} />
                   </motion.div>
                   <h3>You’re all set!</h3>
                   <p>Here are a few quizzes picked for you:</p>
@@ -142,7 +143,7 @@ export default function Onboarding() {
                     )}
                   </div>
                   <button type="button" className="btn btn-primary btn-lg" onClick={closeOnboarding}>
-                    Start exploring <span className="btn-icon">→</span>
+                    Start exploring <span className="btn-icon"><ArrowRight size={14} /></span>
                   </button>
                 </div>
               }
@@ -173,7 +174,7 @@ export default function Onboarding() {
                           <Flag code={c.code} size={34} />
                           <span>{c.name}</span>
                           <span className="ob-chip-check" aria-hidden="true">
-                            ✓
+                            <Check size={14} strokeWidth={3} />
                           </span>
                         </button>
                       )

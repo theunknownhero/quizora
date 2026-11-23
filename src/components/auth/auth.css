@@ -116,3 +116,17 @@
 .auth-spinner.big { width: 42px; height: 42px; border-width: 4px; margin-bottom: 14px; }
 .auth-resend { align-self: flex-start; padding: 7px 14px; border-radius: 999px; background: #ffd166; color: #1a1300; font-weight: 600; font-size: 13px; }
 .auth-resend:disabled { opacity: 0.75; }
+
+/* Date of birth */
+.dob { display: grid; grid-template-columns: auto 0.8fr 1.4fr 1fr; gap: 8px; align-items: center; }
+.dob-ico { display: grid; place-items: center; width: 40px; height: 48px; color: var(--dim); }
+.dob select { height: 48px; min-width: 0; padding: 0 10px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-2); color: var(--text); font: inherit; font-size: 14.5px; appearance: none; -webkit-appearance: none; cursor: pointer; }
+.dob select:focus { outline: none; border-color: rgba(139, 92, 246, 0.7); box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.16); }
+.dob select option { background: #14111f; color: #fff; }
+.has-error .dob select { border-color: rgba(248, 113, 113, 0.6); }
+.af-input svg { flex-shrink: 0; }
+.age-card h2 { font-family: var(--font-display); font-size: 26px; letter-spacing: -0.02em; margin: 12px 0 6px; }
+.age-card .muted { font-size: 14px; line-height: 1.5; margin-bottom: 18px; color: var(--muted); }
+.age-card .auth-form { text-align: left; }
+.age-ico { display: inline-grid; place-items: center; width: 62px; height: 62px; border-radius: 20px; color: #c4b5fd; background: rgba(139, 92, 246, 0.16); border: 1px solid rgba(139, 92, 246, 0.4); }
+.age-later { align-self: center; margin-top: 2px; }

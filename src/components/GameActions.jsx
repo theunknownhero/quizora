@@ -1,14 +1,15 @@
-// Like / favorite / save toggles + "Add to playlist" for a game. Used on game cards and pages.
+// Like / favorite / save toggles + "Add to QuizList" for a game. Used on game cards and pages.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useApp } from '../state/AppState.jsx'
 import { useAnnounce } from './Toaster.jsx'
 import * as udata from '../state/userData.js'
+import { Heart, Star, Bookmark, ListPlus, Check, Plus, ListMusic } from 'lucide-react'
 
 const ACTIONS = [
-  { kind: 'like', on: '❤️', off: '🤍', label: 'Like' },
-  { kind: 'favorite', on: '⭐', off: '☆', label: 'Favorite' },
-  { kind: 'save', on: '🔖', off: '📑', label: 'Save for later' },
+  { kind: 'like', Icon: Heart, label: 'Like' },
+  { kind: 'favorite', Icon: Star, label: 'Favorite' },
+  { kind: 'save', Icon: Bookmark, label: 'Save for later' },
 ]
 
 const stop = (e) => {
@@ -44,7 +45,7 @@ function PlaylistMenu({ slug, onClose }) {
       if (inList) await udata.removeFromPlaylist(l.id, slug)
       else await udata.addToPlaylist(l.id, slug, l.playlist_items?.length || 0)
     } catch {
-      pushToast({ emoji: '⚠️', title: 'Playlist', text: 'Couldn’t update the playlist' })
+      pushToast({ emoji: '⚠️', title: 'QuizList', text: 'Couldn’t update the QuizList' })
     }
   }
   const create = async (e) => {
@@ -58,7 +59,7 @@ function PlaylistMenu({ slug, onClose }) {
       setTitle('')
       announce(await udata.refreshAchievements())
     } catch {
-      pushToast({ emoji: '⚠️', title: 'Playlist', text: 'Couldn’t create the playlist' })
+      pushToast({ emoji: '⚠️', title: 'QuizList', text: 'Couldn’t create the QuizList' })
     } finally {
       setBusy(false)
     }
@@ -69,31 +70,31 @@ function PlaylistMenu({ slug, onClose }) {
       ref={ref}
       className="pl-menu"
       role="dialog"
-      aria-label="Add to playlist"
+      aria-label="Add to QuizList"
       onClick={stop}
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 6, scale: 0.96 }}
       transition={{ duration: 0.16 }}
     >
-      <b className="pl-menu-title">Add to playlist</b>
+      <b className="pl-menu-title">Add to QuizList</b>
       {lists === null ? (
         <span className="pl-menu-empty">Loading…</span>
       ) : lists.length === 0 ? (
-        <span className="pl-menu-empty">No playlists yet. Create your first one:</span>
+        <span className="pl-menu-empty">No QuizLists yet. Create your first one:</span>
       ) : (
         <ul>
           {lists.map((l) => (
             <li key={l.id}>
               <button type="button" className={has(l) ? 'is-on' : ''} onClick={() => toggle(l)}>
-                <span>{l.emoji}</span> {l.title} <i>{has(l) ? '✓' : '+'}</i>
+                <ListMusic size={15} aria-hidden="true" /> <span className="pl-menu-name">{l.title}</span> <i>{has(l) ? <Check size={14} /> : <Plus size={14} />}</i>
               </button>
             </li>
           ))}
         </ul>
       )}
       <form onSubmit={create} className="pl-menu-new">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="New playlist name" aria-label="New playlist name" />
+        <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="New QuizList name" aria-label="New QuizList name" />
         <button type="submit" disabled={busy || !title.trim()}>
           Create
         </button>
@@ -133,7 +134,7 @@ export default function GameActions({ slug, compact = false }) {
             whileTap={{ scale: 0.8 }}
             onClick={(e) => act(e, a.kind)}
           >
-            {on ? a.on : a.off}
+            <a.Icon size={16} strokeWidth={2.2} fill={on ? 'currentColor' : 'none'} aria-hidden="true" />
           </motion.button>
         )
       })}
@@ -141,8 +142,8 @@ export default function GameActions({ slug, compact = false }) {
         <button
           type="button"
           className="gact-btn"
-          aria-label="Add to playlist"
-          title="Add to playlist"
+          aria-label="Add to QuizList"
+          title="Add to QuizList"
           aria-expanded={menu}
           onClick={(e) => {
             stop(e)
@@ -150,7 +151,7 @@ export default function GameActions({ slug, compact = false }) {
             setMenu((m) => !m)
           }}
         >
-          ➕
+          <ListPlus size={16} strokeWidth={2.2} aria-hidden="true" />
         </button>
         <AnimatePresence>{menu && <PlaylistMenu slug={slug} onClose={() => setMenu(false)} />}</AnimatePresence>
       </div>

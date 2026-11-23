@@ -36,6 +36,7 @@ export function AppProvider({ children }) {
   const [authView, setAuthView] = useState(null) // null | 'login' | 'register' | 'forgot' | 'check-email'
   const [pendingEmail, setPendingEmail] = useState('') // where we sent the confirmation link
   const [onboarding, setOnboarding] = useState(false)
+  const [ageCheck, setAgeCheck] = useState(false)
   const [flags, setFlags] = useState({ like: new Set(), favorite: new Set(), save: new Set() })
   const [toasts, setToasts] = useState([])
 
@@ -126,6 +127,9 @@ export function AppProvider({ children }) {
       onboarding,
       openOnboarding: () => setOnboarding(true),
       closeOnboarding: () => setOnboarding(false),
+      ageCheck,
+      openAgeCheck: () => setAgeCheck(true),
+      closeAgeCheck: () => setAgeCheck(false),
       async register(data) {
         const res = await auth.register(data)
         if (res.needsConfirmation) {
@@ -192,7 +196,7 @@ export function AppProvider({ children }) {
         }
       },
     }),
-    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding, flags, toasts, pushToast]
+    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding, ageCheck, flags, toasts, pushToast]
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

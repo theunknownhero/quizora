@@ -1,3 +1,5 @@
+import { Sprout, Compass, BookOpen, GraduationCap, Medal, Crown, Sparkles } from 'lucide-react'
+
 // Player levels. Must match public.level_for_xp() in supabase/002_phase2.sql:
 // level L starts at 50·L·(L−1) XP → L2 = 100, L3 = 300, L4 = 600, L5 = 1000, L10 = 4500, L25 = 30000.
 
@@ -13,13 +15,13 @@ export function levelProgress(xp = 0) {
 
 // Rank titles by level
 export const tiers = [
-  { min: 1, title: 'Rookie', emoji: '🌱', color: '#86efac' },
-  { min: 5, title: 'Explorer', emoji: '🧭', color: '#67e8f9' },
-  { min: 10, title: 'Scholar', emoji: '📘', color: '#a5b4fc' },
-  { min: 20, title: 'Expert', emoji: '🎓', color: '#c4b5fd' },
-  { min: 30, title: 'Master', emoji: '🏅', color: '#fcd34d' },
-  { min: 40, title: 'Grandmaster', emoji: '👑', color: '#fbbf24' },
-  { min: 60, title: 'Legend', emoji: '🌟', color: '#f472b6' },
+  { min: 1, title: 'Rookie', icon: Sprout, emoji: '🌱', color: '#86efac' },
+  { min: 5, title: 'Explorer', icon: Compass, emoji: '🧭', color: '#67e8f9' },
+  { min: 10, title: 'Scholar', icon: BookOpen, emoji: '📘', color: '#a5b4fc' },
+  { min: 20, title: 'Expert', icon: GraduationCap, emoji: '🎓', color: '#c4b5fd' },
+  { min: 30, title: 'Master', icon: Medal, emoji: '🏅', color: '#fcd34d' },
+  { min: 40, title: 'Grandmaster', icon: Crown, emoji: '👑', color: '#fbbf24' },
+  { min: 60, title: 'Legend', icon: Sparkles, emoji: '🌟', color: '#f472b6' },
 ]
 export const tierFor = (level) => [...tiers].reverse().find((t) => level >= t.min) || tiers[0]
 
