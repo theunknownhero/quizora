@@ -131,3 +131,5 @@
   .lb-podium { gap: 8px; }
   .tn-row-time { display: none; }
 }
+.tn-cta { padding: 11px 22px; font-size: 15px; }
+.tn-cols .tn-section + .tn-section { margin-top: 0; }
