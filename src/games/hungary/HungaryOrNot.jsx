@@ -6,7 +6,8 @@ import Terrain from './Terrain.jsx'
 import { spriteSizes } from './spriteSizes.js'
 import { WORLD_W, WORLD_H, islands, nodes as islandNodes, sky } from './layout.js'
 import { MAP_IMAGE, imageNodes } from './imageMap.js'
-import { pickRound, regions, ranks, ROUND_SIZE, WIN_SCORE, PRIZE_URL } from './questions.js'
+import { pickRound, regions, ranks, ROUND_SIZE, WIN_SCORE } from './questions.js'
+import { getSettings } from '../../lib/siteConfig.js'
 import { startRound, submitAnswer, finishRound } from '../../state/playService.js'
 import { useApp } from '../../state/AppState.jsx'
 import { useAnnounce } from '../../components/Toaster.jsx'
@@ -430,9 +431,9 @@ function Results({ round, results, outcome, prevBest, onReplay, tournament }) {
             </Link>
           )}
           {won && !tournament && (
-            <a className="btn btn-lg btn-prize g-full" href={PRIZE_URL} target="_blank" rel="noopener noreferrer">
+            <a className="btn btn-lg btn-prize g-full" href={getSettings().prize?.url || 'https://fortunejack.com'} target="_blank" rel="noopener noreferrer">
               <span className="btn-prize-shine" aria-hidden="true" />
-              <Gift size={18} /> Claim the Prize
+              <Gift size={18} /> {getSettings().prize?.label || 'Claim the Prize'}
             </a>
           )}
           <div className="results-row">

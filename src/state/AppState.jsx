@@ -5,6 +5,7 @@ import { supabase, supabaseConfigured } from '../lib/supabase.js'
 import { countryLang } from '../data/regional.js'
 import * as auth from './authStore.js'
 import * as udata from './userData.js'
+import { getSettings, loadConfig } from '../lib/siteConfig.js'
 
 const COUNTRY_KEY = 'qz.country'
 const LANG_KEY = 'qz.lang' // only set when the player picks a language by hand
@@ -37,6 +38,8 @@ export function AppProvider({ children }) {
   const [pendingEmail, setPendingEmail] = useState('') // where we sent the confirmation link
   const [onboarding, setOnboarding] = useState(false)
   const [ageCheck, setAgeCheck] = useState(false)
+  const [site, setSite] = useState(getSettings)
+  const [staff, setStaff] = useState(null) // { role, perms[] } for staff accounts
   const [flags, setFlags] = useState({ like: new Set(), favorite: new Set(), save: new Set() })
   const [toasts, setToasts] = useState([])
 
@@ -45,6 +48,15 @@ export function AppProvider({ children }) {
     setToasts((t) => [...t, { id, ...toast }])
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), toast.duration || 4500)
   }, [])
+
+  // Staff role + permissions (admin panel access)
+  useEffect(() => {
+    if (!user?.id || !user.role || user.role === 'user') {
+      setStaff(null)
+      return
+    }
+    supabase.rpc('my_staff').then(({ data }) => setStaff(data || null))
+  }, [user?.id, user?.role])
 
   // Load the player's likes / favorites / saves
   useEffect(() => {
@@ -128,6 +140,13 @@ export function AppProvider({ children }) {
       openOnboarding: () => setOnboarding(true),
       closeOnboarding: () => setOnboarding(false),
       ageCheck,
+      site,
+      staff,
+      can: (perm) => !!staff?.perms?.includes(perm),
+      async reloadSite() {
+        await loadConfig(6000)
+        setSite({ ...getSettings() })
+      },
       openAgeCheck: () => setAgeCheck(true),
       closeAgeCheck: () => setAgeCheck(false),
       async register(data) {
@@ -196,7 +215,7 @@ export function AppProvider({ children }) {
         }
       },
     }),
-    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding, ageCheck, flags, toasts, pushToast]
+    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding, ageCheck, site, staff, flags, toasts, pushToast]
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

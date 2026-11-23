@@ -5,8 +5,10 @@ import App from './App.jsx'
 import { AppProvider } from './state/AppState.jsx'
 import { SocialProvider } from './state/SocialState.jsx'
 import './index.css'
+import { loadConfig } from './lib/siteConfig.js'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+loadConfig().finally(() =>
+  ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <AppProvider>
@@ -16,4 +18,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </AppProvider>
     </BrowserRouter>
   </React.StrictMode>
+)
 )

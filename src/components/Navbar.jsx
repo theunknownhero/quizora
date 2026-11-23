@@ -5,21 +5,22 @@ import GooeyNav from './rb/GooeyNav.jsx'
 import StarBorder from './rb/StarBorder.jsx'
 import CountrySelector from './CountrySelector.jsx'
 import AccountMenu from './AccountMenu.jsx'
+import { XpEventChip } from './SiteChrome.jsx'
 import { useApp } from '../state/AppState.jsx'
 import { useT } from '../i18n/useT.js'
 import './Navbar.css'
 
 // Top menu. Items with `id` scroll to a home page section; items with `to` open a page.
-const SECTIONS = [
+const ALL_SECTIONS = [
   { key: 'nav.home', id: 'top' },
   { key: 'nav.games', id: 'games' },
   { key: 'nav.categories', id: 'categories' },
-  { key: 'nav.tournaments', to: '/tournaments', match: ['/tournament'], icon: Medal },
-  { key: 'nav.leaderboards', to: '/leaderboards', icon: Trophy },
-  { key: 'nav.together', to: '/play-together', match: ['/room/'], icon: Swords },
+  { key: 'nav.tournaments', to: '/tournaments', match: ['/tournament'], icon: Medal, feature: 'tournaments' },
+  { key: 'nav.leaderboards', to: '/leaderboards', icon: Trophy, feature: 'leaderboards' },
+  { key: 'nav.together', to: '/play-together', match: ['/room/'], icon: Swords, feature: 'multiplayer' },
 ]
-const routeIndex = (pathname) =>
-  SECTIONS.findIndex((s) => s.to && (pathname === s.to || pathname.startsWith(s.to + '/') || (s.match || []).some((m) => pathname.startsWith(m))))
+const routeIndexIn = (list, pathname) =>
+  list.findIndex((s) => s.to && (pathname === s.to || pathname.startsWith(s.to + '/') || (s.match || []).some((m) => pathname.startsWith(m))))
 const PARTICLES = ['#7c5cff', '#ff5fa2', '#2ec4b6', '#ffd166']
 const CTA_TO = '/play/hungary-or-not'
 
@@ -34,9 +35,11 @@ const scrollToId = (id) => {
 export default function Navbar() {
   const { pathname, hash } = useLocation()
   const navigate = useNavigate()
-  const { user, openAuth, openOnboarding, logout } = useApp()
+  const { user, openAuth, openOnboarding, logout, site, staff } = useApp()
+  const SECTIONS = useMemo(() => ALL_SECTIONS.filter((s) => !s.feature || staff || site.features?.[s.feature] !== false), [site, staff])
+  const routeIndex = (p) => routeIndexIn(SECTIONS, p)
   const t = useT()
-  const items = useMemo(() => SECTIONS.map((s) => ({ label: t(s.key) })), [t])
+  const items = useMemo(() => SECTIONS.map((s) => ({ label: t(s.key) })), [t, SECTIONS])
   const isHome = pathname === '/'
   const [active, setActive] = useState(0)
   const [scrolled, setScrolled] = useState(false)
@@ -62,7 +65,7 @@ export default function Navbar() {
         scrollToId(id)
       }
     },
-    [isHome, navigate]
+    [isHome, navigate, SECTIONS]
   )
 
   // Scroll-spy + "scrolled" state
@@ -156,6 +159,7 @@ export default function Navbar() {
         </div>
 
         <div className="nav-right">
+          <XpEventChip />
           <CountrySelector />
           <span className="nav-acct-desktop">
             <AccountMenu />

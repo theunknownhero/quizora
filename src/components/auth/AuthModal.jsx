@@ -40,7 +40,8 @@ function Field({ id, label, icon, error, type = 'text', value, onChange, autoCom
 }
 
 export default function AuthModal() {
-  const { authView, openAuth, closeAuth, login, register, pendingEmail, accountsEnabled } = useApp()
+  const { authView, openAuth, closeAuth, login, register, pendingEmail, accountsEnabled, site } = useApp()
+  const signupsOff = site?.features?.signups === false
   const view = authView
   const [form, setForm] = useState({ identifier: '', username: '', email: '', password: '', birthDate: '' })
   const [errors, setErrors] = useState({})
@@ -229,6 +230,9 @@ export default function AuthModal() {
               ))}
             </div>
 
+            {isReg && signupsOff ? (
+              <p className="q-error">New sign-ups are paused right now. Please check back soon!</p>
+            ) : (
             <form className="auth-form" onSubmit={submit} noValidate>
               {isReg ? (
                 <>
@@ -287,6 +291,7 @@ export default function AuthModal() {
                 {!busy && <span className="btn-icon"><ArrowRight size={14} /></span>}
               </button>
             </form>
+            )}
 
             <p className="auth-switch">
               {isReg ? 'Already have an account?' : 'New to Quizora?'}{' '}

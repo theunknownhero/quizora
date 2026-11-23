@@ -40,7 +40,9 @@ const teaser = [
 
 function Hero() {
   const t = useT()
-  const { lang } = useApp()
+  const { lang, site } = useApp()
+  const customTitle = site.home?.hero_title?.trim()
+  const customSub = site.home?.hero_subtitle?.trim()
   const featuredGame = games.find((g) => g.featured)
   const picks = ['geo', 'movies', 'history', 'music', 'food', 'sports', 'science', 'flags'].map((id) => t(`cat.${id}`))
   return (
@@ -78,8 +80,9 @@ function Hero() {
         </motion.a>
 
         <h1 className="hero-title">
-          <SplitText key={lang} text={t('hero.title1')} delay={0.2} />
-          <br />
+          <SplitText key={lang + (customTitle || '')} text={customTitle || t('hero.title1')} delay={0.2} />
+          {!customTitle && <br />}
+          {!customTitle && (
           <motion.span
             style={{ display: 'inline-block' }}
             initial={{ opacity: 0, y: 40, filter: 'blur(14px)' }}
@@ -88,10 +91,11 @@ function Hero() {
           >
             <GradientText className="hero-title-grad">{t('hero.title2')}</GradientText>
           </motion.span>
+          )}
         </h1>
 
         <motion.p className="hero-sub" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}>
-          {t('hero.sub')}
+          {customSub || t('hero.sub')}
           <span className="hero-today">
             {t('hero.today')} <RotatingText key={lang} words={picks} className="hero-rotate" />
           </span>
@@ -224,7 +228,7 @@ function Featured() {
             <ul className="featured-points">
               {['food', 'tech', 'celebs', 'holidays'].map((id) => (
                 <li key={id}>
-                  <span>{categoryById(id).emoji}</span> {t(`cat.${id}`)}
+                  <span>{categoryById(id)?.emoji}</span> {t(`cat.${id}`)}
                 </li>
               ))}
             </ul>

@@ -6,11 +6,11 @@ import { resendVerification } from '../state/authStore.js'
 import { useT } from '../i18n/useT.js'
 import { useNavigate } from 'react-router-dom'
 import { levelProgress, tierFor } from '../lib/levels.js'
-import { UserRound, ListChecks, Sparkles, LogOut, MailWarning, Users, Swords, Trophy, Medal } from 'lucide-react'
+import { UserRound, ListChecks, Sparkles, LogOut, MailWarning, Users, Swords, Trophy, Medal, ShieldCheck } from 'lucide-react'
 
 // Navbar account area: "Log in" when signed out, avatar + dropdown when signed in.
 export default function AccountMenu() {
-  const { user, openAuth, openOnboarding, logout } = useApp()
+  const { user, openAuth, openOnboarding, logout, staff } = useApp()
   const [open, setOpen] = useState(false)
   const t = useT()
   const [resend, setResend] = useState('') // '' | 'sending' | 'sent' | error text
@@ -96,6 +96,11 @@ export default function AccountMenu() {
                   </button>
                 )}
               </div>
+            )}
+            {staff && (
+              <button type="button" role="menuitem" className="acct-admin" onClick={() => (setOpen(false), navigate('/admin'))}>
+                <ShieldCheck size={16} /> Admin panel <em>{staff.role}</em>
+              </button>
             )}
             <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/profile'))}>
               <UserRound size={16} /> My profile

@@ -32,7 +32,7 @@ export function passwordStrength(v = '') {
 // Combine the Supabase auth user with their profile row into the shape the app uses
 export async function loadUser(authUser) {
   if (!authUser) return null
-  const { data: p, error } = await supabase.from('profiles').select('username, interests, topics, countries, onboarded, xp, day_streak, best_day_streak, last_played_on, showcase, birth_date, created_at').eq('id', authUser.id).maybeSingle()
+  const { data: p, error } = await supabase.from('profiles').select('username, interests, topics, countries, onboarded, xp, day_streak, best_day_streak, last_played_on, showcase, birth_date, role, banned_until, ban_reason, created_at').eq('id', authUser.id).maybeSingle()
   if (error) console.error('[profiles]', error.message)
   return {
     id: authUser.id,
@@ -46,6 +46,9 @@ export async function loadUser(authUser) {
     showcase: p?.showcase || [],
     joinedAt: p?.created_at || authUser.created_at,
     birthDate: p?.birth_date || null,
+    role: p?.role || 'user',
+    bannedUntil: p?.banned_until || null,
+    banReason: p?.ban_reason || null,
     profile: {
       interests: p?.interests || [],
       topics: p?.topics || [],
@@ -74,7 +77,7 @@ export async function register({ username, email, password, birthDate }) {
   })
   if (error) {
     if (/already registered/i.test(error.message)) throw fail('An account with this email already exists', { email: 'Already registered — try logging in' })
-    if (/database error/i.test(error.message)) throw fail('That username is taken', { username: 'That username is taken' })
+    if (/database error/i.test(error.message)) throw fail('We couldn’t create the account. The username may be taken, or sign-ups may be paused.', { username: ' ' })
     if (/password/i.test(error.message)) throw fail(error.message, { password: error.message })
     if (/rate limit/i.test(error.message)) throw fail('Too many attempts. Please wait a few minutes and try again.')
     throw fail(error.message)
