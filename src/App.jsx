@@ -20,6 +20,7 @@ import PublicProfile from './pages/PublicProfile.jsx'
 import QuizListPage from './pages/QuizListPage.jsx'
 import { AnnouncementBar, FeatureGate, MaintenanceScreen } from './components/SiteChrome.jsx'
 import { useApp } from './state/AppState.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 // The admin panel is only downloaded by staff who open it
 const Admin = lazy(() => import('./admin/Admin.jsx'))
@@ -55,9 +56,11 @@ export default function App() {
           <Route
             path="/admin/*"
             element={
-              <Suspense fallback={<div className="admin-loading">Loading admin…</div>}>
-                <Admin />
-              </Suspense>
+              <ErrorBoundary label="The admin panel">
+                <Suspense fallback={<div className="admin-loading">Loading admin…</div>}>
+                  <Admin />
+                </Suspense>
+              </ErrorBoundary>
             }
           />
           <Route path="*" element={<Home />} />

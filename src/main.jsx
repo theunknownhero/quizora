@@ -6,10 +6,12 @@ import { AppProvider } from './state/AppState.jsx'
 import { SocialProvider } from './state/SocialState.jsx'
 import './index.css'
 import { loadConfig } from './lib/siteConfig.js'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 loadConfig().finally(() =>
   ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <ErrorBoundary label="Quizora">
     <BrowserRouter>
       <AppProvider>
         <SocialProvider>
@@ -17,6 +19,7 @@ loadConfig().finally(() =>
         </SocialProvider>
       </AppProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   </React.StrictMode>
 )
 )
