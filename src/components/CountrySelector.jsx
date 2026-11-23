@@ -3,10 +3,13 @@ import { AnimatePresence, motion } from 'motion/react'
 import Flag from './Flag.jsx'
 import { ALL, countries, countryByCode } from '../data/countries.js'
 import { useApp } from '../state/AppState.jsx'
+import { useT } from '../i18n/useT.js'
+import { languages } from '../data/regional.js'
 
 // Rounded glass dropdown for picking the site country (used in the navbar).
 export default function CountrySelector({ compact = false }) {
-  const { country, setCountry } = useApp()
+  const { country, setCountry, lang, langIsAuto, setLang } = useApp()
+  const t = useT()
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   const current = countryByCode(country)
@@ -27,7 +30,7 @@ export default function CountrySelector({ compact = false }) {
     setCountry(code)
     setOpen(false)
   }
-  const options = [{ code: ALL, name: 'All countries', native: 'Global' }, ...countries]
+  const options = [{ code: ALL, name: t('country.all'), native: 'Global' }, ...countries]
 
   return (
     <div className="csel" ref={ref}>
@@ -36,7 +39,7 @@ export default function CountrySelector({ compact = false }) {
         className={`csel-btn ${compact ? 'is-compact' : ''}`}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Country: ${current?.name || 'All countries'}. Change country`}
+        aria-label={`${current?.name || t('country.all')} · ${t('country.pick')}`}
         onClick={() => setOpen((o) => !o)}
       >
         <Flag code={country} size={20} />
@@ -50,13 +53,13 @@ export default function CountrySelector({ compact = false }) {
           <motion.ul
             className="csel-menu"
             role="listbox"
-            aria-label="Choose your country"
+            aria-label={t('country.pick')}
             initial={{ opacity: 0, y: -8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.18 }}
           >
-            <li className="csel-head">Where are you playing from?</li>
+            <li className="csel-head">{t('country.pick')}</li>
             {options.map((c) => (
               <li key={c.code}>
                 <button type="button" role="option" aria-selected={country === c.code} className={`csel-opt ${country === c.code ? 'is-on' : ''}`} onClick={() => pick(c.code)}>
@@ -73,7 +76,18 @@ export default function CountrySelector({ compact = false }) {
                 </button>
               </li>
             ))}
-            <li className="csel-foot">More countries coming soon</li>
+            <li className="csel-lang">
+              <label htmlFor="csel-lang">{t('lang.label')}</label>
+              <select id="csel-lang" value={langIsAuto ? 'auto' : lang} onChange={(e) => setLang(e.target.value === 'auto' ? null : e.target.value)}>
+                <option value="auto">Auto ({languages.find((l) => l.code === lang)?.name})</option>
+                {languages.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.name}
+                  </option>
+                ))}
+              </select>
+            </li>
+            <li className="csel-foot">{t('country.more')}</li>
           </motion.ul>
         )}
       </AnimatePresence>

@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useApp } from '../state/AppState.jsx'
 import { resendVerification } from '../state/authStore.js'
+import { useT } from '../i18n/useT.js'
 
 // Navbar account area: "Log in" when signed out, avatar + dropdown when signed in.
 export default function AccountMenu() {
   const { user, openAuth, openOnboarding, logout } = useApp()
   const [open, setOpen] = useState(false)
+  const t = useT()
   const [resend, setResend] = useState('') // '' | 'sending' | 'sent' | error text
   const ref = useRef(null)
 
@@ -25,7 +27,7 @@ export default function AccountMenu() {
   if (!user) {
     return (
       <button type="button" className="acct-login" onClick={() => openAuth('login')}>
-        Log in
+        {t('nav.login')}
       </button>
     )
   }
@@ -77,10 +79,10 @@ export default function AccountMenu() {
               </div>
             )}
             <button type="button" role="menuitem" onClick={() => (setOpen(false), openOnboarding())}>
-              ✨ Edit interests & countries
+              ✨ {t('nav.editInterests')}
             </button>
             <button type="button" role="menuitem" className="danger" onClick={() => (setOpen(false), logout())}>
-              ↩ Log out
+              ↩ {t('nav.logout')}
             </button>
           </motion.div>
         )}

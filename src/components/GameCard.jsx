@@ -6,9 +6,11 @@ import TiltCard from './TiltCard.jsx'
 import { categories, isForCountry } from '../data/games.js'
 import CountryBadge from './CountryBadge.jsx'
 import { useApp } from '../state/AppState.jsx'
+import { useT } from '../i18n/useT.js'
 
 const GameCard = forwardRef(function GameCard({ game }, ref) {
   const { country } = useApp()
+  const t = useT()
   const live = game.status === 'live'
   const [a, b] = game.gradient
   const cats = game.categories.map((id) => categories.find((c) => c.id === id)).filter(Boolean)
@@ -21,10 +23,10 @@ const GameCard = forwardRef(function GameCard({ game }, ref) {
         <span className={`game-status ${live ? 'is-live' : ''}`}>
           {live ? (
             <>
-              <i className="pulse-dot" /> Live
+              <i className="pulse-dot" /> {t('card.live')}
             </>
           ) : (
-            'Coming soon'
+            t('card.soon')
           )}
         </span>
       </div>
@@ -34,14 +36,14 @@ const GameCard = forwardRef(function GameCard({ game }, ref) {
         <div className="game-tags">
           {cats.slice(0, 2).map((c) => (
             <span key={c.id} className="tag">
-              {c.emoji} {c.label}
+              {c.emoji} {t(`cat.${c.id}`)}
             </span>
           ))}
         </div>
         <div className="game-meta">
-          <span>{game.questions} Qs</span>
-          <span>~{game.minutes} min</span>
-          <span>{game.difficulty}</span>
+          <span>{t('card.qs', { n: game.questions })}</span>
+          <span>{t('card.min', { n: game.minutes })}</span>
+          <span>{t(`diff.${game.difficulty}`)}</span>
           <span className="game-arrow" aria-hidden="true">
             →
           </span>

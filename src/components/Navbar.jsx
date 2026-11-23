@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import GooeyNav from './rb/GooeyNav.jsx'
 import StarBorder from './rb/StarBorder.jsx'
 import CountrySelector from './CountrySelector.jsx'
 import AccountMenu from './AccountMenu.jsx'
 import { useApp } from '../state/AppState.jsx'
+import { useT } from '../i18n/useT.js'
 import './Navbar.css'
 
 // Home page sections, in the order they appear on the page.
 const SECTIONS = [
-  { label: 'Home', id: 'top' },
-  { label: 'Featured', id: 'featured' },
-  { label: 'Categories', id: 'categories' },
-  { label: 'Games', id: 'games' },
-  { label: 'How it works', id: 'how' },
+  { key: 'nav.home', id: 'top' },
+  { key: 'nav.featured', id: 'featured' },
+  { key: 'nav.categories', id: 'categories' },
+  { key: 'nav.games', id: 'games' },
+  { key: 'nav.how', id: 'how' },
 ]
-const ITEMS = SECTIONS.map(({ label }) => ({ label }))
 const PARTICLES = ['#7c5cff', '#ff5fa2', '#2ec4b6', '#ffd166']
-const CTA = { to: '/play/hungary-or-not', label: 'Play now' }
+const CTA_TO = '/play/hungary-or-not'
 
 const scrollToId = (id) => {
   if (id === 'top') {
@@ -31,6 +31,8 @@ export default function Navbar() {
   const { pathname, hash } = useLocation()
   const navigate = useNavigate()
   const { user, openAuth, openOnboarding, logout } = useApp()
+  const t = useT()
+  const items = useMemo(() => SECTIONS.map((s) => ({ label: t(s.key) })), [t])
   const isHome = pathname === '/'
   const [active, setActive] = useState(0)
   const [scrolled, setScrolled] = useState(false)
@@ -126,7 +128,7 @@ export default function Navbar() {
 
         <div className={`nav-center ${isHome ? '' : 'is-off'}`}>
           <GooeyNav
-            items={ITEMS}
+            items={items}
             activeIndex={isHome ? active : -1}
             onChange={go}
             frame={false}
@@ -141,8 +143,8 @@ export default function Navbar() {
           <span className="nav-acct-desktop">
             <AccountMenu />
           </span>
-          <StarBorder as={Link} to={CTA.to} radius={999} className="nav-cta" color="#c4b5fd" backgroundColor="rgba(255,255,255,0.06)">
-            {CTA.label} <span aria-hidden="true">→</span>
+          <StarBorder as={Link} to={CTA_TO} radius={999} className="nav-cta" color="#c4b5fd" backgroundColor="rgba(255,255,255,0.06)">
+            {t('nav.play')} <span aria-hidden="true">→</span>
           </StarBorder>
           <button
             type="button"
@@ -166,7 +168,7 @@ export default function Navbar() {
             className={`nav-sheet-item ${isHome && i === active ? 'is-active' : ''}`}
             onClick={() => go(i)}
           >
-            {s.label}
+            {t(s.key)}
           </button>
         ))}
         <div className="nav-sheet-acct">
@@ -177,25 +179,25 @@ export default function Navbar() {
                 {user.username}
               </span>
               <button type="button" onClick={() => (setOpen(false), openOnboarding())}>
-                Edit interests
+                {t('nav.editInterests')}
               </button>
               <button type="button" onClick={() => (setOpen(false), logout())}>
-                Log out
+                {t('nav.logout')}
               </button>
             </>
           ) : (
             <>
               <button type="button" onClick={() => (setOpen(false), openAuth('login'))}>
-                Log in
+                {t('nav.login')}
               </button>
               <button type="button" className="is-primary" onClick={() => (setOpen(false), openAuth('register'))}>
-                Sign up
+                {t('nav.signup')}
               </button>
             </>
           )}
         </div>
-        <Link to={CTA.to} className="nav-sheet-cta" onClick={() => setOpen(false)}>
-          {CTA.label} →
+        <Link to={CTA_TO} className="nav-sheet-cta" onClick={() => setOpen(false)}>
+          {t('nav.play')} →
         </Link>
       </nav>
     </header>

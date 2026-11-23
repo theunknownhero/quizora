@@ -2,9 +2,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ALL, countryByCode, guessCountry } from '../data/countries.js'
 import { supabase, supabaseConfigured } from '../lib/supabase.js'
+import { countryLang } from '../data/regional.js'
 import * as auth from './authStore.js'
 
 const COUNTRY_KEY = 'qz.country'
+const LANG_KEY = 'qz.lang' // only set when the player picks a language by hand
 const Ctx = createContext(null)
 
 const readCountry = () => {
@@ -19,6 +21,14 @@ const readCountry = () => {
 
 export function AppProvider({ children }) {
   const [country, setCountryState] = useState(readCountry)
+  const [langOverride, setLangOverride] = useState(() => {
+    try {
+      return localStorage.getItem(LANG_KEY) || null
+    } catch {
+      return null
+    }
+  })
+  const lang = langOverride || countryLang[country] || 'en'
   const [user, setUser] = useState(null)
   const [authReady, setAuthReady] = useState(false) // false until we know if someone is logged in
   const [recovery, setRecovery] = useState(false) // true after opening a password-reset link
@@ -58,9 +68,26 @@ export function AppProvider({ children }) {
     }
   }, [])
 
+  const setLang = useCallback((code) => {
+    setLangOverride(code)
+    try {
+      if (code) localStorage.setItem(LANG_KEY, code)
+      else localStorage.removeItem(LANG_KEY)
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   const value = useMemo(
     () => ({
       accountsEnabled: supabaseConfigured,
+      lang,
+      langIsAuto: !langOverride,
+      setLang,
       country,
       setCountry,
       user,
@@ -107,7 +134,7 @@ export function AppProvider({ children }) {
         }
       },
     }),
-    [country, setCountry, user, authReady, recovery, authView, pendingEmail, onboarding]
+    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding]
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

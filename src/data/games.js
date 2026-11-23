@@ -5,22 +5,14 @@
 
 import { ALL } from './countries.js'
 
-export const categories = [
-  { id: 'all', label: 'All games', emoji: '✨' },
-  { id: 'culture', label: 'Culture & Origins', emoji: '🌍', color: '#a78bfa', blurb: 'Where did it really come from?' },
-  { id: 'food', label: 'Food & Drink', emoji: '🍲', color: '#fb923c', blurb: 'Dishes, drinks and delicious myths.' },
-  { id: 'science', label: 'Inventions & Science', emoji: '💡', color: '#22d3ee', blurb: 'Breakthroughs and the minds behind them.' },
-  { id: 'celebs', label: 'Celebrities', emoji: '⭐', color: '#f472b6', blurb: 'Famous faces, surprising roots.' },
-  { id: 'geo', label: 'Geography', emoji: '🗺️', color: '#4ade80', blurb: 'Maps, flags, capitals and borders.' },
-  { id: 'history', label: 'History', emoji: '🏛️', color: '#facc15', blurb: 'Dates, empires and turning points.' },
-]
+export { categories, categoryById, groups } from './categories.js'
 
 export const games = [
   {
     slug: 'hungary-or-not',
     title: 'Hungary or Not?',
     tagline: 'Guess whether a food, invention, celebrity or tradition has Hungarian origins.',
-    categories: ['culture', 'food', 'science', 'celebs'],
+    categories: ['culture', 'food', 'tech', 'celebs', 'general'],
     countries: ['HU'],
     status: 'live',
     featured: true,
@@ -34,7 +26,7 @@ export const games = [
     slug: 'capital-clash',
     title: 'Capital Clash',
     tagline: 'Two cities, one capital. Pick fast before the timer runs out.',
-    categories: ['geo'],
+    categories: ['capitals', 'geo', 'travel'],
     status: 'soon',
     questions: 25,
     minutes: 3,
@@ -46,7 +38,7 @@ export const games = [
     slug: 'german-engineering',
     title: 'Made in Germany?',
     tagline: 'Cars, gadgets and everyday things: which ones were really invented in Germany?',
-    categories: ['science', 'history'],
+    categories: ['tech', 'cars', 'history'],
     countries: ['DE'],
     status: 'soon',
     questions: 20,
@@ -85,7 +77,7 @@ export const games = [
     slug: 'czech-it-out',
     title: 'Czech It Out',
     tagline: 'Sugar cubes, contact lenses and Pilsner: how much do you know about Czech inventions?',
-    categories: ['science', 'food'],
+    categories: ['tech', 'food', 'culture'],
     countries: ['CZ'],
     status: 'soon',
     questions: 15,
@@ -98,7 +90,7 @@ export const games = [
     slug: 'serbian-stories',
     title: 'Serbian Legends',
     tagline: 'From Tesla to Novak: famous Serbs, dishes and traditions.',
-    categories: ['celebs', 'culture', 'history'],
+    categories: ['celebs', 'culture', 'history', 'sports'],
     countries: ['RS'],
     status: 'soon',
     questions: 15,
@@ -111,7 +103,7 @@ export const games = [
     slug: 'flag-frenzy',
     title: 'Flag Frenzy',
     tagline: 'Spot the right flag among near-identical lookalikes.',
-    categories: ['geo'],
+    categories: ['flags', 'geo'],
     status: 'soon',
     questions: 30,
     minutes: 5,
@@ -123,7 +115,7 @@ export const games = [
     slug: 'dish-detective',
     title: 'Dish Detective',
     tagline: 'One photo, four countries. Where is this dish from?',
-    categories: ['food', 'culture'],
+    categories: ['food', 'culture', 'travel'],
     status: 'soon',
     questions: 20,
     minutes: 4,
@@ -135,7 +127,7 @@ export const games = [
     slug: 'year-it-happened',
     title: 'The Year It Happened',
     tagline: 'Drag the slider to the year a historic moment took place.',
-    categories: ['history'],
+    categories: ['history', 'general'],
     status: 'soon',
     questions: 12,
     minutes: 5,
@@ -146,6 +138,7 @@ export const games = [
 ]
 
 export const countByCategory = (id, list = games) => (id === 'all' ? list.length : list.filter((g) => g.categories.includes(id)).length)
+export const gamesInCategory = (id) => games.filter((g) => g.categories.includes(id))
 
 export const isForCountry = (g, code) => code !== ALL && (g.countries || []).includes(code)
 
