@@ -7,6 +7,11 @@ import { spriteSizes } from './spriteSizes.js'
 import { WORLD_W, WORLD_H, islands, nodes as islandNodes, sky } from './layout.js'
 import { MAP_IMAGE, imageNodes } from './imageMap.js'
 import { pickRound, regions, ranks, ROUND_SIZE, WIN_SCORE, PRIZE_URL } from './questions.js'
+import { startRound, submitAnswer, finishRound } from '../../state/playService.js'
+import { useApp } from '../../state/AppState.jsx'
+import { useAnnounce } from '../../components/Toaster.jsx'
+import { achievementById, tiersStyle } from '../../data/achievements.js'
+import { levelProgress, tierFor } from '../../lib/levels.js'
 import GradientText from '../../components/GradientText.jsx'
 import ShinyText from '../../components/ShinyText.jsx'
 import Aurora from '../../components/Aurora.jsx'
@@ -99,13 +104,15 @@ function ItemArt({ q }) {
   return <span className="item-emoji">{q.emoji}</span>
 }
 
-function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
-  const answered = picked !== null
-  const correct = answered && picked === q.answer
+function QuestionCard({ q, index, picked, result, error, onPick, onNext, onClose, onRetry }) {
+  const answered = !!result
+  const pending = picked !== null && !result && !error
+  const correct = answered && result.correct
   const region = regions[nodes[index].region]
 
   useEffect(() => {
     const key = (e) => {
+      if (pending) return
       if (!answered) {
         if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'h') onPick(true)
         if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'n') onPick(false)
@@ -117,7 +124,7 @@ function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
-  }, [answered, onPick, onNext, onClose])
+  }, [answered, pending, onPick, onNext, onClose])
 
   return (
     <motion.div
@@ -125,7 +132,7 @@ function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onClick={(e) => e.target === e.currentTarget && !answered && onClose()}
+      onClick={(e) => e.target === e.currentTarget && !answered && !pending && onClose()}
     >
       <motion.div
         className={`g-card q-card ${answered ? (correct ? 'is-correct' : 'is-wrong') : ''}`}
@@ -146,7 +153,7 @@ function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
           <span className="q-region">
             {region.emoji} {region.name}
           </span>
-          {!answered && (
+          {!answered && !pending && (
             <button className="g-icon-btn" onClick={onClose} aria-label="Close question">
               ✕
             </button>
@@ -175,13 +182,21 @@ function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
             <motion.div key="ask" exit={{ opacity: 0, y: -8 }}>
               <p className="q-question">Does it have Hungarian origins?</p>
               <div className="q-btns">
-                <button className="btn btn-lg btn-hu" onClick={() => onPick(true)}>
-                  <span className="flag-chip" aria-hidden="true" /> Hungary
+                <button className={`btn btn-lg btn-hu ${pending && picked === true ? 'is-picked' : ''}`} disabled={pending} onClick={() => onPick(true)}>
+                  {pending && picked === true ? <span className="auth-spinner" aria-label="Checking" /> : <span className="flag-chip" aria-hidden="true" />} Hungary
                 </button>
-                <button className="btn btn-lg btn-not" onClick={() => onPick(false)}>
-                  <span aria-hidden="true">✕</span> Not
+                <button className={`btn btn-lg btn-not ${pending && picked === false ? 'is-picked' : ''}`} disabled={pending} onClick={() => onPick(false)}>
+                  {pending && picked === false ? <span className="auth-spinner" aria-label="Checking" /> : <span aria-hidden="true">✕</span>} Not
                 </button>
               </div>
+              {error && (
+                <div className="q-error" role="alert">
+                  {error}
+                  <button type="button" onClick={onRetry}>
+                    Try again
+                  </button>
+                </div>
+              )}
               <p className="q-hint">
                 <kbd>←</kbd> Hungary · <kbd>→</kbd> Not
               </p>
@@ -192,12 +207,13 @@ function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
                 <span className="q-verdict-icon">{correct ? '★' : '✕'}</span>
                 <div>
                   <strong>{correct ? 'Correct!' : 'Not quite!'}</strong>
-                  <span>{q.answer ? 'It’s Hungarian 🇭🇺' : 'Not Hungarian'}</span>
+                  <span>{result.answer ? 'It’s Hungarian 🇭🇺' : 'Not Hungarian'}</span>
                 </div>
               </div>
-              <p className="q-fact">{q.fact}</p>
-              <button className="btn btn-primary btn-lg g-full" onClick={onNext} autoFocus>
-                {index + 1 < TOTAL ? 'Fly to the next stop' : 'See results'} <span className="btn-icon">→</span>
+              <p className="q-fact">{result.fact}</p>
+              <button className="btn btn-primary btn-lg g-full" onClick={onNext} autoFocus disabled={error === 'finishing'}>
+                {error === 'finishing' ? <span className="auth-spinner" aria-label="Saving" /> : index + 1 < TOTAL ? 'Fly to the next stop' : 'See results'}{' '}
+                {error !== 'finishing' && <span className="btn-icon">→</span>}
               </button>
             </motion.div>
           )}
@@ -207,7 +223,7 @@ function QuestionCard({ q, index, picked, onPick, onNext, onClose }) {
   )
 }
 
-function Intro({ onStart, best }) {
+function Intro({ onStart, best, loading, error }) {
   return (
     <motion.div className="g-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <motion.div
@@ -243,8 +259,13 @@ function Intro({ onStart, best }) {
             </span>
           ))}
         </div>
-        <button className="btn btn-primary btn-lg g-full" onClick={onStart} autoFocus>
-          Start the journey <span className="btn-icon">▶</span>
+        {error && (
+          <p className="q-error" role="alert">
+            {error}
+          </p>
+        )}
+        <button className="btn btn-primary btn-lg g-full" onClick={onStart} autoFocus disabled={loading}>
+          {loading ? <span className="auth-spinner" aria-label="Loading" /> : 'Start the journey'} {!loading && <span className="btn-icon">▶</span>}
         </button>
         {best > 0 && (
           <span className="intro-best">
@@ -256,9 +277,64 @@ function Intro({ onStart, best }) {
   )
 }
 
-function Results({ round, answers, prevBest, onReplay }) {
-  const score = answers.filter((a, i) => a === round[i].answer).length
-  const won = score >= WIN_SCORE
+function XpPanel({ outcome }) {
+  const { user, openAuth } = useApp()
+  if (!outcome.saved) {
+    return (
+      <div className="xp-panel xp-guest">
+        <span>⭐</span>
+        <div>
+          <b>Save your progress</b>
+          <small>Log in to earn XP, level up and unlock achievements.</small>
+        </div>
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => openAuth(user ? 'login' : 'register')}>
+          Sign up
+        </button>
+      </div>
+    )
+  }
+  const p = levelProgress(outcome.xp_total || 0)
+  const before = levelProgress((outcome.xp_total || 0) - (outcome.xp_earned || 0))
+  const leveled = outcome.level_after > outcome.level_before
+  const tier = tierFor(p.level)
+  return (
+    <div className={`xp-panel ${leveled ? 'is-levelup' : ''}`}>
+      <div className="xp-top">
+        <motion.span className="xp-gain" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.5, type: 'spring', stiffness: 300, damping: 14 }}>
+          +{outcome.xp_earned} XP
+        </motion.span>
+        <span className="xp-level" style={{ '--tier': tier.color }}>
+          {tier.emoji} Lv {p.level} · {tier.title}
+        </span>
+      </div>
+      <div className="xp-bar" aria-label={`${p.into} of ${p.need} XP to level ${p.level + 1}`}>
+        <motion.span initial={{ width: `${leveled ? 0 : before.pct}%` }} animate={{ width: `${p.pct}%` }} transition={{ delay: 0.7, duration: 1.1, ease: 'easeOut' }} />
+      </div>
+      <small className="xp-next">{p.toNext} XP to level {p.level + 1}</small>
+      {leveled && (
+        <motion.div className="xp-levelup" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.2 }}>
+          🎉 Level up! You reached level {outcome.level_after}
+        </motion.div>
+      )}
+      {outcome.new_achievements?.length > 0 && (
+        <div className="xp-ach">
+          {outcome.new_achievements.map((id) => {
+            const a = achievementById(id)
+            return a ? (
+              <span key={id} className="xp-ach-chip" style={{ '--tier': tiersStyle[a.tier].color }} title={a.desc}>
+                {a.emoji} {a.name}
+              </span>
+            ) : null
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Results({ round, results, outcome, prevBest, onReplay }) {
+  const score = outcome.correct
+  const won = outcome.won
   const rank = [...ranks].reverse().find((r) => score >= r.min)
   const stars = score >= 19 ? 3 : score >= 16 ? 2 : won ? 1 : 0
   const [copied, setCopied] = useState(false)
@@ -334,6 +410,8 @@ function Results({ round, answers, prevBest, onReplay }) {
           {score > prevBest && <span className="results-new">New best!</span>}
         </div>
 
+        <XpPanel outcome={outcome} />
+
         <div className="results-actions">
           {won && (
             <a className="btn btn-lg btn-prize g-full" href={PRIZE_URL} target="_blank" rel="noopener noreferrer">
@@ -358,12 +436,13 @@ function Results({ round, answers, prevBest, onReplay }) {
           {showList && (
             <motion.ul className="results-list" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
               {round.map((q, i) => {
-                const ok = answers[i] === q.answer
+                const r = results[i]
+                const ok = !!r?.correct
                 return (
                   <li key={q.item} className={ok ? 'ok' : 'bad'}>
                     <span className="rl-icon">{ok ? '✓' : '✕'}</span>
                     <span className="rl-item">{q.item}</span>
-                    <span className="rl-ans">{q.answer ? '🇭🇺 Hungarian' : 'Not Hungarian'}</span>
+                    <span className="rl-ans">{r?.answer ? '🇭🇺 Hungarian' : 'Not Hungarian'}</span>
                   </li>
                 )
               })}
@@ -386,10 +465,18 @@ function Results({ round, answers, prevBest, onReplay }) {
 export default function HungaryOrNot() {
   const s = useWorldScale()
   const scroller = useRef(null)
-  const [round, setRound] = useState(() => pickRound())
+  const { reloadUser } = useApp()
+  const announce = useAnnounce()
+  const [game, setGame] = useState(null) // server/local round from playService
+  const round = game?.questions || []
   const [phase, setPhase] = useState('intro') // intro | map | question | done
   const [current, setCurrent] = useState(0)
-  const [answers, setAnswers] = useState(() => Array(TOTAL).fill(null))
+  const [answers, setAnswers] = useState(() => Array(TOTAL).fill(null)) // player's choices
+  const [results, setResults] = useState(() => Array(TOTAL).fill(null)) // server verdicts
+  const [qError, setQError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [startError, setStartError] = useState('')
+  const [outcome, setOutcome] = useState(null)
   const [flying, setFlying] = useState(false)
   const [banner, setBanner] = useState(null)
   const [best, setBest] = useState(readBest)
@@ -399,16 +486,16 @@ export default function HungaryOrNot() {
   const later = (fn, ms) => timers.current.push(setTimeout(fn, ms))
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
-  const score = answers.filter((a, i) => a !== null && a === round[i].answer).length
-  const answeredCount = answers.filter((a) => a !== null).length
+  const score = results.filter((r) => r?.correct).length
+  const answeredCount = results.filter(Boolean).length
   const streak = useMemo(() => {
     let n = 0
-    for (let i = current - (answers[current] !== null ? 0 : 1); i >= 0; i--) {
-      if (answers[i] !== null && answers[i] === round[i].answer) n++
+    for (let i = current - (results[current] ? 0 : 1); i >= 0; i--) {
+      if (results[i]?.correct) n++
       else break
     }
     return n
-  }, [answers, current, round])
+  }, [results, current])
 
   const focusNode = useCallback(
     (i, smooth = true) => {
@@ -436,33 +523,82 @@ export default function HungaryOrNot() {
     later(() => setBanner(null), 2400)
   }
 
-  const begin = () => {
+  const newRound = async () => {
+    setLoading(true)
+    setStartError('')
+    try {
+      const g = await startRound('hungary-or-not', { count: TOTAL, localPick: pickRound })
+      setGame(g)
+      setAnswers(Array(TOTAL).fill(null))
+      setResults(Array(TOTAL).fill(null))
+      setOutcome(null)
+      setQError('')
+      return true
+    } catch (e) {
+      setStartError(e.message)
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const begin = async () => {
+    if (!(await newRound())) return
     setPhase('map')
     showBanner(0)
     focusNode(0)
     later(() => setPhase('question'), 900)
   }
 
+  const send = useCallback(
+    async (val) => {
+      setQError('')
+      try {
+        const r = await submitAnswer(game, current, val)
+        setResults((rs) => {
+          const next = [...rs]
+          next[current] = r
+          return next
+        })
+      } catch (e) {
+        setQError(e.message)
+      }
+    },
+    [game, current]
+  )
+
   const pick = useCallback(
-    (val) =>
+    (val) => {
+      if (answers[current] !== null) return
       setAnswers((a) => {
-        if (a[current] !== null) return a
         const next = [...a]
         next[current] = val
         return next
-      }),
-    [current]
+      })
+      send(val)
+    },
+    [answers, current, send]
   )
 
   const next = useCallback(() => {
     if (current + 1 >= TOTAL) {
-      const final = answers.filter((a, i) => a === round[i].answer).length
-      setPrevBest(best)
-      if (final > best) {
-        saveBest(final)
-        setBest(final)
-      }
-      setPhase('done')
+      setQError('finishing')
+      finishRound(game)
+        .then((out) => {
+          setQError('')
+          setOutcome(out)
+          setPrevBest(best)
+          if (out.correct > best) {
+            saveBest(out.correct)
+            setBest(out.correct)
+          }
+          setPhase('done')
+          if (out.saved) {
+            reloadUser()
+            announce(out.new_achievements || [])
+          }
+        })
+        .catch((e) => setQError(e.message))
       return
     }
     const to = current + 1
@@ -476,12 +612,14 @@ export default function HungaryOrNot() {
       setPhase('question')
     }, FLIGHT_MS + 250)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, answers, best, round, focusNode])
+  }, [current, best, game, focusNode])
 
-  const replay = () => {
+  const replay = async () => {
     timers.current.forEach(clearTimeout)
-    setRound(pickRound())
-    setAnswers(Array(TOTAL).fill(null))
+    if (!(await newRound())) {
+      setPhase('intro')
+      return
+    }
     setCurrent(0)
     setFlying(false)
     setPhase('map')
@@ -491,7 +629,7 @@ export default function HungaryOrNot() {
   }
 
   const nodeState = (i) => {
-    if (answers[i] !== null) return answers[i] === round[i].answer ? 'ok' : 'bad'
+    if (results[i]) return results[i].correct ? 'ok' : 'bad'
     if (i === current) return 'current'
     return 'locked'
   }
@@ -629,20 +767,23 @@ export default function HungaryOrNot() {
       )}
 
       <AnimatePresence>
-        {phase === 'intro' && <Intro key="intro" onStart={begin} best={best} />}
-        {phase === 'question' && (
+        {phase === 'intro' && <Intro key="intro" onStart={begin} best={best} loading={loading} error={startError} />}
+        {phase === 'question' && round[current] && (
           <QuestionCard
             key={`q${current}`}
             q={round[current]}
             index={current}
             picked={answers[current]}
+            result={results[current]}
+            error={qError}
             onPick={pick}
             onNext={next}
+            onRetry={() => (qError === 'finishing' || results[current] ? next() : send(answers[current]))}
             onClose={() => setPhase('map')}
           />
         )}
       </AnimatePresence>
-      {phase === 'done' && <Results round={round} answers={answers} prevBest={prevBest} onReplay={replay} />}
+      {phase === 'done' && outcome && <Results round={round} results={results} outcome={outcome} prevBest={prevBest} onReplay={replay} />}
     </div>
   )
 }

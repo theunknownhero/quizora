@@ -5,6 +5,7 @@ import SpotlightCard from './SpotlightCard.jsx'
 import TiltCard from './TiltCard.jsx'
 import { categories, isForCountry } from '../data/games.js'
 import CountryBadge from './CountryBadge.jsx'
+import GameActions from './GameActions.jsx'
 import { useApp } from '../state/AppState.jsx'
 import { useT } from '../i18n/useT.js'
 
@@ -40,6 +41,7 @@ const GameCard = forwardRef(function GameCard({ game }, ref) {
             </span>
           ))}
         </div>
+        <GameActions slug={game.slug} compact />
         <div className="game-meta">
           <span>{t('card.qs', { n: game.questions })}</span>
           <span>{t('card.min', { n: game.minutes })}</span>

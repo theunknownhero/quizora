@@ -178,6 +178,9 @@ export default function Navbar() {
                 <span className="acct-avatar">{user.username[0].toUpperCase()}</span>
                 {user.username}
               </span>
+              <Link to="/profile" className="nav-sheet-link" onClick={() => setOpen(false)}>
+                👤 My profile
+              </Link>
               <button type="button" onClick={() => (setOpen(false), openOnboarding())}>
                 {t('nav.editInterests')}
               </button>

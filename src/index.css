@@ -390,3 +390,33 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* Hero "today's pick" line */
 .hero-today { display: block; margin-top: 12px; font-size: 0.92em; color: var(--muted); }
 @media (max-width: 900px) and (min-width: 521px) { .bento-7 { grid-column: span 2; } }
+
+/* ---------- Toasts ---------- */
+.toaster { position: fixed; right: 16px; bottom: 16px; z-index: 300; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: none; }
+.toast { pointer-events: auto; display: flex; align-items: center; gap: 12px; min-width: 240px; max-width: 340px; padding: 12px 16px 12px 12px; border-radius: 18px; text-align: left; color: var(--text); background: rgba(16, 14, 28, 0.92); border: 1px solid var(--border-2); box-shadow: 0 20px 50px -14px rgba(0, 0, 0, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.toast-achievement { border-color: color-mix(in srgb, var(--tier, #a78bfa) 60%, transparent); box-shadow: 0 20px 50px -14px rgba(0, 0, 0, 0.75), 0 0 30px -10px var(--tier, #a78bfa); }
+.toast-emoji { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; font-size: 24px; flex: none; background: color-mix(in srgb, var(--tier, #a78bfa) 22%, transparent); border: 1px solid color-mix(in srgb, var(--tier, #a78bfa) 45%, transparent); }
+.toast-body small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+.toast-body b { display: block; font-family: var(--font-display); font-size: 16px; }
+@media (max-width: 520px) { .toaster { left: 16px; align-items: stretch; } .toast { max-width: none; } }
+
+/* ---------- Game actions (like / favorite / save / playlist) ---------- */
+.gact { position: relative; display: flex; gap: 6px; align-items: center; }
+.gact-btn { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; font-size: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+.gact-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-2); transform: translateY(-1px); }
+.gact-btn.is-on { background: rgba(167, 139, 250, 0.16); border-color: rgba(167, 139, 250, 0.45); }
+.gact.is-compact .gact-btn { width: 30px; height: 30px; font-size: 13px; border-radius: 10px; }
+.gact-pl { position: relative; }
+.pl-menu { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 40; width: 250px; padding: 10px; border-radius: 18px; text-align: left; cursor: default; background: rgba(14, 12, 24, 0.96); border: 1px solid var(--border-2); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.85); backdrop-filter: blur(18px); }
+.pl-menu-title { display: block; padding: 2px 6px 8px; font-family: var(--font-display); font-size: 14px; }
+.pl-menu-empty { display: block; padding: 4px 6px 8px; font-size: 13px; color: var(--muted); }
+.pl-menu ul { list-style: none; max-height: 180px; overflow-y: auto; margin-bottom: 8px; }
+.pl-menu li button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px; border-radius: 10px; font-size: 13.5px; color: #d6d2e6; text-align: left; }
+.pl-menu li button:hover { background: rgba(255, 255, 255, 0.07); }
+.pl-menu li button.is-on { color: #fff; background: rgba(139, 92, 246, 0.18); }
+.pl-menu li button i { margin-left: auto; font-style: normal; color: #c4b5fd; }
+.pl-menu-new { display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border); }
+.pl-menu-new input { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 10px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-2); color: var(--text); font: inherit; font-size: 13px; outline: none; }
+.pl-menu-new input:focus { border-color: rgba(139, 92, 246, 0.7); }
+.pl-menu-new button { padding: 8px 12px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #22d3ee); color: #fff; font-weight: 600; font-size: 13px; }
+.pl-menu-new button:disabled { opacity: 0.5; }

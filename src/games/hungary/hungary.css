@@ -219,3 +219,25 @@
 @media (prefers-reduced-motion: reduce) {
   .disc-current .disc-face, .btn-prize, .btn-prize-shine { animation: none !important; }
 }
+
+/* ---------- Server round states + XP panel ---------- */
+.q-btns .btn:disabled { opacity: 0.65; cursor: wait; }
+.q-btns .btn.is-picked { opacity: 1; outline: 2px solid rgba(255, 255, 255, 0.7); outline-offset: 2px; }
+.q-error { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); color: #fecaca; font-size: 13.5px; text-align: left; }
+.q-error button { flex: none; padding: 6px 12px; border-radius: 999px; background: #fecaca; color: #450a0a; font-weight: 600; font-size: 12.5px; }
+.xp-panel { margin-top: 18px; padding: 14px 16px; border-radius: 18px; text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-2); }
+.xp-panel.is-levelup { border-color: rgba(250, 204, 21, 0.5); box-shadow: 0 0 40px -16px rgba(250, 204, 21, 0.7); }
+.xp-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.xp-gain { font-family: var(--font-display); font-size: 22px; font-weight: 700; background: linear-gradient(90deg, #a78bfa, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.xp-level { font-size: 13px; font-weight: 600; color: var(--tier); padding: 4px 10px; border-radius: 999px; background: color-mix(in srgb, var(--tier) 14%, transparent); border: 1px solid color-mix(in srgb, var(--tier) 35%, transparent); white-space: nowrap; }
+.xp-bar { height: 10px; margin-top: 10px; border-radius: 999px; overflow: hidden; background: rgba(255, 255, 255, 0.08); }
+.xp-bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #8b5cf6, #22d3ee); box-shadow: 0 0 14px rgba(139, 92, 246, 0.8); }
+.xp-next { display: block; margin-top: 6px; font-size: 12px; color: var(--dim); }
+.xp-levelup { margin-top: 10px; padding: 8px 12px; border-radius: 12px; background: rgba(250, 204, 21, 0.12); color: #fde68a; font-weight: 600; font-size: 14px; }
+.xp-ach { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.xp-ach-chip { padding: 5px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #fff; background: color-mix(in srgb, var(--tier) 18%, transparent); border: 1px solid color-mix(in srgb, var(--tier) 50%, transparent); }
+.xp-guest { display: flex; align-items: center; gap: 12px; }
+.xp-guest > span { font-size: 26px; }
+.xp-guest div { flex: 1; }
+.xp-guest b { display: block; font-family: var(--font-display); }
+.xp-guest small { color: var(--muted); font-size: 12.5px; }

@@ -4,6 +4,7 @@ import { ALL, countryByCode, guessCountry } from '../data/countries.js'
 import { supabase, supabaseConfigured } from '../lib/supabase.js'
 import { countryLang } from '../data/regional.js'
 import * as auth from './authStore.js'
+import * as udata from './userData.js'
 
 const COUNTRY_KEY = 'qz.country'
 const LANG_KEY = 'qz.lang' // only set when the player picks a language by hand
@@ -35,6 +36,30 @@ export function AppProvider({ children }) {
   const [authView, setAuthView] = useState(null) // null | 'login' | 'register' | 'forgot' | 'check-email'
   const [pendingEmail, setPendingEmail] = useState('') // where we sent the confirmation link
   const [onboarding, setOnboarding] = useState(false)
+  const [flags, setFlags] = useState({ like: new Set(), favorite: new Set(), save: new Set() })
+  const [toasts, setToasts] = useState([])
+
+  const pushToast = useCallback((toast) => {
+    const id = Math.random().toString(36).slice(2)
+    setToasts((t) => [...t, { id, ...toast }])
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), toast.duration || 4500)
+  }, [])
+
+  // Load the player's likes / favorites / saves
+  useEffect(() => {
+    if (!user?.id) {
+      setFlags({ like: new Set(), favorite: new Set(), save: new Set() })
+      return
+    }
+    udata
+      .getFlags()
+      .then((rows) => {
+        const f = { like: new Set(), favorite: new Set(), save: new Set() }
+        rows.forEach((r) => f[r.kind]?.add(r.game_slug))
+        setFlags(f)
+      })
+      .catch(() => {})
+  }, [user?.id])
 
   useEffect(() => {
     if (!supabaseConfigured) {
@@ -120,6 +145,39 @@ export function AppProvider({ children }) {
         if (!u.profile?.onboarded) setOnboarding(true)
         return u
       },
+      flags,
+      toasts,
+      pushToast,
+      dismissToast: (id) => setToasts((t) => t.filter((x) => x.id !== id)),
+      async reloadUser() {
+        if (!supabaseConfigured) return null
+        const u = await auth.currentUser()
+        setUser(u)
+        return u
+      },
+      async toggleFlag(slug, kind) {
+        if (!user) {
+          setAuthView('login')
+          return
+        }
+        const on = !flags[kind].has(slug)
+        setFlags((f) => {
+          const next = { ...f, [kind]: new Set(f[kind]) }
+          on ? next[kind].add(slug) : next[kind].delete(slug)
+          return next
+        })
+        try {
+          const unlocked = await udata.setFlag(user.id, slug, kind, on)
+          return unlocked
+        } catch (e) {
+          setFlags((f) => {
+            const next = { ...f, [kind]: new Set(f[kind]) }
+            on ? next[kind].delete(slug) : next[kind].add(slug)
+            return next
+          })
+          throw e
+        }
+      },
       async logout() {
         setUser(null)
         await auth.logout().catch(() => {})
@@ -134,7 +192,7 @@ export function AppProvider({ children }) {
         }
       },
     }),
-    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding]
+    [country, setCountry, lang, langOverride, setLang, user, authReady, recovery, authView, pendingEmail, onboarding, flags, toasts, pushToast]
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

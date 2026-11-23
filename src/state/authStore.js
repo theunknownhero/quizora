@@ -32,13 +32,19 @@ export function passwordStrength(v = '') {
 // Combine the Supabase auth user with their profile row into the shape the app uses
 export async function loadUser(authUser) {
   if (!authUser) return null
-  const { data: p, error } = await supabase.from('profiles').select('username, interests, topics, countries, onboarded').eq('id', authUser.id).maybeSingle()
+  const { data: p, error } = await supabase.from('profiles').select('username, interests, topics, countries, onboarded, xp, day_streak, best_day_streak, last_played_on, showcase, created_at').eq('id', authUser.id).maybeSingle()
   if (error) console.error('[profiles]', error.message)
   return {
     id: authUser.id,
     email: authUser.email,
     emailVerified: !!authUser.email_confirmed_at,
     username: p?.username || authUser.user_metadata?.username || authUser.email?.split('@')[0] || 'player',
+    xp: p?.xp || 0,
+    dayStreak: p?.day_streak || 0,
+    bestDayStreak: p?.best_day_streak || 0,
+    lastPlayedOn: p?.last_played_on || null,
+    showcase: p?.showcase || [],
+    joinedAt: p?.created_at || authUser.created_at,
     profile: {
       interests: p?.interests || [],
       topics: p?.topics || [],

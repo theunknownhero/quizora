@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useApp } from '../state/AppState.jsx'
 import { resendVerification } from '../state/authStore.js'
 import { useT } from '../i18n/useT.js'
+import { useNavigate } from 'react-router-dom'
+import { levelProgress, tierFor } from '../lib/levels.js'
 
 // Navbar account area: "Log in" when signed out, avatar + dropdown when signed in.
 export default function AccountMenu() {
@@ -11,6 +13,7 @@ export default function AccountMenu() {
   const t = useT()
   const [resend, setResend] = useState('') // '' | 'sending' | 'sent' | error text
   const ref = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!open) return
@@ -36,6 +39,7 @@ export default function AccountMenu() {
     <div className="acct" ref={ref}>
       <button type="button" className="acct-btn" aria-haspopup="menu" aria-expanded={open} aria-label={`Account: ${user.username}`} onClick={() => setOpen((o) => !o)}>
         <span className="acct-avatar">{user.username[0].toUpperCase()}</span>
+        <span className="acct-lvl" title={`Level ${levelProgress(user.xp).level}`}>{levelProgress(user.xp).level}</span>
         {!user.emailVerified && <span className="acct-dot" aria-label="Email not confirmed" />}
       </button>
       <AnimatePresence>
@@ -54,6 +58,14 @@ export default function AccountMenu() {
                 <b>{user.username}</b>
                 <small>{user.email}</small>
               </div>
+            </div>
+            <div className="acct-level">
+              <span>
+                {tierFor(levelProgress(user.xp).level).emoji} Level {levelProgress(user.xp).level} · {tierFor(levelProgress(user.xp).level).title}
+              </span>
+              <i>
+                <b style={{ width: `${levelProgress(user.xp).pct}%` }} />
+              </i>
             </div>
             {!user.emailVerified && (
               <div className="acct-verify">
@@ -78,6 +90,12 @@ export default function AccountMenu() {
                 )}
               </div>
             )}
+            <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/profile'))}>
+              👤 My profile
+            </button>
+            <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/profile?tab=playlists'))}>
+              🎵 My playlists
+            </button>
             <button type="button" role="menuitem" onClick={() => (setOpen(false), openOnboarding())}>
               ✨ {t('nav.editInterests')}
             </button>

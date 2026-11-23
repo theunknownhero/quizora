@@ -86,3 +86,11 @@
 .acct-verify span { overflow-wrap: anywhere; }
 .acct-menu .acct-verify button { align-self: flex-start; margin-top: 4px; padding: 6px 12px; border-radius: 999px; background: #ffd166; color: #1a1300; font-weight: 600; font-size: 12.5px; }
 .acct-menu .acct-verify button:hover { background: #ffe08f; color: #1a1300; }
+
+/* Profile / level */
+.acct-btn { position: relative; }
+.acct-lvl { position: absolute; right: -4px; bottom: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; color: #120c22; background: linear-gradient(135deg, #fde68a, #f59e0b); border: 2px solid #0b0a12; }
+.acct-level { padding: 4px 10px 10px; margin-bottom: 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); font-size: 12.5px; color: #d6d2e6; }
+.acct-level i { display: block; height: 6px; margin-top: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.acct-level b { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #8b5cf6, #22d3ee); }
+.nav-sheet-acct .nav-sheet-link { flex: 1; padding: 11px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.05); color: #fff; font-weight: 600; font-size: 14px; text-align: center; text-decoration: none; }
