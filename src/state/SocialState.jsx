@@ -54,13 +54,13 @@ export function SocialProvider({ children }) {
           pushToast({
             emoji: '🎮',
             title: 'Game invite',
-            text: `${i.from.username} invited you to ${g?.title || 'a quiz'}`,
-            duration: 12000,
+            text: i.room_code ? `${i.from.username} invited you to their ${g?.title || 'quiz'} party` : `${i.from.username} invited you to ${g?.title || 'a quiz'}`,
+            duration: 15000,
             action: {
-              label: 'Play now',
+              label: i.room_code ? 'Join party' : 'Play now',
               onClick: () => {
                 social.respondGameInvite(i.id, true).catch(() => {})
-                navigate(`/play/${i.game_slug}`)
+                navigate(i.room_code ? `/room/${i.room_code}` : `/play/${i.game_slug}`)
               },
             },
           })

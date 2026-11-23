@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useApp } from '../state/AppState.jsx'
 import { useAnnounce } from './Toaster.jsx'
 import * as udata from '../state/userData.js'
-import { Heart, Star, Bookmark, ListPlus, Check, Plus, ListMusic } from 'lucide-react'
+import { Heart, Star, Bookmark, ListPlus, Check, Plus, ListChecks } from 'lucide-react'
 
 const ACTIONS = [
   { kind: 'like', Icon: Heart, label: 'Like' },
@@ -87,7 +87,7 @@ function PlaylistMenu({ slug, onClose }) {
           {lists.map((l) => (
             <li key={l.id}>
               <button type="button" className={has(l) ? 'is-on' : ''} onClick={() => toggle(l)}>
-                <ListMusic size={15} aria-hidden="true" /> <span className="pl-menu-name">{l.title}</span> <i>{has(l) ? <Check size={14} /> : <Plus size={14} />}</i>
+                <ListChecks size={15} aria-hidden="true" /> <span className="pl-menu-name">{l.title}</span> <i>{has(l) ? <Check size={14} /> : <Plus size={14} />}</i>
               </button>
             </li>
           ))}

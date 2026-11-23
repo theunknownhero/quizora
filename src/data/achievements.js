@@ -31,7 +31,10 @@ export const achievements = [
   { id: 'speed_runner', emoji: '⏱️', tier: 'silver', name: 'Speed Runner', desc: 'Win a round in under 2 minutes.' },
   { id: 'collector', emoji: '🔖', tier: 'bronze', name: 'Collector', desc: 'Save 5 games.' },
   { id: 'critic', emoji: '❤️', tier: 'bronze', name: 'Critic', desc: 'Like 3 games.' },
-  { id: 'curator', emoji: '📚', tier: 'bronze', name: 'Curator', desc: 'Create a playlist.' },
+  { id: 'curator', emoji: '📚', tier: 'bronze', name: 'Curator', desc: 'Create a QuizList.' },
+  { id: 'party_first', emoji: '🎉', tier: 'bronze', name: 'Party Starter', desc: 'Finish a game in a party room.' },
+  { id: 'party_win', emoji: '🥇', tier: 'silver', name: 'Crowd Pleaser', desc: 'Win a multiplayer room.' },
+  { id: 'party_crowd', emoji: '🎪', tier: 'gold', name: 'Full House', desc: 'Finish a room with 4 or more players.' },
 ]
 
 export const achievementById = (id) => achievements.find((a) => a.id === id)

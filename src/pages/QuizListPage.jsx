@@ -8,7 +8,7 @@ import GameCard from '../components/GameCard.jsx'
 import { useApp } from '../state/AppState.jsx'
 import * as udata from '../state/userData.js'
 import { games } from '../data/games.js'
-import { ListMusic, Share2, Pencil, Play, SearchX, Loader2 } from 'lucide-react'
+import { ListChecks, Share2, Pencil, Play, SearchX, Loader2 } from 'lucide-react'
 import './profile.css'
 
 export default function QuizListPage() {
@@ -68,11 +68,11 @@ export default function QuizListPage() {
       <main className="profile playlist-page">
         <section className="pl-hero container">
           <motion.span className="pl-hero-emoji" initial={{ scale: 0.5, rotate: -12, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }}>
-            <ListMusic size={64} />
+            <ListChecks size={64} />
           </motion.span>
           <div>
             <span className="pf-tier">
-              <ListMusic size={14} /> QuizList
+              <ListChecks size={14} /> QuizList
             </span>
             <h1>{pl.title}</h1>
             {pl.description && <p className="muted">{pl.description}</p>}

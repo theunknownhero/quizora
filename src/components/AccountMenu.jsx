@@ -6,7 +6,7 @@ import { resendVerification } from '../state/authStore.js'
 import { useT } from '../i18n/useT.js'
 import { useNavigate } from 'react-router-dom'
 import { levelProgress, tierFor } from '../lib/levels.js'
-import { UserRound, ListMusic, Sparkles, LogOut, MailWarning, Users } from 'lucide-react'
+import { UserRound, ListChecks, Sparkles, LogOut, MailWarning, Users, Swords } from 'lucide-react'
 
 // Navbar account area: "Log in" when signed out, avatar + dropdown when signed in.
 export default function AccountMenu() {
@@ -100,12 +100,15 @@ export default function AccountMenu() {
             <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/profile'))}>
               <UserRound size={16} /> My profile
             </button>
+            <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/play-together'))}>
+              <Swords size={16} /> Play together
+            </button>
             <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/friends'))}>
               <Users size={16} /> Friends
               {requests > 0 ? <em className="acct-menu-badge">{requests}</em> : social?.onlineFriends.length ? <small className="acct-menu-on">{social.onlineFriends.length} online</small> : null}
             </button>
             <button type="button" role="menuitem" onClick={() => (setOpen(false), navigate('/profile?tab=quizlists'))}>
-              <ListMusic size={16} /> My QuizLists
+              <ListChecks size={16} /> My QuizLists
             </button>
             <button type="button" role="menuitem" onClick={() => (setOpen(false), openOnboarding())}>
               <Sparkles size={16} /> {t('nav.editInterests')}

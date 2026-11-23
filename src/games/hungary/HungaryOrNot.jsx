@@ -17,7 +17,7 @@ import ShinyText from '../../components/ShinyText.jsx'
 import Aurora from '../../components/Aurora.jsx'
 import CountUp from '../../components/CountUp.jsx'
 import './hungary.css'
-import { ArrowRight, ArrowLeft, Check, X, PartyPopper, Play, Star, Flame, Gift, RotateCcw, Share2, Trophy, Target } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Check, X, PartyPopper, Play, Star, Flame, Gift, RotateCcw, Share2, Trophy, Target, Users } from 'lucide-react'
 
 const TOTAL = ROUND_SIZE
 
@@ -268,6 +268,9 @@ function Intro({ onStart, best, loading, error }) {
         <button className="btn btn-primary btn-lg g-full" onClick={onStart} autoFocus disabled={loading}>
           {loading ? <span className="auth-spinner" aria-label="Loading" /> : 'Start the journey'} {!loading && <span className="btn-icon"><Play size={12} fill="currentColor" /></span>}
         </button>
+        <Link to="/play-together" className="btn btn-ghost g-full intro-multi">
+          <Users size={17} /> Play with friends
+        </Link>
         {best > 0 && (
           <span className="intro-best">
             Your best: <b>{best}</b>/{TOTAL}

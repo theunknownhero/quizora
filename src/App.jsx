@@ -10,6 +10,8 @@ import Toaster from './components/Toaster.jsx'
 import AgeCheck from './components/auth/AgeCheck.jsx'
 import Profile from './pages/Profile.jsx'
 import Friends from './pages/Friends.jsx'
+import PlayTogether from './pages/PlayTogether.jsx'
+import Room from './pages/Room.jsx'
 import PublicProfile from './pages/PublicProfile.jsx'
 import QuizListPage from './pages/QuizListPage.jsx'
 
@@ -25,6 +27,8 @@ export default function App() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/friends" element={<Friends />} />
+      <Route path="/play-together" element={<PlayTogether />} />
+      <Route path="/room/:code" element={<Room />} />
       <Route path="/u/:username" element={<PublicProfile />} />
       <Route path="/quizlist/:code" element={<QuizListPage />} />
       <Route path="/playlist/:code" element={<QuizListPage />} />

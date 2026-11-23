@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Gamepad2, Trophy, Target, Flame, Gem, Users, CalendarDays, UserMinus, Lock, ListMusic, SearchX, Loader2, Pencil, Swords, Award } from 'lucide-react'
+import { Gamepad2, Trophy, Target, Flame, Gem, Users, CalendarDays, UserMinus, Lock, ListChecks, SearchX, Loader2, Pencil, Swords, Award } from 'lucide-react'
 import Navbar from '../components/Navbar.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import PlayerAvatar from '../components/PlayerAvatar.jsx'
@@ -291,13 +291,13 @@ export default function PublicProfile() {
             {p.quizlists.length > 0 && (
               <section className="pf-card pf-span3">
                 <h3>
-                  <ListMusic size={17} className="ico" /> Public QuizLists
+                  <ListChecks size={17} className="ico" /> Public QuizLists
                 </h3>
                 <div className="pub-lists">
                   {p.quizlists.map((l) => (
                     <Link key={l.share_code} to={`/quizlist/${l.share_code}`} className="pub-list">
                       <span className="pl-emoji">
-                        <ListMusic size={20} />
+                        <ListChecks size={20} />
                       </span>
                       <span>
                         <b>{l.title}</b>

@@ -15,7 +15,7 @@ import { achievements, achievementById, tiersStyle } from '../data/achievements.
 import { levelProgress, tierFor, xpRules } from '../lib/levels.js'
 import { computeStats, insightsFrom, fmtDuration } from '../lib/stats.js'
 import {
-  LayoutDashboard, History as HistoryIcon, BarChart3, Award, Library as LibraryIcon, ListMusic, Gamepad2, Trophy, Target, Flame,
+  LayoutDashboard, History as HistoryIcon, BarChart3, Award, Library as LibraryIcon, ListChecks, Gamepad2, Trophy, Target, Flame,
   Zap, Timer, Sparkles, Gem, CalendarDays, CalendarCheck, Check, X, ChevronRight, Pin, Lock, Share2, Pencil, Trash2,
   Star, Heart, Bookmark, Lightbulb, TrendingUp, TrendingDown, Clock, Brain, Dumbbell, Sunrise, Plus, Play, UserRound, Users,
 } from 'lucide-react'
@@ -27,7 +27,7 @@ const TABS = [
   ['stats', 'Stats & records', BarChart3],
   ['achievements', 'Achievements', Award],
   ['library', 'Library', LibraryIcon],
-  ['quizlists', 'QuizLists', ListMusic],
+  ['quizlists', 'QuizLists', ListChecks],
 ]
 // Insight emoji from stats.js → Lucide icon
 const INSIGHT_ICON = { '💪': Dumbbell, '🎯': Target, '🕒': Clock, '📅': CalendarDays, '⚡': Zap, '🧘': Brain, '📈': TrendingUp, '🔄': TrendingDown }
@@ -550,7 +550,7 @@ function QuizLists({ user }) {
       ) : lists.length === 0 ? (
         <div className="pf-empty">
           <span>
-            <ListMusic size={36} />
+            <ListChecks size={36} />
           </span>
           <p>Bundle your favourite quizzes into a QuizList and share it with friends.</p>
         </div>
@@ -563,7 +563,7 @@ function QuizLists({ user }) {
               <article key={pl.id} className="pl-card">
                 <header>
                   <span className="pl-emoji">
-                    <ListMusic size={22} />
+                    <ListChecks size={22} />
                   </span>
                   <div className="pl-titles">
                     {isEdit ? (

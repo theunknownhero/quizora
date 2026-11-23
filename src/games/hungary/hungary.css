@@ -241,3 +241,4 @@
 .xp-guest div { flex: 1; }
 .xp-guest b { display: block; font-family: var(--font-display); }
 .xp-guest small { color: var(--muted); font-size: 12.5px; }
+.intro-multi { margin-top: 10px; }

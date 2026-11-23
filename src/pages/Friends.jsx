@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { Users, UserPlus, Search, Inbox, Check, X, UserMinus, Clock, Flame, UserRound, Loader2 } from 'lucide-react'
+import { Swords, Users, UserPlus, Search, Inbox, Check, X, UserMinus, Clock, Flame, UserRound, Loader2 } from 'lucide-react'
 import Navbar from '../components/Navbar.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import PlayerAvatar from '../components/PlayerAvatar.jsx'
@@ -287,6 +287,11 @@ export default function Friends() {
           {user && (
             <Link to={`/u/${user.username}`} className="link-btn">
               <UserRound size={14} className="ico" /> See your public profile
+            </Link>
+          )}
+          {user && (
+            <Link to="/play-together" className="btn btn-primary btn-sm">
+              <Swords size={16} /> Play together
             </Link>
           )}
         </section>
