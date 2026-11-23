@@ -9,14 +9,17 @@ import { useApp } from '../state/AppState.jsx'
 import { useT } from '../i18n/useT.js'
 import './Navbar.css'
 
-// Home page sections, in the order they appear on the page.
+// Top menu. Items with `id` scroll to a home page section; items with `to` open a page.
 const SECTIONS = [
   { key: 'nav.home', id: 'top' },
-  { key: 'nav.featured', id: 'featured' },
-  { key: 'nav.categories', id: 'categories' },
   { key: 'nav.games', id: 'games' },
-  { key: 'nav.how', id: 'how' },
+  { key: 'nav.categories', id: 'categories' },
+  { key: 'nav.tournaments', to: '/tournaments', match: ['/tournament'], icon: Medal },
+  { key: 'nav.leaderboards', to: '/leaderboards', icon: Trophy },
+  { key: 'nav.together', to: '/play-together', match: ['/room/'], icon: Swords },
 ]
+const routeIndex = (pathname) =>
+  SECTIONS.findIndex((s) => s.to && (pathname === s.to || pathname.startsWith(s.to + '/') || (s.match || []).some((m) => pathname.startsWith(m))))
 const PARTICLES = ['#7c5cff', '#ff5fa2', '#2ec4b6', '#ffd166']
 const CTA_TO = '/play/hungary-or-not'
 
@@ -40,11 +43,17 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const lockRef = useRef(0) // pauses scroll-spy while a click-triggered smooth scroll runs
 
+  const routeActive = routeIndex(pathname)
   const go = useCallback(
     (index) => {
-      const { id } = SECTIONS[index]
-      setActive(index)
+      const { id, to } = SECTIONS[index]
       setOpen(false)
+      if (to) {
+        navigate(to)
+        window.scrollTo(0, 0)
+        return
+      }
+      setActive(index)
       lockRef.current = Date.now() + 1000
       if (!isHome) {
         navigate('/')
@@ -64,10 +73,16 @@ export default function Navbar() {
       setScrolled(window.scrollY > 24)
       if (!isHome || Date.now() < lockRef.current) return
       const line = window.innerHeight * 0.4
+      // The section whose top most recently passed the line (menu order can differ from page order)
       let idx = 0
+      let best = -Infinity
       SECTIONS.forEach((s, i) => {
-        const el = s.id === 'top' ? document.body : document.getElementById(s.id)
-        if (el && (s.id === 'top' || el.getBoundingClientRect().top <= line)) idx = i
+        if (!s.id || s.id === 'top') return
+        const top = document.getElementById(s.id)?.getBoundingClientRect().top
+        if (top != null && top <= line && top > best) {
+          best = top
+          idx = i
+        }
       })
       setActive(idx)
     }
@@ -89,7 +104,7 @@ export default function Navbar() {
   useEffect(() => {
     if (!isHome || !hash) return
     const id = hash.slice(1)
-    const i = SECTIONS.findIndex((s) => s.id === id)
+    const i = SECTIONS.findIndex((s) => s.id && s.id === id)
     const t = setTimeout(() => {
       if (i >= 0) {
         setActive(i)
@@ -127,10 +142,11 @@ export default function Navbar() {
           <span className="nav-brand-text">Quizora</span>
         </Link>
 
-        <div className={`nav-center ${isHome ? '' : 'is-off'}`}>
+        <div className={`nav-center ${isHome || routeActive >= 0 ? '' : 'is-off'}`}>
           <GooeyNav
+            key={routeActive >= 0 ? `r${routeActive}` : isHome ? 'home' : 'off'}
             items={items}
-            activeIndex={isHome ? active : -1}
+            activeIndex={routeActive >= 0 ? routeActive : isHome ? active : -1}
             onChange={go}
             frame={false}
             size="sm"
@@ -164,12 +180,12 @@ export default function Navbar() {
       <nav id="nav-sheet" className={`nav-sheet ${open ? 'is-open' : ''}`} aria-label="Mobile">
         {SECTIONS.map((s, i) => (
           <button
-            key={s.id}
+            key={s.key}
             type="button"
-            className={`nav-sheet-item ${isHome && i === active ? 'is-active' : ''}`}
+            className={`nav-sheet-item ${(routeActive >= 0 ? routeActive === i : isHome && i === active) ? 'is-active' : ''}`}
             onClick={() => go(i)}
           >
-            {t(s.key)}
+            {s.icon && <s.icon size={16} className="ico" />} {t(s.key)}
           </button>
         ))}
         <div className="nav-sheet-acct">
@@ -181,15 +197,6 @@ export default function Navbar() {
               </span>
               <Link to="/profile" className="nav-sheet-link" onClick={() => setOpen(false)}>
                 <UserRound size={15} className="ico" /> Profile
-              </Link>
-              <Link to="/play-together" className="nav-sheet-link" onClick={() => setOpen(false)}>
-                <Swords size={15} className="ico" /> Play together
-              </Link>
-              <Link to="/tournaments" className="nav-sheet-link" onClick={() => setOpen(false)}>
-                <Medal size={15} className="ico" /> Tournaments
-              </Link>
-              <Link to="/leaderboards" className="nav-sheet-link" onClick={() => setOpen(false)}>
-                <Trophy size={15} className="ico" /> Leaderboards
               </Link>
               <Link to="/friends" className="nav-sheet-link" onClick={() => setOpen(false)}>
                 <Users size={15} className="ico" /> Friends

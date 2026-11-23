@@ -3,7 +3,7 @@
 // Non-English text was drafted by Claude — please have native speakers review before launch.
 
 const en = {
-  'nav.home': 'Home', 'nav.featured': 'Featured', 'nav.categories': 'Categories', 'nav.games': 'Games', 'nav.how': 'How it works',
+  'nav.home': 'Home', 'nav.featured': 'Featured', 'nav.categories': 'Categories', 'nav.games': 'Games', 'nav.how': 'How it works', 'nav.tournaments': 'Tournaments', 'nav.leaderboards': 'Leaderboards', 'nav.together': 'Play together', 'compete.eyebrow': 'Compete', 'compete.title': 'Tournaments, rankings and duels', 'compete.sub': 'Daily and weekly tournaments with rewards, live leaderboards, and multiplayer matches with friends or strangers.',
   'nav.login': 'Log in', 'nav.signup': 'Sign up', 'nav.play': 'Play now', 'nav.editInterests': 'Edit interests', 'nav.logout': 'Log out',
   'lang.label': 'Language', 'country.pick': 'Where are you playing from?', 'country.more': 'More countries coming soon',
   'hero.new': 'NEW', 'hero.badge': '{game} is now live', 'hero.title1': 'Play smarter.', 'hero.title2': 'Quiz harder.',
@@ -48,7 +48,7 @@ const en = {
 }
 
 const hu = {
-  'nav.home': 'Főoldal', 'nav.featured': 'Kiemelt', 'nav.categories': 'Kategóriák', 'nav.games': 'Játékok', 'nav.how': 'Hogyan működik',
+  'nav.home': 'Főoldal', 'nav.featured': 'Kiemelt', 'nav.categories': 'Kategóriák', 'nav.games': 'Játékok', 'nav.how': 'Hogyan működik', 'nav.tournaments': 'Versenyek', 'nav.leaderboards': 'Ranglisták', 'nav.together': 'Közös játék',
   'nav.login': 'Belépés', 'nav.signup': 'Regisztráció', 'nav.play': 'Játék', 'nav.editInterests': 'Érdeklődés szerkesztése', 'nav.logout': 'Kilépés',
   'lang.label': 'Nyelv', 'country.pick': 'Honnan játszol?', 'country.more': 'Hamarosan több ország',
   'hero.new': 'ÚJ', 'hero.badge': 'Elindult: {game}', 'hero.title1': 'Játssz okosan.', 'hero.title2': 'Kvízelj keményen.',
@@ -93,7 +93,7 @@ const hu = {
 }
 
 const de = {
-  'nav.home': 'Start', 'nav.featured': 'Highlights', 'nav.categories': 'Kategorien', 'nav.games': 'Spiele', 'nav.how': 'So funktioniert’s',
+  'nav.home': 'Start', 'nav.featured': 'Highlights', 'nav.categories': 'Kategorien', 'nav.games': 'Spiele', 'nav.how': 'So funktioniert’s', 'nav.tournaments': 'Turniere', 'nav.leaderboards': 'Bestenlisten', 'nav.together': 'Zusammen spielen',
   'nav.login': 'Anmelden', 'nav.signup': 'Registrieren', 'nav.play': 'Jetzt spielen', 'nav.editInterests': 'Interessen bearbeiten', 'nav.logout': 'Abmelden',
   'lang.label': 'Sprache', 'country.pick': 'Von wo spielst du?', 'country.more': 'Weitere Länder folgen bald',
   'hero.new': 'NEU', 'hero.badge': '{game} ist jetzt live', 'hero.title1': 'Spiel klüger.', 'hero.title2': 'Quizze härter.',
@@ -138,7 +138,7 @@ const de = {
 }
 
 const cs = {
-  'nav.home': 'Domů', 'nav.featured': 'Doporučené', 'nav.categories': 'Kategorie', 'nav.games': 'Hry', 'nav.how': 'Jak to funguje',
+  'nav.home': 'Domů', 'nav.featured': 'Doporučené', 'nav.categories': 'Kategorie', 'nav.games': 'Hry', 'nav.how': 'Jak to funguje', 'nav.tournaments': 'Turnaje', 'nav.leaderboards': 'Žebříčky', 'nav.together': 'Hrát spolu',
   'nav.login': 'Přihlásit', 'nav.signup': 'Registrace', 'nav.play': 'Hrát', 'nav.editInterests': 'Upravit zájmy', 'nav.logout': 'Odhlásit',
   'lang.label': 'Jazyk', 'country.pick': 'Odkud hraješ?', 'country.more': 'Další země brzy',
   'hero.new': 'NOVÉ', 'hero.badge': '{game} je spuštěno', 'hero.title1': 'Hraj chytřeji.', 'hero.title2': 'Kvízuj naplno.',
@@ -183,7 +183,7 @@ const cs = {
 }
 
 const sr = {
-  'nav.home': 'Početna', 'nav.featured': 'Izdvojeno', 'nav.categories': 'Kategorije', 'nav.games': 'Igre', 'nav.how': 'Kako radi',
+  'nav.home': 'Početna', 'nav.featured': 'Izdvojeno', 'nav.categories': 'Kategorije', 'nav.games': 'Igre', 'nav.how': 'Kako radi', 'nav.tournaments': 'Turniri', 'nav.leaderboards': 'Rang liste', 'nav.together': 'Igraj zajedno',
   'nav.login': 'Prijava', 'nav.signup': 'Registracija', 'nav.play': 'Igraj', 'nav.editInterests': 'Izmeni interesovanja', 'nav.logout': 'Odjava',
   'lang.label': 'Jezik', 'country.pick': 'Odakle igraš?', 'country.more': 'Uskoro još zemalja',
   'hero.new': 'NOVO', 'hero.badge': '{game} je sada dostupan', 'hero.title1': 'Igraj pametnije.', 'hero.title2': 'Kvizuj jače.',
@@ -228,7 +228,7 @@ const sr = {
 }
 
 const es = {
-  'nav.home': 'Inicio', 'nav.featured': 'Destacado', 'nav.categories': 'Categorías', 'nav.games': 'Juegos', 'nav.how': 'Cómo funciona',
+  'nav.home': 'Inicio', 'nav.featured': 'Destacado', 'nav.categories': 'Categorías', 'nav.games': 'Juegos', 'nav.how': 'Cómo funciona', 'nav.tournaments': 'Torneos', 'nav.leaderboards': 'Clasificaciones', 'nav.together': 'Jugar juntos',
   'nav.login': 'Entrar', 'nav.signup': 'Registrarse', 'nav.play': 'Jugar', 'nav.editInterests': 'Editar intereses', 'nav.logout': 'Cerrar sesión',
   'lang.label': 'Idioma', 'country.pick': '¿Desde dónde juegas?', 'country.more': 'Pronto más países',
   'hero.new': 'NUEVO', 'hero.badge': '{game} ya está disponible', 'hero.title1': 'Juega con cabeza.', 'hero.title2': 'Demuestra lo que sabes.',
@@ -273,7 +273,7 @@ const es = {
 }
 
 const pt = {
-  'nav.home': 'Início', 'nav.featured': 'Destaque', 'nav.categories': 'Categorias', 'nav.games': 'Jogos', 'nav.how': 'Como funciona',
+  'nav.home': 'Início', 'nav.featured': 'Destaque', 'nav.categories': 'Categorias', 'nav.games': 'Jogos', 'nav.how': 'Como funciona', 'nav.tournaments': 'Torneios', 'nav.leaderboards': 'Classificações', 'nav.together': 'Jogar juntos',
   'nav.login': 'Entrar', 'nav.signup': 'Registar', 'nav.play': 'Jogar', 'nav.editInterests': 'Editar interesses', 'nav.logout': 'Terminar sessão',
   'lang.label': 'Idioma', 'country.pick': 'De onde estás a jogar?', 'country.more': 'Mais países em breve',
   'hero.new': 'NOVO', 'hero.badge': '{game} já está disponível', 'hero.title1': 'Joga com cabeça.', 'hero.title2': 'Mostra o que sabes.',

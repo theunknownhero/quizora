@@ -25,6 +25,7 @@ import { useApp } from '../state/AppState.jsx'
 import CountryBadge from '../components/CountryBadge.jsx'
 import Flag from '../components/Flag.jsx'
 import { ArrowRight, X, Play, Trophy, Sparkles, Gamepad2, Zap, Search } from 'lucide-react'
+import CompeteSection from '../components/CompeteSection.jsx'
 
 const auroraColors = ['#7c3aed', '#22d3ee', '#ec4899']
 
@@ -597,6 +598,7 @@ export default function Home() {
         <ForYou />
         <Categories />
         <Library filter={filter} setFilter={setFilter} />
+        <CompeteSection />
         <How />
         <CTA />
       </main>
