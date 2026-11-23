@@ -1,45 +1,46 @@
 # Quizora
 
-Quiz games library (React + Vite) with a small Node API for accounts.
+Quiz games library: React + Vite, hosted on **Vercel**, accounts on **Supabase**.
 
 ## Run locally
 
-Needs Node 22.13 or newer (uses Node's built-in SQLite). Two terminals:
-
-```bash
-npm run api   # API on http://localhost:8787
-npm run dev   # site on http://localhost:5173 (calls /api through the Vite proxy)
-```
-
-Emails (confirm email, reset password) are **not sent** locally. They're printed in the API terminal and listed at http://localhost:5173/api/dev/outbox, so you can click the links.
-
-## Deploy
-
-One Node process serves the built site and the API:
-
 ```bash
 npm install
-npm run build
-npm start          # NODE_ENV=production, port from PORT (default 8787)
+cp .env.example .env.local   # then paste your Supabase URL + anon key
+npm run dev                  # http://localhost:5173
 ```
 
-Before going live, create a `.env` (see `.env.example`):
+Without the two Supabase values the site still runs. Accounts are just switched off, and every quiz stays playable as a guest.
 
-| Setting | What to set |
-| --- | --- |
-| `APP_URL` | Your public HTTPS address, e.g. `https://quizora.com`. Used in email links and to block requests from other sites. |
-| `RESEND_API_KEY`, `MAIL_FROM` | From [resend.com](https://resend.com), with your domain verified. Without these, no emails go out. |
-| `DB_FILE` | Path on a **persistent disk** (the SQLite file holds all accounts). Back it up. |
+## 1. Set up Supabase (once)
 
-Requirements for production:
-- Serve over **HTTPS** (the session cookie is `Secure` in production). Put it behind your host's HTTPS or a proxy (Nginx, Caddy, Cloudflare).
-- Run **one instance** (rate limits are kept in memory, and SQLite is a single file). For several servers, move to Postgres + a shared rate-limit store.
-- Hosts that fit: Railway, Render, Fly.io, a VPS. Plain static hosts (Netlify/Vercel static) can't run the API.
+1. Create a project at [supabase.com](https://supabase.com).
+2. **SQL Editor → New query**, paste all of [`supabase/schema.sql`](supabase/schema.sql), and click **Run**. This creates the `profiles` table (username + onboarding picks), its security rules, and the sign-up trigger.
+3. **Authentication → Sign In / Providers → Email**:
+   - Keep **Email** enabled and **Confirm email** ON.
+   - Set **minimum password length** to 8.
+4. **Authentication → URL Configuration**:
+   - **Site URL**: your Vercel address, e.g. `https://quizora.vercel.app`.
+   - **Redirect URLs**: add
+     - `https://quizora.vercel.app/**`
+     - `http://localhost:5173/**` (for local testing)
+     - your custom domain later, e.g. `https://yourdomain.com/**`
+5. **Project Settings → API**: copy the **Project URL** and the **anon public** key. Never use the `service_role` key in this app.
+6. Recommended before launch: **Authentication → Emails → SMTP Settings**. Plug in an email provider (e.g. Resend), because Supabase's built-in email only sends a few messages per hour. You can also restyle the confirm and reset emails under **Email Templates**.
+
+## 2. Deploy on Vercel
+
+1. [vercel.com/new](https://vercel.com/new) → import `theunknownhero/quizora`. Framework: **Vite** is detected automatically.
+2. **Environment Variables** (Production and Preview):
+   - `VITE_SUPABASE_URL` = Project URL
+   - `VITE_SUPABASE_ANON_KEY` = anon public key
+3. Deploy. Then put the final Vercel URL into Supabase's **Site URL** and **Redirect URLs** (step 1.4).
+
+`vercel.json` sends every page to the app, so links like `/play/hungary-or-not` and `/reset-password` work when opened directly.
 
 ## How accounts work
 
-- `server/index.js`: routes. `server/db.js`: tables. `server/security.js`: hashing, validation and rate limits. `server/mailer.js`: emails.
-- Passwords are hashed with scrypt. Sessions are random tokens in an `HttpOnly; SameSite=Lax` cookie, and only their SHA-256 hash is stored.
-- Login attempts and email sends are rate-limited. "Forgot password" gives the same answer whether or not the email exists.
-- Resetting a password signs the account out everywhere else.
-- Frontend API client: `src/state/authStore.js`.
+- Supabase Auth handles sign-up, login, sessions, email confirmation and password reset. Users log in with their **email** and password.
+- `profiles` holds the username and onboarding picks. Row Level Security means each person can only read and update their own row, and only the preference columns.
+- Usernames are unique (case-insensitive). The site checks availability before sign-up with the `username_available` function.
+- Code: [`src/lib/supabase.js`](src/lib/supabase.js) (client) and [`src/state/authStore.js`](src/state/authStore.js) (all account calls).

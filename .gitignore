@@ -1,6 +1,9 @@
 node_modules
 dist
 .env
-server/data/
+.env.local
+.env.*.local
+.vercel
 *.log
 .DS_Store
+server/data/

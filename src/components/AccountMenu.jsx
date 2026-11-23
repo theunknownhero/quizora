@@ -64,7 +64,7 @@ export default function AccountMenu() {
                     onClick={async () => {
                       setResend('sending')
                       try {
-                        await resendVerification()
+                        await resendVerification(user.email)
                         setResend('sent')
                       } catch (e) {
                         setResend(e.message)

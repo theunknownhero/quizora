@@ -1,6 +1,7 @@
-// App-wide state: selected country, signed-in user (from the API), and which dialog is open.
+// App-wide state: selected country, signed-in user (Supabase), and which dialog is open.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ALL, countryByCode, guessCountry } from '../data/countries.js'
+import { supabase, supabaseConfigured } from '../lib/supabase.js'
 import * as auth from './authStore.js'
 
 const COUNTRY_KEY = 'qz.country'
@@ -19,17 +20,33 @@ const readCountry = () => {
 export function AppProvider({ children }) {
   const [country, setCountryState] = useState(readCountry)
   const [user, setUser] = useState(null)
-  const [authReady, setAuthReady] = useState(false) // false until we've asked the server who's logged in
-  const [authView, setAuthView] = useState(null) // null | 'login' | 'register' | 'forgot'
+  const [authReady, setAuthReady] = useState(false) // false until we know if someone is logged in
+  const [recovery, setRecovery] = useState(false) // true after opening a password-reset link
+  const [authView, setAuthView] = useState(null) // null | 'login' | 'register' | 'forgot' | 'check-email'
+  const [pendingEmail, setPendingEmail] = useState('') // where we sent the confirmation link
   const [onboarding, setOnboarding] = useState(false)
 
-  // Restore the session from the httpOnly cookie
   useEffect(() => {
+    if (!supabaseConfigured) {
+      setAuthReady(true)
+      return
+    }
     auth
-      .me()
+      .currentUser()
       .then(setUser)
-      .catch(() => setUser(null))
       .finally(() => setAuthReady(true))
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true)
+      if (event === 'SIGNED_OUT' || !session) {
+        setUser(null)
+        return
+      }
+      if (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'INITIAL_SESSION') {
+        // Supabase recommends not awaiting other Supabase calls inside this callback
+        setTimeout(() => auth.loadUser(session.user).then(setUser), 0)
+      }
+    })
+    return () => data.subscription.unsubscribe()
   }, [])
 
   const setCountry = useCallback((code) => {
@@ -43,23 +60,31 @@ export function AppProvider({ children }) {
 
   const value = useMemo(
     () => ({
+      accountsEnabled: supabaseConfigured,
       country,
       setCountry,
       user,
-      authReady,
       setUser,
+      authReady,
+      recovery,
       authView,
+      pendingEmail,
       openAuth: (view = 'login') => setAuthView(view),
       closeAuth: () => setAuthView(null),
       onboarding,
       openOnboarding: () => setOnboarding(true),
       closeOnboarding: () => setOnboarding(false),
       async register(data) {
-        const u = await auth.register(data)
-        setUser(u)
-        setAuthView(null)
-        setOnboarding(true) // straight into onboarding
-        return u
+        const res = await auth.register(data)
+        if (res.needsConfirmation) {
+          setPendingEmail(data.email)
+          setAuthView('check-email')
+        } else {
+          setUser(res.user)
+          setAuthView(null)
+          setOnboarding(true)
+        }
+        return res
       },
       async login(data) {
         const u = await auth.login(data)
@@ -76,13 +101,13 @@ export function AppProvider({ children }) {
         if (!user) return
         setUser((u) => (u ? { ...u, profile: { ...u.profile, ...profile } } : u)) // optimistic
         try {
-          setUser(await auth.saveProfile(profile))
+          setUser(await auth.saveProfile(user.id, profile))
         } catch (e) {
-          console.error('Could not save profile', e)
+          console.error(e.message)
         }
       },
     }),
-    [country, setCountry, user, authReady, authView, onboarding]
+    [country, setCountry, user, authReady, recovery, authView, pendingEmail, onboarding]
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

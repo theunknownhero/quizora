@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useApp } from '../../state/AppState.jsx'
-import { forgotPassword, passwordStrength, rules } from '../../state/authStore.js'
+import { forgotPassword, passwordStrength, resendVerification, rules } from '../../state/authStore.js'
 import './auth.css'
 
 const Icon = ({ d }) => (
@@ -48,7 +48,7 @@ function Field({ id, label, icon, error, type = 'text', value, onChange, autoCom
 }
 
 export default function AuthModal() {
-  const { authView, openAuth, closeAuth, login, register } = useApp()
+  const { authView, openAuth, closeAuth, login, register, pendingEmail, accountsEnabled } = useApp()
   const view = authView
   const [form, setForm] = useState({ identifier: '', username: '', email: '', password: '' })
   const [errors, setErrors] = useState({})
@@ -56,12 +56,16 @@ export default function AuthModal() {
   const [showPw, setShowPw] = useState(false)
   const [busy, setBusy] = useState(false)
   const [sentTo, setSentTo] = useState('')
+  const [unconfirmed, setUnconfirmed] = useState('') // email that still needs confirming
+  const [resendState, setResendState] = useState('') // '' | 'sending' | 'sent' | error
 
   useEffect(() => {
     setErrors({})
     setFormError('')
     setShowPw(false)
     setSentTo('')
+    setUnconfirmed('')
+    setResendState('')
   }, [view])
 
   useEffect(() => {
@@ -103,7 +107,7 @@ export default function AuthModal() {
       setErrors(errs)
       if (Object.values(errs).some(Boolean)) return
     } else {
-      const errs = { identifier: form.identifier ? null : 'Enter your username or email', password: form.password ? null : 'Enter your password' }
+      const errs = { identifier: rules.email(form.identifier.trim()), password: form.password ? null : 'Enter your password' }
       setErrors(errs)
       if (Object.values(errs).some(Boolean)) return
     }
@@ -115,14 +119,27 @@ export default function AuthModal() {
     } catch (err) {
       setErrors(err.fields || {})
       setFormError(err.message || 'Something went wrong')
+      if (err.code === 'email_not_confirmed') setUnconfirmed(form.identifier.trim())
     } finally {
       setBusy(false)
     }
   }
 
+  const resend = async (email) => {
+    setResendState('sending')
+    try {
+      await resendVerification(email)
+      setResendState('sent')
+    } catch (e) {
+      setResendState(e.message)
+    }
+  }
+  const resendLabel = resendState === 'sending' ? 'Sending…' : resendState === 'sent' ? '✓ Link sent' : 'Resend confirmation link'
+
   const strength = passwordStrength(form.password)
   const isReg = view === 'register'
   const isForgot = view === 'forgot'
+  const isCheck = view === 'check-email'
 
   return (
     <AnimatePresence>
@@ -154,13 +171,32 @@ export default function AuthModal() {
               <i />
             </div>
             <h2 id="auth-title" className="auth-title">
-              {isForgot ? 'Reset your password' : isReg ? 'Create your account' : 'Welcome back'}
+              {isCheck ? 'Check your inbox' : isForgot ? 'Reset your password' : isReg ? 'Create your account' : 'Welcome back'}
             </h2>
             <p className="auth-sub">
-              {isForgot ? 'Enter your email and we’ll send you a link to choose a new password.' : isReg ? 'Save your scores and get quizzes picked for you.' : 'Log in to keep your streaks and picks.'}
+              {isCheck ? 'One last step to finish creating your account.' : isForgot ? 'Enter your email and we’ll send you a link to choose a new password.' : isReg ? 'Save your scores and get quizzes picked for you.' : 'Log in to keep your streaks and picks.'}
             </p>
 
-            {isForgot ? (
+            {!accountsEnabled && (
+              <p className="auth-form-error" role="status" style={{ marginBottom: 14 }}>
+                Accounts aren’t switched on yet. You can still play every quiz as a guest.
+              </p>
+            )}
+            {isCheck ? (
+              <div className="auth-sent" role="status">
+                <span className="auth-sent-icon">📧</span>
+                <p>
+                  We sent a confirmation link to <b>{pendingEmail}</b>. Open it to activate your account, then you’ll pick your interests. Check spam too.
+                </p>
+                <button type="button" className="btn btn-ghost btn-lg auth-submit" disabled={resendState === 'sending' || resendState === 'sent'} onClick={() => resend(pendingEmail)}>
+                  {resendLabel}
+                </button>
+                {resendState && !['sending', 'sent'].includes(resendState) && <span className="af-error">{resendState}</span>}
+                <button type="button" className="auth-back" onClick={() => openAuth('login')}>
+                  Already confirmed? Log in
+                </button>
+              </div>
+            ) : isForgot ? (
               sentTo ? (
                 <div className="auth-sent" role="status">
                   <span className="auth-sent-icon">📬</span>
@@ -208,7 +244,7 @@ export default function AuthModal() {
                   <Field id="reg-mail" label="Email" icon="mail" type="email" value={form.email} onChange={set('email')} error={errors.email} autoComplete="email" />
                 </>
               ) : (
-                <Field id="log-id" label="Username or email" icon="user" value={form.identifier} onChange={set('identifier')} error={errors.identifier} autoComplete="username" autoFocus />
+                <Field id="log-id" label="Email" icon="mail" type="email" value={form.identifier} onChange={set('identifier')} error={errors.identifier} autoComplete="email" autoFocus />
               )}
               <Field
                 id={isReg ? 'reg-pw' : 'log-pw'}
@@ -240,6 +276,11 @@ export default function AuthModal() {
                 </div>
               )}
 
+              {unconfirmed && (
+                <button type="button" className="auth-resend" disabled={resendState === 'sending' || resendState === 'sent'} onClick={() => resend(unconfirmed)}>
+                  {resendLabel}
+                </button>
+              )}
               <AnimatePresence>
                 {formError && (
                   <motion.p className="auth-form-error" role="alert" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>

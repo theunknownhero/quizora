@@ -114,3 +114,5 @@
 .account-page > .btn { margin-top: 8px; }
 .account-emoji { font-size: 50px; margin-bottom: 6px; }
 .auth-spinner.big { width: 42px; height: 42px; border-width: 4px; margin-bottom: 14px; }
+.auth-resend { align-self: flex-start; padding: 7px 14px; border-radius: 999px; background: #ffd166; color: #1a1300; font-weight: 600; font-size: 13px; }
+.auth-resend:disabled { opacity: 0.75; }
