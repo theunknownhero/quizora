@@ -141,9 +141,11 @@ export default function QuestionInput({ q, yes = 'True', no = 'False', disabled,
         }}
       >
         <input value={result ? picked || '' : text} onChange={(e) => setText(e.target.value)} placeholder="Type your answer" disabled={locked} autoFocus maxLength={120} autoComplete="off" aria-label="Your answer" />
-        <button type="submit" className="btn btn-primary" disabled={locked || !text.trim()}>
-          {pending ? <Loader2 size={16} className="spin" /> : <Send size={16} />} Submit
-        </button>
+        {!result && (
+          <button type="submit" className="btn btn-primary" disabled={locked || !text.trim()}>
+            {pending ? <Loader2 size={16} className="spin" /> : <Send size={16} />} Submit
+          </button>
+        )}
       </form>
     )
   }
@@ -163,9 +165,6 @@ export default function QuestionInput({ q, yes = 'True', no = 'False', disabled,
         <div className="qi-num-row">
           <input type="number" inputMode="decimal" value={val} step={n.step || 1} min={n.min ?? undefined} max={n.max ?? undefined} onChange={(e) => setNum(e.target.value)} disabled={locked} autoFocus aria-label="Your guess" />
           {n.unit && <span className="qi-unit">{n.unit}</span>}
-          <button type="submit" className="btn btn-primary" disabled={locked || num === ''}>
-            {pending ? <Loader2 size={16} className="spin" /> : <Send size={16} />} Lock in
-          </button>
         </div>
         {hasRange && (
           <input type="range" className="qi-range" min={n.min} max={n.max} step={n.step || 1} value={val === '' ? n.min : val} onChange={(e) => setNum(e.target.value)} disabled={locked} aria-label="Slide to guess" />
@@ -175,6 +174,11 @@ export default function QuestionInput({ q, yes = 'True', no = 'False', disabled,
             <span>{n.min}</span>
             <span>{n.max}</span>
           </div>
+        )}
+        {!result && (
+          <button type="submit" className="btn btn-primary qi-submit" disabled={locked || num === ''}>
+            {pending ? <Loader2 size={16} className="spin" /> : <Send size={16} />} Lock in
+          </button>
         )}
       </form>
     )
