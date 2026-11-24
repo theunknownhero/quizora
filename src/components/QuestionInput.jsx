@@ -42,10 +42,8 @@ export default function QuestionInput({ q, yes = 'True', no = 'False', disabled,
   const locked = disabled || pending || !!result
   const [sel, setSel] = useState(() => (kind === 'multi' ? [] : null))
   const [text, setText] = useState('')
-  const [num, setNum] = useState(() => {
-    const n = q.number || {}
-    return n.min != null && n.max != null ? Math.round((Number(n.min) + Number(n.max)) / 2) : ''
-  })
+  // Number guesses start empty: a pre-filled midpoint can sit right on the answer
+  const [num, setNum] = useState('')
   const [order, setOrder] = useState(() => (q.options || []).map((o) => o.i))
   const [drag, setDrag] = useState(null)
 
@@ -54,8 +52,7 @@ export default function QuestionInput({ q, yes = 'True', no = 'False', disabled,
     setSel(kind === 'multi' ? [] : null)
     setText('')
     setOrder((q.options || []).map((o) => o.i))
-    const n = q.number || {}
-    setNum(n.min != null && n.max != null ? Math.round((Number(n.min) + Number(n.max)) / 2) : '')
+    setNum('')
   }, [q.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = (v) => !locked && onSubmit(v)
@@ -163,7 +160,7 @@ export default function QuestionInput({ q, yes = 'True', no = 'False', disabled,
         }}
       >
         <div className="qi-num-row">
-          <input type="number" inputMode="decimal" value={val} step={n.step || 1} min={n.min ?? undefined} max={n.max ?? undefined} onChange={(e) => setNum(e.target.value)} disabled={locked} autoFocus aria-label="Your guess" />
+          <input type="number" inputMode="decimal" value={val} step={n.step || 1} min={n.min ?? undefined} max={n.max ?? undefined} onChange={(e) => setNum(e.target.value)} disabled={locked} autoFocus placeholder="?" aria-label="Your guess" />
           {n.unit && <span className="qi-unit">{n.unit}</span>}
         </div>
         {hasRange && (
