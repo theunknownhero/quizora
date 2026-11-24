@@ -25,7 +25,7 @@ const COLS = ['owner', 'admin', 'editor', 'moderator']
 const TONE = { owner: 'gold', admin: 'red', editor: 'cyan', moderator: 'violet', user: 'muted' }
 
 export default function StaffPage() {
-  const { staff, pushToast } = useApp()
+  const { staff, user, pushToast } = useApp()
   const team = useAsync(() => api.listUsers({ status: 'staff', limit: 200 }), [])
   const [q, setQ] = useState('')
   const found = useAsync(() => (q.length >= 2 ? api.listUsers({ q, limit: 8 }) : Promise.resolve(null)), [q])
@@ -52,11 +52,11 @@ export default function StaffPage() {
           {team.loading && !team.data ? (
             <Loading />
           ) : (
-            <table className="qa-table">
+            <table className="qa-table qa-team">
               <tbody>
                 {team.data?.rows.map((u) => (
                   <tr key={u.id}>
-                    <td>
+                    <td className="qa-grow">
                       <Link to={`/admin/users/${u.id}`} className="qa-user-cell">
                         <span className="acct-avatar">{u.username[0].toUpperCase()}</span>
                         <span>
@@ -69,7 +69,7 @@ export default function StaffPage() {
                       <Pill tone={TONE[u.role]}>{u.role}</Pill>
                     </td>
                     <td className="qa-right">
-                      {(staff.role === 'owner' || !['admin', 'owner'].includes(u.role)) && (
+                      {u.role !== 'user' && u.id !== user?.id && (staff.role === 'owner' || !['admin', 'owner'].includes(u.role)) && (
                         <Btn size="sm" onClick={() => assign(u, 'user')}>
                           Remove access
                         </Btn>

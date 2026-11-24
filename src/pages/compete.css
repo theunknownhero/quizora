@@ -133,3 +133,11 @@
 }
 .tn-cta { padding: 11px 22px; font-size: 15px; }
 .tn-cols .tn-section + .tn-section { margin-top: 0; }
+
+/* Phones: equal-width stacked actions, and the period tabs fit without scrolling */
+@media (max-width: 560px) {
+  .lb-links { flex-direction: column; align-items: center; }
+  .lb-links > .btn { width: min(300px, 100%); justify-content: center; }
+  .lb-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; }
+  .lb-tabs button { padding: 9px 4px; font-size: 13px; text-align: center; }
+}

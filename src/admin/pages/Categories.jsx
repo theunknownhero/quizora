@@ -60,7 +60,18 @@ export default function CategoriesPage() {
           const list = cats.filter((c) => c.grp === gr.id)
           if (!list.length) return null
           return (
-            <Card key={gr.id} title={`${gr.emoji} ${gr.id[0].toUpperCase() + gr.id.slice(1)} (${list.length})`} pad={false}>
+            <Card
+              key={gr.id}
+              title={
+                <>
+                  <span aria-hidden="true">{gr.emoji}</span>
+                  <span>
+                    {gr.id[0].toUpperCase() + gr.id.slice(1)} ({list.length})
+                  </span>
+                </>
+              }
+              pad={false}
+            >
               <div className="qa-table-wrap">
                 <table className="qa-table">
                   <tbody>

@@ -14,7 +14,7 @@ import Magnet from '../components/Magnet.jsx'
 import ScrollVelocity from '../components/ScrollVelocity.jsx'
 import ClickSpark from '../components/ClickSpark.jsx'
 import GameCard from '../components/GameCard.jsx'
-import { categories, games, countByCategory, isForCountry, sortForCountry, recommend } from '../data/games.js'
+import { categories, games, countByCategory, isForCountry, sortForCountry, recommend, featuredGame as pickFeatured } from '../data/games.js'
 import { categoryById, homeCategories } from '../data/categories.js'
 import { topicsFor } from '../data/regional.js'
 import { useT } from '../i18n/useT.js'
@@ -24,7 +24,7 @@ import { interests, topics } from '../data/preferences.js'
 import { useApp } from '../state/AppState.jsx'
 import CountryBadge from '../components/CountryBadge.jsx'
 import Flag from '../components/Flag.jsx'
-import { ArrowRight, X, Play, Trophy, Sparkles, Gamepad2, Zap, Search } from 'lucide-react'
+import { ArrowRight, X, Play, Trophy, Sparkles, Gamepad2, Zap, Search, ChevronDown } from 'lucide-react'
 import CompeteSection from '../components/CompeteSection.jsx'
 
 const auroraColors = ['#7c3aed', '#22d3ee', '#ec4899']
@@ -43,7 +43,7 @@ function Hero() {
   const { lang, site } = useApp()
   const customTitle = site.home?.hero_title?.trim()
   const customSub = site.home?.hero_subtitle?.trim()
-  const featuredGame = games.find((g) => g.featured)
+  const featuredGame = pickFeatured()
   const picks = ['geo', 'movies', 'history', 'music', 'food', 'sports', 'science', 'flags'].map((id) => t(`cat.${id}`))
   return (
     <section className="hero" id="top">
@@ -102,13 +102,13 @@ function Hero() {
         </motion.p>
 
         <motion.div className="hero-ctas" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}>
-          <Magnet strength={0.25}>
+          <Magnet strength={0.25} className="hero-cta">
             <Link to={`/play/${featuredGame.slug}`} className="btn btn-primary btn-lg">
               <span>{t('hero.start')}</span>
               <span className="btn-icon"><Play size={12} fill="currentColor" /></span>
             </Link>
           </Magnet>
-          <Magnet strength={0.2}>
+          <Magnet strength={0.2} className="hero-cta">
             <a href="#games" className="btn btn-ghost btn-lg">
               {t('hero.browse')}
             </a>
@@ -196,7 +196,8 @@ function TeaserStack() {
 
 function Featured() {
   const t = useT()
-  const g = games.find((x) => x.featured)
+  const g = pickFeatured()
+  const isHu = g.slug === 'hungary-or-not'
   return (
     <section className="section" id="featured">
       <div className="container">
@@ -211,10 +212,14 @@ function Featured() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="featured-flag" aria-hidden="true">
-            <span />
-            <span />
-            <span />
+          <div className="featured-flag" aria-hidden="true" style={isHu ? undefined : { background: `linear-gradient(90deg, ${g.gradient[0]}, ${g.gradient[1]})` }}>
+            {isHu && (
+              <>
+                <span />
+                <span />
+                <span />
+              </>
+            )}
           </div>
           <div className="featured-copy">
             <div className="featured-tags">
@@ -224,9 +229,12 @@ function Featured() {
               <CountryBadge codes={g.countries} />
             </div>
             <h3 className="featured-title">{g.title}</h3>
-            <p className="featured-text">{g.tagline} Paprika-powered trivia that will surprise even the locals.</p>
+            <p className="featured-text">
+              {g.tagline}
+              {isHu && ' Paprika-powered trivia that will surprise even the locals.'}
+            </p>
             <ul className="featured-points">
-              {['food', 'tech', 'celebs', 'holidays'].map((id) => (
+              {(isHu ? ['food', 'tech', 'celebs', 'holidays'] : g.categories.filter((id) => categoryById(id)).slice(0, 4)).map((id) => (
                 <li key={id}>
                   <span>{categoryById(id)?.emoji}</span> {t(`cat.${id}`)}
                 </li>
@@ -249,7 +257,16 @@ function Featured() {
               </Link>
             </Magnet>
           </div>
-          <TeaserStack />
+          {isHu ? (
+            <TeaserStack />
+          ) : (
+            <div className="teaser" aria-hidden="true">
+              <div className="teaser-card" style={{ background: `linear-gradient(135deg, ${g.gradient[0]}, ${g.gradient[1]})` }}>
+                <span className="teaser-emoji">{g.emoji}</span>
+                <span className="teaser-item">{g.title}</span>
+              </div>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>
@@ -341,11 +358,14 @@ function Categories() {
   )
 }
 
+const PAGE = 12
+
 function Library({ filter, setFilter }) {
   const t = useT()
   const { country } = useApp()
   const [q, setQ] = useState('')
   const [localOnly, setLocalOnly] = useState(false)
+  const [limit, setLimit] = useState(PAGE)
   const here = countryByCode(country)
   useEffect(() => {
     setLocalOnly(false)
@@ -363,7 +383,11 @@ function Library({ filter, setFilter }) {
       ),
     [filter, q, country, localOnly]
   )
+  useEffect(() => {
+    setLimit(PAGE)
+  }, [filter, q, country, localOnly])
   const localCount = games.filter((g) => isForCountry(g, country)).length
+  const visible = shown.slice(0, limit)
   return (
     <section className="section" id="games">
       <div className="container">
@@ -398,12 +422,20 @@ function Library({ filter, setFilter }) {
 
         <motion.div layout className="games-grid">
           <AnimatePresence mode="popLayout">
-            {shown.map((g) => (
+            {visible.map((g) => (
               <GameCard key={g.slug} game={g} />
             ))}
           </AnimatePresence>
         </motion.div>
         {shown.length === 0 && <p className="empty">{t('lib.empty')}</p>}
+        {shown.length > limit && (
+          <div className="lib-more">
+            <span>{t('lib.showing', { n: visible.length, total: shown.length })}</span>
+            <button type="button" className="btn btn-ghost btn-lg" onClick={() => setLimit((l) => l + PAGE * 2)}>
+              {t('lib.more')} <ChevronDown size={16} aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )
@@ -559,7 +591,7 @@ function How() {
 
 function CTA() {
   const t = useT()
-  const g = games.find((x) => x.featured)
+  const g = pickFeatured()
   return (
     <section className="section">
       <div className="container">

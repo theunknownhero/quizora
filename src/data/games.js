@@ -139,6 +139,8 @@ export const games = [
   },
 ]
 
+// The game the home page spotlights: the featured one, else the first live game (never undefined while any game exists)
+export const featuredGame = () => games.find((g) => g.featured && g.status === 'live') || games.find((g) => g.status === 'live') || games[0]
 export const countByCategory = (id, list = games) => (id === 'all' ? list.length : list.filter((g) => g.categories.includes(id)).length)
 export const gamesInCategory = (id) => games.filter((g) => g.categories.includes(id))
 
