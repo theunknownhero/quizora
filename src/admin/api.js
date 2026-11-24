@@ -18,6 +18,13 @@ const MESSAGES = {
   locked: 'Finished tournaments can’t be edited',
   has_attempts: 'Players already played it. Hide it or end it instead.',
   bad_key: 'Unknown setting',
+  bad_kind: 'Unknown question type',
+  need_answer: 'Pick the correct answer',
+  need_options: 'Add 2–8 options',
+  need_order_items: 'Add 3–8 items to put in order',
+  need_correct_option: 'Mark the correct option',
+  need_accepted: 'Add at least one accepted answer',
+  need_number: 'Enter the correct number',
 }
 export async function call(fn, args) {
   const { data, error } = await supabase.rpc(fn, args)

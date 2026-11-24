@@ -15,6 +15,7 @@ import { supabase } from '../lib/supabase.js'
 import * as rooms from '../state/rooms.js'
 import { games } from '../data/games.js'
 import { GameSelect } from './PlayTogether.jsx'
+import QuestionInput, { QuestionHeader } from '../components/QuestionInput.jsx'
 import './profile.css'
 import './social.css'
 import './party.css'
@@ -400,16 +401,6 @@ function Playing({ room, offset, refetch, setError }) {
     }
   }
 
-  useEffect(() => {
-    if (phase !== 'question' || !q) return
-    const onKey = (e) => {
-      if (e.key === 'ArrowLeft') pick(true)
-      if (e.key === 'ArrowRight') pick(false)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  })
-
   if (phase === 'countdown') {
     const n = Math.max(1, Math.ceil((startsAt - now) / 1000))
     return (
@@ -440,7 +431,11 @@ function Playing({ room, offset, refetch, setError }) {
             <>
               <span className="rm-q-emoji">{last.emoji}</span>
               <h2>{last.item}</h2>
-              <p className={`rm-answer ${last.answer ? 'is-yes' : 'is-no'}`}>{last.answer ? ui.yesLong : ui.noLong}</p>
+              {(last.kind || 'truefalse') === 'truefalse' ? (
+                <p className={`rm-answer ${last.answer ? 'is-yes' : 'is-no'}`}>{last.answer ? ui.yesLong : ui.noLong}</p>
+              ) : (
+                <p className="rm-answer is-yes">{last.answer_text}</p>
+              )}
               <p className={`rm-you ${myLast?.correct ? 'ok' : 'bad'}`}>
                 {myLast ? (myLast.correct ? <><Check size={16} /> +{myLast.points} points</> : <><X size={16} /> Missed</>) : <><Hourglass size={16} /> No answer</>}
               </p>
@@ -474,18 +469,9 @@ function Playing({ room, offset, refetch, setError }) {
         </div>
         {q ? (
           <motion.div key={q.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="rm-q">
-            <span className="rm-q-emoji">{q.emoji}</span>
-            <small className="rm-q-type">{q.type}</small>
-            <h2>{q.item}</h2>
-            <p className="muted">{ui.question}</p>
-            <div className="rm-btns">
-              <button type="button" className={`btn btn-lg rm-yes ${myAnswer?.choice === true ? 'is-picked' : ''}`} disabled={!!myAnswer || pending || left <= 0} onClick={() => pick(true)}>
-                {pending && pendingChoice === true ? <Loader2 size={18} className="spin" /> : <Check size={20} strokeWidth={2.6} />} {ui.yes}
-              </button>
-              <button type="button" className={`btn btn-lg rm-no ${myAnswer?.choice === false ? 'is-picked' : ''}`} disabled={!!myAnswer || pending || left <= 0} onClick={() => pick(false)}>
-                {pending && pendingChoice === false ? <Loader2 size={18} className="spin" /> : <X size={20} strokeWidth={2.6} />} {ui.no}
-              </button>
-            </div>
+            <QuestionHeader q={q} prompt={ui.question} />
+            {/* The right answer is only revealed after everyone answers, so no result is passed here */}
+            <QuestionInput q={q} yes={ui.yes} no={ui.no} disabled={!!myAnswer || left <= 0} pending={pending} picked={myAnswer?.choice ?? pendingChoice} onSubmit={pick} />
             <p className="rm-after" aria-live="polite">
               {myAnswer ? (
                 myAnswer.correct ? (
@@ -499,11 +485,11 @@ function Playing({ room, offset, refetch, setError }) {
                 )
               ) : left <= 0 ? (
                 'Time’s up!'
-              ) : (
+              ) : (q.kind || 'truefalse') === 'truefalse' ? (
                 <span className="muted small">
                   <kbd>←</kbd> {ui.yes} · <kbd>→</kbd> {ui.no}
                 </span>
-              )}
+              ) : null}
             </p>
             {myAnswer && !allAnswered && <p className="muted small">Waiting for others…</p>}
           </motion.div>

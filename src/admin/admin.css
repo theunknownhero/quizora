@@ -334,3 +334,36 @@
 @media (max-width: 900px) {
   .qa-root .qa-close, .qa-root .qa-burger { display: inline-grid; }
 }
+
+/* Question types editor */
+.qa-qeditor { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px; }
+.qa-qpreview { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 0; align-self: start; }
+.qa-qpreview > small { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.qa-qstage { min-height: 0 !important; padding: 20px 14px !important; }
+.qa-qstage h2 { font-size: 22px !important; }
+.qa-qstage .rm-q { margin-top: 0; }
+.qa-try { font-weight: 700; font-size: 13.5px; }
+.qa-try.ok { color: #86efac; }
+.qa-try.bad { color: #fca5a5; }
+.qa-kinds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.qa-kinds button { display: flex; align-items: center; gap: 7px; padding: 9px 10px; border-radius: 11px; font-size: 12.5px; font-weight: 700; text-align: left; color: var(--muted); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--qa-line, rgba(255,255,255,.08)); cursor: pointer; }
+.qa-kinds button:hover { color: #fff; }
+.qa-kinds button.is-on { color: #fff; background: rgba(139, 92, 246, 0.22); border-color: rgba(139, 92, 246, 0.65); }
+.qa-kinds button svg { flex: none; }
+.qa-opts { display: flex; flex-direction: column; gap: 6px; }
+.qa-opt-row { display: flex; align-items: center; gap: 6px; }
+.qa-opt-row input { flex: 1; }
+.qa-opt-row.is-right input { border-color: rgba(34, 197, 94, 0.6) !important; background: rgba(34, 197, 94, 0.08) !important; }
+.qa-opt-mark, .qa-opt-n { flex: none; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; font-size: 12.5px; font-weight: 800; color: #c4b5fd; background: rgba(139, 92, 246, 0.14); border: 0; cursor: pointer; }
+.qa-opt-n { cursor: default; }
+.qa-opt-mark.on { color: #052e16; background: #22c55e; }
+.qa-kind-pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: #c4b5fd; background: rgba(139, 92, 246, 0.14); white-space: nowrap; }
+.qa-answer-txt { font-size: 13px; color: #86efac; font-weight: 600; }
+.qa-q-img { width: 40px; height: 40px; border-radius: 9px; object-fit: cover; flex: none; }
+.qa-import-help table td:first-child { font-family: ui-monospace, Menlo, monospace; color: #c4b5fd; white-space: nowrap; }
+.qa-link { background: none; border: 0; padding: 0; cursor: pointer; }
+@media (max-width: 900px) {
+  .qa-qeditor { grid-template-columns: 1fr; }
+  .qa-qpreview { position: static; }
+  .qa-kinds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -1,5 +1,6 @@
 // Multiplayer rooms (supabase/005_phase4.sql). The server owns questions, timing and scoring.
 import { supabase, supabaseConfigured } from '../lib/supabase.js'
+import { games } from '../data/games.js'
 
 const MESSAGES = {
   not_signed_in: 'Log in to play with others',
@@ -39,7 +40,7 @@ export const rematchRoom = (id) => rpc('rematch_room', { p_room: id })
 export const quickMatch = (game, seconds) => rpc('quick_match', { p_game: game, p_seconds: seconds })
 export const listPublicRooms = () => rpc('list_public_rooms')
 export const getRoom = (code) => rpc('get_room', { p_code: code })
-export const submitRoomAnswer = (id, index, choice) => rpc('submit_room_answer', { p_room: id, p_index: index, p_choice: choice })
+export const submitRoomAnswer = (id, index, value) => rpc('submit_room_answer_v2', { p_room: id, p_index: index, p_value: value })
 export const advanceRoom = (id, index) => rpc('advance_room', { p_room: id, p_index: index })
 export const sendRoomInvite = (to, id) => rpc('send_room_invite', { p_to: to, p_room: id })
 
@@ -47,7 +48,13 @@ export const sendRoomInvite = (to, id) => rpc('send_room_invite', { p_to: to, p_
 const UI = {
   'hungary-or-not': { question: 'Does it have Hungarian origins?', yes: 'Hungary', no: 'Not', yesLong: 'Hungarian', noLong: 'Not Hungarian' },
 }
-export const gameUi = (slug) => UI[slug] || { question: 'True or false?', yes: 'True', no: 'False', yesLong: 'True', noLong: 'False' }
+export const gameUi = (slug) => {
+  if (UI[slug]) return UI[slug]
+  const g = games.find((x) => x.slug === slug)
+  const yes = g?.yesLabel || 'True'
+  const no = g?.noLabel || 'False'
+  return { question: g?.prompt || 'True or false?', yes, no, yesLong: yes, noLong: no }
+}
 
 export const SETTING_OPTIONS = {
   count: [5, 10, 15, 20],

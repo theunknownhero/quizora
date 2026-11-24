@@ -12,6 +12,7 @@ import { games } from '../data/games.js'
 import { getSettings } from '../lib/siteConfig.js'
 import { levelProgress } from '../lib/levels.js'
 import { playableBy } from '../lib/age.js'
+import QuestionInput, { QuestionHeader, answerText } from '../components/QuestionInput.jsx'
 import './profile.css'
 import './party.css'
 import './game-page.css'
@@ -125,12 +126,10 @@ function GenericQuiz({ g }) {
     }
   }
 
-  // Keyboard: ← yes, → no, Enter next
+  // Enter goes to the next question
   useEffect(() => {
     if (phase !== 'question') return
     const onKey = (e) => {
-      if (!res && e.key === 'ArrowLeft') pick(true)
-      if (!res && e.key === 'ArrowRight') pick(false)
       if (res && e.key === 'Enter') next()
     }
     window.addEventListener('keydown', onKey)
@@ -194,22 +193,12 @@ function GenericQuiz({ g }) {
                   <span style={{ width: `${((i + (res ? 1 : 0)) / total) * 100}%` }} />
                 </div>
                 <div className="rm-q">
-                  <span className="rm-q-emoji">{q.emoji}</span>
-                  {q.type && <small className="rm-q-type">{q.type}</small>}
-                  <h2>{q.item}</h2>
-                  <p className="muted">{g.prompt || 'True or false?'}</p>
-                  <div className="rm-btns">
-                    <button type="button" className={`btn btn-lg rm-yes ${res?.choice === true ? 'is-picked' : ''}`} disabled={!!res || busy} onClick={() => pick(true)}>
-                      <Check size={20} strokeWidth={2.6} /> {yes}
-                    </button>
-                    <button type="button" className={`btn btn-lg rm-no ${res?.choice === false ? 'is-picked' : ''}`} disabled={!!res || busy} onClick={() => pick(false)}>
-                      <X size={20} strokeWidth={2.6} /> {no}
-                    </button>
-                  </div>
+                  <QuestionHeader q={q} prompt={g.prompt || 'True or false?'} />
+                  <QuestionInput q={q} yes={yes} no={no} pending={busy && !res} picked={res?.choice} result={res} onSubmit={pick} />
                   {res ? (
                     <motion.div className={`gp-verdict ${res.correct ? 'ok' : 'bad'}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                       <b>
-                        {res.correct ? <Check size={18} /> : <X size={18} />} {res.correct ? 'Correct!' : `Answer: ${res.answer ? yes : no}`}
+                        {res.correct ? <Check size={18} /> : <X size={18} />} {res.correct ? 'Correct!' : `Answer: ${answerText(q, res, yes, no)}`}
                       </b>
                       {res.fact && <p>{res.fact}</p>}
                       <button type="button" className="btn btn-primary" onClick={next} disabled={busy} autoFocus>
@@ -217,9 +206,11 @@ function GenericQuiz({ g }) {
                       </button>
                     </motion.div>
                   ) : (
-                    <p className="rm-after muted small">
-                      <kbd>←</kbd> {yes} · <kbd>→</kbd> {no}
-                    </p>
+                    (q.kind || 'truefalse') === 'truefalse' && (
+                      <p className="rm-after muted small">
+                        <kbd>←</kbd> {yes} · <kbd>→</kbd> {no}
+                      </p>
+                    )
                   )}
                   {error && <p className="q-error">{error}</p>}
                 </div>
@@ -309,7 +300,7 @@ function Results({ g, outcome, results, round, tcode, onReplay }) {
             <span className="gp-r-item">
               {q.emoji} {q.item}
             </span>
-            <span className="gp-r-ans">{results[i]?.answer ? g.yesLabel || 'True' : g.noLabel || 'False'}</span>
+            <span className="gp-r-ans">{answerText(q, results[i], g.yesLabel || 'True', g.noLabel || 'False')}</span>
           </li>
         ))}
       </ol>

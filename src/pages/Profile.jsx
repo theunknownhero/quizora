@@ -126,7 +126,15 @@ function PlayRow({ p, open, onToggle }) {
                 <span className="pa-icon">{a.correct ? <Check size={15} /> : <X size={15} />}</span>
                 <span className="pa-item">{a.item}</span>
                 <span className="pa-type">{a.type}</span>
-                <span className="pa-ans">{a.answer ? 'Hungarian' : 'Not Hungarian'}</span>
+                <span className="pa-ans">
+                  {a.kind && a.kind !== 'truefalse'
+                    ? a.correct
+                      ? a.answer
+                      : `${a.given || '—'} → ${a.answer}`
+                    : a.answer
+                      ? g?.yesLabel === 'Hungary' || p.game_slug === 'hungary-or-not' ? 'Hungarian' : g?.yesLabel || 'True'
+                      : p.game_slug === 'hungary-or-not' ? 'Not Hungarian' : g?.noLabel || 'False'}
+                </span>
               </li>
             ))}
           </motion.ol>

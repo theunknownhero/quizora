@@ -68,7 +68,7 @@ export async function startRound(slug, { count = 20, localPick, tournament } = {
 
 export async function submitAnswer(round, index, choice) {
   if (round.mode === 'server') {
-    const { data, error } = await supabase.rpc('submit_answer', { p_session: round.sessionId, p_index: index, p_choice: choice, p_guest_token: round.guestToken })
+    const { data, error } = await supabase.rpc('submit_answer_v2', { p_session: round.sessionId, p_index: index, p_value: choice, p_guest_token: round.guestToken })
     if (error) throw fail(error)
     return data
   }
