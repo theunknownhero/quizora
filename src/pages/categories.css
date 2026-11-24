@@ -1,7 +1,7 @@
 /* Category pages */
 .catpage { min-height: 100vh; }
 
-.cat-hero { position: relative; overflow: hidden; padding: 130px 0 70px; text-align: center; }
+.cat-hero { position: relative; overflow: hidden; overflow: clip; padding: 130px 0 70px; text-align: center; }
 .cat-hero--all { padding-bottom: 50px; }
 .cat-hero-bg { position: absolute; inset: 0; z-index: 0; -webkit-mask-image: linear-gradient(#000 35%, transparent 84%); mask-image: linear-gradient(#000 35%, transparent 84%); }
 .cat-hero-bg .aurora { height: 85%; transform: scaleY(-1); opacity: 0.75; }

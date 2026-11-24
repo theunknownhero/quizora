@@ -73,7 +73,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ---------- Buttons ---------- */
 .btn {
-  display: inline-flex; align-items: center; gap: 10px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; padding: 12px 22px; font-size: 15px; line-height: 1.2;
   font-weight: 600; font-family: var(--font-display); white-space: nowrap;
   transition: transform 0.2s, box-shadow 0.3s, background 0.3s, border-color 0.3s;
 }
@@ -113,7 +113,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background: linear-gradient(135deg, var(--violet), var(--cyan)); box-shadow: 0 4px 16px -4px rgba(139,92,246,.8);
 }
 /* ---------- Hero ---------- */
-.hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 140px 0 100px; overflow: hidden; }
+.hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 140px 0 100px; overflow: hidden; overflow: clip; }
 .hero-bg { position: absolute; inset: 0; z-index: 0; -webkit-mask-image: linear-gradient(#000 40%, transparent 74%); mask-image: linear-gradient(#000 40%, transparent 74%); }
 .hero-bg .aurora { height: 75%; transform: scaleY(-1); opacity: 0.9; }
 .hero-grid {

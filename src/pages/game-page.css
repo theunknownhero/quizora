@@ -1,8 +1,10 @@
 /* Generic quiz player */
-.gp-page { position: relative; min-height: 100vh; padding-top: 100px; overflow: hidden; }
+.gp-page { position: relative; min-height: 100vh; padding-top: 100px; overflow: hidden; overflow: clip; }
 .gp-bg { position: absolute; inset: -20% -10% auto; height: 640px; pointer-events: none; opacity: 0.4; background: radial-gradient(closest-side at 30% 40%, var(--g1), transparent), radial-gradient(closest-side at 75% 35%, var(--g2), transparent); filter: blur(40px); }
 .gp-wrap { position: relative; max-width: 820px; }
-.gp-back { display: inline-flex; margin-bottom: 14px; }
+.gp-back { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; margin-bottom: 8px; }
+.gp-back .ico { margin: 0; vertical-align: 0; }
+.gp-intro .tn-facts { justify-content: center; }
 .gp-intro, .gp-done { gap: 14px; padding: 40px 24px; }
 .gp-emoji { font-size: 84px; line-height: 1; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.5)); }
 .gp-intro h1, .gp-done h1 { font-family: var(--font-display); font-size: clamp(34px, 6vw, 56px); letter-spacing: -0.035em; line-height: 1; }
