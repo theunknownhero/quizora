@@ -140,6 +140,12 @@ export const games = [
 ]
 
 // The game the home page spotlights: the featured one, else the first live game (never undefined while any game exists)
+// Link-only quizzes (status 'hidden' in the admin panel) are never listed, but players' history still needs a name for them
+export const unlisted = {
+  'black-friday-fake-or-real': { slug: 'black-friday-fake-or-real', title: 'Black Friday: Fake or Real?', emoji: '🏷️', gradient: ['#fcd01c', '#d24629'], yesLabel: 'Real', noLabel: 'Fake', path: '/blackfriday' },
+}
+export const findGame = (slug) => games.find((g) => g.slug === slug) || unlisted[slug]
+
 export const featuredGame = () => games.find((g) => g.featured && g.status === 'live') || games.find((g) => g.status === 'live') || games[0]
 export const countByCategory = (id, list = games) => (id === 'all' ? list.length : list.filter((g) => g.categories.includes(id)).length)
 export const gamesInCategory = (id) => games.filter((g) => g.categories.includes(id))

@@ -10,7 +10,7 @@ import Flag from '../components/Flag.jsx'
 import { useAnnounce } from '../components/Toaster.jsx'
 import { useApp } from '../state/AppState.jsx'
 import * as udata from '../state/userData.js'
-import { games } from '../data/games.js'
+import { games, findGame } from '../data/games.js'
 import { achievements, achievementById, tiersStyle } from '../data/achievements.js'
 import { levelProgress, tierFor, xpRules } from '../lib/levels.js'
 import { computeStats, insightsFrom, fmtDuration } from '../lib/stats.js'
@@ -35,7 +35,7 @@ const InsightIcon = ({ e }) => {
   const I = INSIGHT_ICON[e] || Lightbulb
   return <I size={18} aria-hidden="true" />
 }
-const gameBySlug = (slug) => games.find((g) => g.slug === slug)
+const gameBySlug = findGame
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 const fmtWhen = (d) => {
   const diff = (Date.now() - new Date(d)) / 1000

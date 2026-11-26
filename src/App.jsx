@@ -24,6 +24,8 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 // The admin panel is only downloaded by staff who open it
 const Admin = lazy(() => import('./admin/Admin.jsx'))
+// Link-only Black Friday landing page: not linked from anywhere, loaded only when someone opens /blackfriday
+const BlackFriday = lazy(() => import('./pages/blackfriday/BlackFriday.jsx'))
 
 export default function App() {
   const { site, staff, authReady } = useApp()
@@ -54,6 +56,14 @@ export default function App() {
           <Route path="/playlist/:code" element={<QuizListPage />} />
           <Route path="/play/:slug" element={<GamePage />} />
           <Route
+            path="/blackfriday"
+            element={
+              <Suspense fallback={<div style={{ minHeight: '100vh', background: '#050505' }} />}>
+                <BlackFriday />
+              </Suspense>
+            }
+          />
+          <Route
             path="/admin/*"
             element={
               <ErrorBoundary label="The admin panel">
@@ -66,7 +76,7 @@ export default function App() {
           <Route path="*" element={<Home />} />
         </Routes>
       )}
-      {!pathname.startsWith('/admin') && <AnnouncementBar />}
+      {!pathname.startsWith('/admin') && pathname !== '/blackfriday' && <AnnouncementBar />}
       <AuthModal />
       <Onboarding />
       <AgeCheck />

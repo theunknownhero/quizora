@@ -13,7 +13,7 @@ import { useSocial } from '../state/SocialState.jsx'
 import * as social from '../state/social.js'
 import { levelProgress, tierFor } from '../lib/levels.js'
 import { achievements, achievementById, tiersStyle } from '../data/achievements.js'
-import { games } from '../data/games.js'
+import { games, findGame } from '../data/games.js'
 import './profile.css'
 import './social.css'
 
@@ -246,7 +246,7 @@ export default function PublicProfile() {
                 p.recent.length ? (
                   <ul className="plays">
                     {p.recent.map((r, i) => {
-                      const g = games.find((x) => x.slug === r.game_slug)
+                      const g = findGame(r.game_slug)
                       return (
                         <li key={i} className="play-row">
                           <div className="play-row-head">

@@ -1,0 +1,35 @@
+-- Black Friday "Fake or Real?": the link-only quiz on /blackfriday.
+-- status 'hidden' keeps it out of every list on the site (get_site_config skips hidden games); start_session still plays it.
+-- Idempotent: safe to run again after editing.
+insert into public.games (slug, title, tagline, emoji, gradient, categories, status, featured, difficulty, minutes, questions, age_rating, prompt, yes_label, no_label, sort)
+values ('black-friday-fake-or-real', 'Black Friday: Fake or Real?', 'Real bargains or scams in disguise? Call it before you click.', '🏷️', array['#fcd01c', '#d24629'], array['brands'], 'hidden', false, 'Easy', 3, 10, 0, 'Real deal or fake?', 'Real', 'Fake', 900)
+on conflict (slug) do update set title = excluded.title, tagline = excluded.tagline, emoji = excluded.emoji, gradient = excluded.gradient,
+  categories = excluded.categories, status = 'hidden', featured = false, difficulty = excluded.difficulty, minutes = excluded.minutes,
+  questions = excluded.questions, prompt = excluded.prompt, yes_label = excluded.yes_label, no_label = excluded.no_label, sort = excluded.sort, updated_at = now();
+
+insert into public.quiz_questions (game_slug, item, qtype, emoji, kind, answer, fact, active) values
+  ('black-friday-fake-or-real', 'Last year''s 55-inch 4K TV — $279 (was $449)', 'Store flyer', '📺', 'truefalse', true, 'Around a third off an older TV model, in a big store''s own flyer: a classic, believable Black Friday deal.', true),
+  ('black-friday-fake-or-real', 'Previous-model wireless earbuds in the brand''s own app — $129 (was $199)', 'Official app', '🎧', 'truefalse', true, 'A modest cut on last year''s model, sold through the brand''s own app, is exactly what genuine deals look like.', true),
+  ('black-friday-fake-or-real', 'Buy one, get one free on all board games', 'Store flyer', '🎲', 'truefalse', true, 'Buy-one-get-one offers on games and toys are a long-running Black Friday favourite.', true),
+  ('black-friday-fake-or-real', 'Games console bundle with an extra game included — $449 (was $529)', 'Retailer website', '🎮', 'truefalse', true, 'Real console deals are usually small: a bundle or a cut of 10–20%, never 90% off.', true),
+  ('black-friday-fake-or-real', 'Coffee machine doorbuster, first 20 customers only — $49 (was $99)', 'Store flyer', '☕', 'truefalse', true, 'Doorbusters are real: a few items at a big discount to pull shoppers in early, while stocks last.', true),
+  ('black-friday-fake-or-real', 'Streaming subscription, first 6 months — $2.99 a month (was $7.99)', 'Email', '🍿', 'truefalse', true, 'Cheap intro months are common on Black Friday. Just check what the price goes back to afterwards.', true),
+  ('black-friday-fake-or-real', 'Free shipping on every order, Friday to Cyber Monday', 'Email newsletter', '📦', 'truefalse', true, 'Free-shipping weekends are one of the most common genuine Black Friday perks.', true),
+  ('black-friday-fake-or-real', 'Last season''s running shoes on the brand''s official site — $84 (was $140)', 'Official website', '👟', 'truefalse', true, '40% off an older colourway, straight from the official store, is a typical and believable sneaker deal.', true),
+  ('black-friday-fake-or-real', 'Previous-generation laptop at an electronics chain — $649 (was $899)', 'Retailer website', '💻', 'truefalse', true, 'Genuine laptop deals usually land around 20–30% off, often on last year''s model.', true),
+  ('black-friday-fake-or-real', 'Buy a $100 gift card, get a $20 bonus card free', 'In-store sign', '🎁', 'truefalse', true, 'Gift card bonuses are a real Black Friday promotion. Watch out: the bonus card often expires within weeks.', true),
+  ('black-friday-fake-or-real', 'Robot vacuum at a big-box store, limited stock — $199 (was $399)', 'Store flyer', '🤖', 'truefalse', true, 'Small home gadgets like robot vacuums often get their biggest cuts of the year on Black Friday.', true),
+  ('black-friday-fake-or-real', 'Brand-new iPhone 18 Pro, sealed in box — $99 (was $1,199)', 'Instagram ad', '📱', 'truefalse', false, 'No new flagship phone drops 90% overnight. Prices like this are bait used by fake shops to steal card details.', true),
+  ('black-friday-fake-or-real', 'PlayStation 5 Pro, today only through this text link — $49 (was $699)', 'Text message', '🕹️', 'truefalse', false, 'Surprise texts with crazy prices and a link are classic phishing. Go to the shop''s own app or website instead.', true),
+  ('black-friday-fake-or-real', 'Air Jordan 1s in every size, on a site that opened last week — $19 (was $180)', 'Pop-up ad', '👟', 'truefalse', false, 'Famous sneakers at 90% off on a brand-new site is the top sign of a fake shop selling counterfeits, or nothing at all.', true),
+  ('black-friday-fake-or-real', '65-inch OLED TV, gift card payment only — $299 (was $1,999)', 'Email', '📺', 'truefalse', false, 'No real shop asks you to pay with gift cards. Scammers love them because the money can''t be traced or refunded.', true),
+  ('black-friday-fake-or-real', 'Free laptop for answering 3 quick survey questions — $0 (was $1,099)', 'Pop-up ad', '💻', 'truefalse', false, '''Win a laptop'' surveys are bait for your personal and card details. The prize never turns up.', true),
+  ('black-friday-fake-or-real', 'Designer handbag, crypto or wire transfer only — $60 (was $2,800)', 'Direct message', '👜', 'truefalse', false, 'Crypto or wire transfer only means no buyer protection: if the bag never arrives, the money is gone.', true),
+  ('black-friday-fake-or-real', 'Electric scooter giveaway, you just pay shipping — $4.99 (was $699)', 'Social media post', '🛴', 'truefalse', false, '''Free, just pay shipping'' giveaways often hide a subscription that keeps charging your card every month.', true),
+  ('black-friday-fake-or-real', 'AirPods Pro with ''7 left'' and a 2-minute countdown — $12 (was $249)', 'Shopping website', '🎧', 'truefalse', false, 'Fake timers and ''only a few left'' badges on an impossible price are pressure tactics to stop you thinking.', true),
+  ('black-friday-fake-or-real', 'Pay a $1.99 ''customs fee'' to release your Black Friday parcel', 'Text message', '📦', 'truefalse', false, 'Fake delivery-fee texts surge around Black Friday. Real couriers don''t ask for small fees through random links.', true),
+  ('black-friday-fake-or-real', 'Nintendo Switch 2 from a seller with 0 reviews, bank transfer only — $35 (was $449)', 'Marketplace listing', '🎮', 'truefalse', false, 'A brand-new console, no reviews, no buyer protection and 90% off: four red flags in one listing.', true),
+  ('black-friday-fake-or-real', 'Gaming laptop on techmart-0fficial.shop — $89 (was $1,299)', 'Search ad', '🌐', 'truefalse', false, 'Lookalike web addresses with typos, zeros for O''s or odd endings are a hallmark of fake shops. Check the URL letter by letter.', true)
+on conflict (game_slug, item) do update set qtype = excluded.qtype, emoji = excluded.emoji, kind = excluded.kind, answer = excluded.answer, fact = excluded.fact, active = true;
+
+select count(*) as black_friday_questions from public.quiz_questions where game_slug = 'black-friday-fake-or-real' and active;
