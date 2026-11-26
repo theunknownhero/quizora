@@ -94,7 +94,7 @@ export function MaintenanceScreen() {
           <Wrench size={60} />
         </span>
         <h1>Back soon</h1>
-        <p>{site.maintenance?.message || 'We are making Quizora even better. Please check back shortly.'}</p>
+        <p>{site.maintenance?.message || 'We are making QuizBit even better. Please check back shortly.'}</p>
         {!user && (
           <button type="button" className="link-btn" onClick={() => openAuth('login')}>
             Staff login
@@ -118,7 +118,7 @@ export function FeatureGate({ name, label, children }) {
               <Power size={60} />
             </span>
             <h1>{label} is paused</h1>
-            <p>This part of Quizora is switched off for now. Check back soon!</p>
+            <p>This part of QuizBit is switched off for now. Check back soon!</p>
             <Link to="/" className="btn btn-primary btn-lg">
               Back home
             </Link>

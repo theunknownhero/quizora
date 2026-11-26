@@ -56,7 +56,7 @@ export function GameEditor({ game, categories, onClose, onSaved }) {
           <Field label="Title" span={2}>
             <input value={g.title} onChange={(e) => setG((s) => ({ ...s, title: e.target.value, ...(isNew ? { slug: slugify(e.target.value) } : {}) }))} placeholder="Italy or Not?" autoFocus />
           </Field>
-          <Field label="URL slug" hint={isNew ? `quizora.com/play/${g.slug || '…'}` : 'Can’t change after creation'}>
+          <Field label="URL slug" hint={isNew ? `${window.location.host}/play/${g.slug || '…'}` : 'Can’t change after creation'}>
             <input value={g.slug} onChange={(e) => set('slug')(slugify(e.target.value))} disabled={!isNew} />
           </Field>
           <Field label="Emoji">
@@ -191,7 +191,7 @@ export default function GamesPage() {
 
   return (
     <>
-      <PageHead title="Games & questions" sub="Every quiz on Quizora. New “live” quizzes are playable right away with the standard player." icon={Gamepad2}>
+      <PageHead title="Games & questions" sub="Every quiz on QuizBit. New “live” quizzes are playable right away with the standard player." icon={Gamepad2}>
         <Btn kind="primary" icon={Plus} onClick={() => setEdit({})}>
           New quiz
         </Btn>

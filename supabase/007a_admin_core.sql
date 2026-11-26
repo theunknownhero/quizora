@@ -70,7 +70,7 @@ revoke all on public.site_settings from anon, authenticated;
 insert into public.site_settings (key, value) values
   ('announcement', '{"enabled": false, "text": "", "link": "", "link_label": "", "tone": "info"}'),
   ('features', '{"signups": true, "multiplayer": true, "tournaments": true, "community_tournaments": true, "friends": true, "leaderboards": true}'),
-  ('maintenance', '{"enabled": false, "message": "We are making Quizora even better. Back soon!"}'),
+  ('maintenance', '{"enabled": false, "message": "We are making QuizBit even better. Back soon!"}'),
   ('prize', '{"url": "https://fortunejack.com", "label": "Claim the Prize"}'),
   ('xp_event', '{"multiplier": 1, "label": "", "starts_at": null, "ends_at": null}'),
   ('home', '{"featured_slug": "hungary-or-not", "hero_title": "", "hero_subtitle": ""}'),
@@ -80,7 +80,7 @@ insert into public.site_settings (key, value) values
       "terms": "Rewards are added to your account automatically when the challenge ends."},
     "weekly": {"enabled": true, "game": null, "title": "Weekly Masters", "description": "The hard one. One attempt only, level 3 and up. Accuracy first, speed breaks ties.", "attempts": 1, "min_level": 3,
       "prizes": [{"from":1,"to":1,"label":"Weekly prize (announced on this page) + 1000 XP","xp":1000,"external":true},{"from":2,"to":3,"label":"500 XP","xp":500},{"from":4,"to":10,"label":"150 XP","xp":150}],
-      "terms": "One attempt per player. Leaving a round counts as your attempt. External prizes are sent to the email on the winning account within 7 days. Quizora may disqualify entries that break the rules."}
+      "terms": "One attempt per player. Leaving a round counts as your attempt. External prizes are sent to the email on the winning account within 7 days. QuizBit may disqualify entries that break the rules."}
   }')
 on conflict (key) do nothing;
 

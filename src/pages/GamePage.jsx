@@ -234,7 +234,7 @@ function Results({ g, outcome, results, round, tcode, onReplay }) {
   const prize = getSettings().prize || {}
   const lp = user ? levelProgress(user.xp) : null
   const share = async () => {
-    const text = `I scored ${outcome.correct}/${outcome.total} on ${g.title} at Quizora!`
+    const text = `I scored ${outcome.correct}/${outcome.total} on ${g.title} at QuizBit!`
     try {
       if (navigator.share) await navigator.share({ title: g.title, text, url: window.location.origin + `/play/${g.slug}` })
       else {

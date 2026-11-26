@@ -675,7 +675,7 @@ export default function HungaryOrNot() {
         <nav className="nav nav--scrolled g-nav" aria-label="Game">
           <Link to="/" className="nav-logo">
             <span className="nav-logo-mark">Q</span>
-            <span className="nav-logo-text">Quizora</span>
+            <span className="nav-logo-text">QuizBit</span>
           </Link>
           <div className="g-nav-title">
             <span className="flag-chip" aria-hidden="true" />

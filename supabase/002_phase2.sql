@@ -1,4 +1,4 @@
--- Quizora — Phase 2: server-side scoring, play history, XP/levels, achievements, library, playlists.
+-- QuizBit — Phase 2: server-side scoring, play history, XP/levels, achievements, library, playlists.
 -- Run after schema.sql. Safe to re-run.
 
 -- ============================================================================

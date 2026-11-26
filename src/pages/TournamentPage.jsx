@@ -100,7 +100,7 @@ export default function TournamentPage() {
   const share = async () => {
     const url = window.location.href
     try {
-      if (navigator.share) await navigator.share({ title: t.title, text: `Join "${t.title}" on Quizora`, url })
+      if (navigator.share) await navigator.share({ title: t.title, text: `Join "${t.title}" on QuizBit`, url })
       else {
         await navigator.clipboard.writeText(url)
         pushToast({ emoji: '🔗', title: 'Link copied', text: 'Send it to your friends!' })

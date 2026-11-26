@@ -1,4 +1,4 @@
-# Quizora
+# QuizBit
 
 Quiz games library: React + Vite, hosted on **Vercel**, accounts on **Supabase**.
 

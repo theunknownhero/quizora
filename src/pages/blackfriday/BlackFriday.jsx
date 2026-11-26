@@ -79,7 +79,7 @@ export function parseDeal(item = '') {
 function useHead() {
   useEffect(() => {
     const prevTitle = document.title
-    document.title = 'Black Friday Madness: Fake or Real? | Quizora'
+    document.title = 'Black Friday Madness: Fake or Real? | QuizBit'
     const add = (tag, attrs) => {
       const el = document.createElement(tag)
       Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v))
@@ -210,13 +210,13 @@ export default function BlackFriday() {
     <div className="bf">
       <Backdrop />
       <header className="bf-top">
-        <Link to="/" className="bf-logo" aria-label="Quizora home">
+        <Link to="/" className="bf-logo" aria-label="QuizBit home">
           <span className="bf-logo-bars" aria-hidden="true">
             <i />
             <i />
             <i />
           </span>
-          Quizora
+          QuizBit
         </Link>
         <span className="bf-top-chip">
           <Zap size={14} aria-hidden="true" /> Black Friday Madness
@@ -358,7 +358,7 @@ export default function BlackFriday() {
             <ShieldCheck size={16} aria-hidden="true" /> If a deal looks too good to be true, it probably is. Shop on official sites and apps.
           </p>
           <Link to="/" className="bf-foot-link">
-            More quizzes on Quizora <ArrowRight size={15} />
+            More quizzes on QuizBit <ArrowRight size={15} />
           </Link>
         </footer>
       </main>

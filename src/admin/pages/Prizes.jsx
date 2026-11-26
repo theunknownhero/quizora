@@ -61,7 +61,7 @@ export default function PrizesPage() {
                       <b>{p.username}</b>
                       {p.email ? (
                         <small className="qa-block">
-                          <a href={`mailto:${p.email}?subject=${encodeURIComponent(`Your Quizora prize: ${p.title}`)}`} className="qa-link">
+                          <a href={`mailto:${p.email}?subject=${encodeURIComponent(`Your QuizBit prize: ${p.title}`)}`} className="qa-link">
                             <Mail size={12} /> {p.email}
                           </a>{' '}
                           <button type="button" className="qa-icon-btn is-xs" onClick={() => navigator.clipboard.writeText(p.email)} aria-label="Copy email">

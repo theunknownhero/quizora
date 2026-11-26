@@ -1,4 +1,4 @@
--- Quizora — Supabase setup
+-- QuizBit — Supabase setup
 -- Run this once in Supabase: Dashboard → SQL Editor → New query → paste → Run.
 -- Safe to re-run (it replaces functions/policies and only creates what's missing).
 

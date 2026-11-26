@@ -532,7 +532,7 @@ function QuizLists({ user }) {
   const share = async (pl) => {
     const url = `${window.location.origin}/quizlist/${pl.share_code}`
     try {
-      if (navigator.share) await navigator.share({ title: pl.title, text: `Play my Quizora QuizList “${pl.title}”`, url })
+      if (navigator.share) await navigator.share({ title: pl.title, text: `Play my QuizBit QuizList “${pl.title}”`, url })
       else {
         await navigator.clipboard.writeText(url)
         pushToast({ emoji: '🔗', title: 'Link copied', text: 'Send it to your friends!' })

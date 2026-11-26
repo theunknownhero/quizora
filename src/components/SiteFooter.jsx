@@ -8,7 +8,7 @@ export default function SiteFooter() {
       <div className="container footer-inner">
         <Link to="/" className="nav-logo">
           <span className="nav-logo-mark">Q</span>
-          <span className="nav-logo-text">Quizora</span>
+          <span className="nav-logo-text">QuizBit</span>
         </Link>
         <nav className="footer-links" aria-label="Footer">
           <Link to="/#featured">{t('nav.featured')}</Link>
@@ -24,7 +24,7 @@ export default function SiteFooter() {
           <img src="/brand/fortunejack.svg" alt="FortuneJack" width="150" height="17" />
         </a>
         <span className="footer-copy">
-          © {new Date().getFullYear()} Quizora. {t('footer.copy')}
+          © {new Date().getFullYear()} QuizBit. {t('footer.copy')}
         </span>
       </div>
     </footer>

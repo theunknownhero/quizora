@@ -131,7 +131,7 @@ begin
     'The hard one. One attempt only, level 3 and up. Accuracy first, speed breaks ties.',
     v_game, w, w + interval '7 days', 1, 3,
     '[{"from":1,"to":1,"label":"Weekly prize (announced on this page) + 1000 XP","xp":1000,"external":true},{"from":2,"to":3,"label":"500 XP","xp":500},{"from":4,"to":10,"label":"150 XP","xp":150}]'::jsonb,
-    'One attempt per player. Leaving a round counts as your attempt. External prizes are sent to the email on the winning account within 7 days. Quizora may disqualify entries that break the rules.')
+    'One attempt per player. Leaving a round counts as your attempt. External prizes are sent to the email on the winning account within 7 days. QuizBit may disqualify entries that break the rules.')
   on conflict do nothing;
 end;
 $$;

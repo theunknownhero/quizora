@@ -1,4 +1,4 @@
-// Countries Quizora runs in. Add a new one here (and drop its flag SVGs in /public/flags/circle + /rect).
+// Countries QuizBit runs in. Add a new one here (and drop its flag SVGs in /public/flags/circle + /rect).
 // Flags: Untitled UI free flag icons (https://www.untitledui.com/resources/flag-icons)
 
 export const ALL = 'ALL'

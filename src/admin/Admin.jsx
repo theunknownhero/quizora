@@ -45,7 +45,7 @@ function Denied({ text }) {
       <h1>Admins only</h1>
       <p>{text}</p>
       <Link to="/" className="qa-btn is-primary">
-        <ArrowLeft size={15} /> Back to Quizora
+        <ArrowLeft size={15} /> Back to QuizBit
       </Link>
     </div>
   )
@@ -95,7 +95,7 @@ export default function Admin() {
               <i />
               <i />
             </span>
-            Quizora <em>Admin</em>
+            QuizBit <em>Admin</em>
           </Link>
           <button type="button" className="qa-icon-btn qa-close" onClick={() => setOpen(false)} aria-label="Close menu">
             <X size={18} />

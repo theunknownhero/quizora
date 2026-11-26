@@ -68,10 +68,10 @@ export function VerifyEmailPage() {
         <>
           <div className="account-emoji"><CheckCircle2 size={52} /></div>
           <h1 className="auth-title">Email confirmed</h1>
-          <p className="auth-sub">Welcome to Quizora, {user.username}!</p>
+          <p className="auth-sub">Welcome to QuizBit, {user.username}!</p>
           {user.profile.onboarded ? (
             <Link to="/" className="btn btn-primary btn-lg auth-submit">
-              Go to Quizora <span className="btn-icon"><ArrowRight size={14} /></span>
+              Go to QuizBit <span className="btn-icon"><ArrowRight size={14} /></span>
             </Link>
           ) : (
             <button type="button" className="btn btn-primary btn-lg auth-submit" onClick={() => (navigate('/'), openOnboarding())}>

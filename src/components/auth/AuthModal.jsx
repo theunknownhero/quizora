@@ -294,7 +294,7 @@ export default function AuthModal() {
             )}
 
             <p className="auth-switch">
-              {isReg ? 'Already have an account?' : 'New to Quizora?'}{' '}
+              {isReg ? 'Already have an account?' : 'New to QuizBit?'}{' '}
               <button type="button" onClick={() => openAuth(isReg ? 'login' : 'register')}>
                 {isReg ? 'Log in' : 'Create an account'}
               </button>

@@ -49,7 +49,7 @@ function CodeBox({ code }) {
   }
   const share = async () => {
     try {
-      if (navigator.share) await navigator.share({ title: 'Join my Quizora party', text: `Join my quiz party with code ${code}`, url })
+      if (navigator.share) await navigator.share({ title: 'Join my QuizBit party', text: `Join my quiz party with code ${code}`, url })
       else {
         await navigator.clipboard.writeText(url)
         pushToast({ emoji: '🔗', title: 'Link copied', text: 'Send it to your friends!' })

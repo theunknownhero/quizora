@@ -7,7 +7,7 @@ export default class ErrorBoundary extends Component {
     return { error }
   }
   componentDidCatch(error, info) {
-    console.error('[Quizora] render error:', error, info?.componentStack)
+    console.error('[QuizBit] render error:', error, info?.componentStack)
   }
   render() {
     const { error } = this.state

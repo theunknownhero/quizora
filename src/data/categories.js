@@ -1,4 +1,4 @@
-// Every quiz category on Quizora, grouped. Names are translated in src/i18n/dict.js (key "cat.<id>").
+// Every quiz category on QuizBit, grouped. Names are translated in src/i18n/dict.js (key "cat.<id>").
 // Keep existing ids stable: they're stored in games.js and in players' preferences.
 
 export const groups = [

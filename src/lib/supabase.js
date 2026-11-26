@@ -21,5 +21,5 @@ export const supabase = supabaseConfigured
   : null
 
 if (!supabaseConfigured && import.meta.env.DEV) {
-  console.info('[Quizora] Supabase is not configured — accounts are disabled. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local.')
+  console.info('[QuizBit] Supabase is not configured — accounts are disabled. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local.')
 }

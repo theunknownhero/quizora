@@ -135,14 +135,14 @@ export default function Navbar() {
             setOpen(false)
             if (isHome) go(0)
           }}
-          aria-label="Quizora home"
+          aria-label="QuizBit home"
         >
           <span className="nav-brand-bars" aria-hidden="true">
             <i />
             <i />
             <i />
           </span>
-          <span className="nav-brand-text">Quizora</span>
+          <span className="nav-brand-text">QuizBit</span>
         </Link>
 
         <div className={`nav-center ${isHome || routeActive >= 0 ? '' : 'is-off'}`}>

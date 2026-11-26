@@ -93,7 +93,7 @@ export default function Onboarding() {
               <div>
                 <span className="eyebrow">{editing ? 'Your preferences' : 'Welcome aboard'}</span>
                 <h2 id="ob-title" className="ob-title">
-                  {editing ? 'Update your picks' : `Hi ${user.username}! Let’s personalise Quizora`}
+                  {editing ? 'Update your picks' : `Hi ${user.username}! Let’s personalise QuizBit`}
                 </h2>
                 <p className="ob-sub">Choose what you’re into and we’ll suggest quizzes you’ll love. You can change this any time.</p>
               </div>
