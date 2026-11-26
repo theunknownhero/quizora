@@ -61,12 +61,9 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.bf-bg-x { position: absolute; top: -20vh; width: 36vmax; height: 140vh; }
-.bf-bg-x::before, .bf-bg-x::after { content: ''; position: absolute; left: 50%; top: 0; width: 30%; height: 100%; margin-left: -15%; background: var(--bf-x); }
-.bf-bg-x::before { transform: rotate(22deg); }
-.bf-bg-x::after { transform: rotate(-22deg); }
-.bf-bg-x.is-right { right: -19vmax; }
-.bf-bg-x.is-left { left: -24vmax; top: 30vh; opacity: 0.6; }
+.bf-bg-x { position: absolute; width: 64vmax; aspect-ratio: 724 / 500; background: url('/blackfriday/kv-pattern.webp') center / contain no-repeat; opacity: 0.75; }
+.bf-bg-x.is-right { right: -26vmax; top: -6vmax; }
+.bf-bg-x.is-left { left: -32vmax; top: 46vh; transform: scaleX(-1); opacity: 0.5; }
 
 /* ---------- Top bar ---------- */
 .bf-top {
@@ -104,30 +101,27 @@ button.bf-top-user { padding: 6px 18px; }
   background: #000;
 }
 .bf-hero-kv { position: absolute; inset: 0; }
-.bf-hero-x { position: absolute; right: -7%; top: -35%; width: 44%; height: 170%; pointer-events: none; }
-.bf-hero-x::before, .bf-hero-x::after { content: ''; position: absolute; left: 50%; top: 0; width: 34%; height: 100%; margin-left: -17%; background: #1a1e21; }
-.bf-hero-x::before { transform: rotate(26deg); }
-.bf-hero-x::after { transform: rotate(-26deg); }
-.bf-hero-glow { position: absolute; left: 35%; top: 52%; width: 52%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgba(252, 208, 28, 0.2), transparent 62%); }
-.bf-hero-logo { position: absolute; left: 13%; top: 50%; width: 44%; height: auto; translate: 0 -50%; filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.7)); }
-.bf-hero-rider { position: absolute; right: 2%; bottom: 3%; width: 41%; isolation: isolate; }
-.bf-hero-rider img { position: relative; display: block; width: 100%; height: auto; transform-origin: 70% 92%; animation: bf-ride 2.4s ease-in-out infinite; filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.6)); }
-.bf-hero-rider::before { content: ''; position: absolute; z-index: -1; left: 34%; right: 4%; bottom: 0; height: 7%; border-radius: 50%; background: var(--bf-yellow); transform: skewX(-24deg); box-shadow: 0 0 30px rgba(252, 208, 28, 0.5); }
-@keyframes bf-ride { 0%, 100% { transform: rotate(0deg) translateY(0); } 50% { transform: rotate(-1.8deg) translateY(-6px); } }
-.bf-hero-speed { position: absolute; left: -16%; top: 34%; width: 36%; height: 46%; }
-.bf-hero-speed i { position: absolute; right: 0; height: 4px; border-radius: 4px; background: linear-gradient(90deg, transparent, rgba(255, 253, 245, 0.75)); animation: bf-speed 1s linear infinite; }
+.bf-hero-x { position: absolute; right: -12%; top: -4%; height: 108%; aspect-ratio: 724 / 500; background: url('/blackfriday/kv-pattern.webp') center / contain no-repeat; pointer-events: none; }
+.bf-hero-glow { position: absolute; left: 29%; top: 52%; width: 52%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgba(252, 208, 28, 0.2), transparent 62%); }
+.bf-hero-logo { position: absolute; left: 6%; top: 50%; width: 44%; height: auto; translate: 0 -50%; filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.7)); }
+/* The rider faces left, so his speed trail and the flying price tags stream out behind him, to the right */
+.bf-hero-rider { position: absolute; right: 7%; bottom: 4%; width: 41%; isolation: isolate; container-type: inline-size; --k: 1; }
+.bf-hero-rider img { position: relative; display: block; width: 100%; height: auto; transform-origin: 30% 88%; animation: bf-ride 2.4s ease-in-out infinite; filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.6)); }
+@keyframes bf-ride { 0%, 100% { transform: rotate(0deg) translateY(0); } 50% { transform: rotate(1.8deg) translateY(-6px); } }
+.bf-hero-speed { position: absolute; left: 80%; top: 30%; width: 40%; height: 44%; }
+.bf-hero-speed i { position: absolute; left: 0; height: 4px; border-radius: 4px; background: linear-gradient(90deg, rgba(255, 253, 245, 0.75), transparent); animation: bf-speed 1s linear infinite; }
 .bf-hero-speed i:nth-child(1) { top: 0; width: 70%; }
-.bf-hero-speed i:nth-child(2) { top: 32%; width: 100%; animation-delay: -0.35s; background: linear-gradient(90deg, transparent, var(--bf-yellow)); }
+.bf-hero-speed i:nth-child(2) { top: 32%; width: 100%; animation-delay: -0.35s; background: linear-gradient(90deg, var(--bf-yellow), transparent); }
 .bf-hero-speed i:nth-child(3) { top: 62%; width: 55%; animation-delay: -0.7s; }
-.bf-hero-speed i:nth-child(4) { top: 92%; width: 85%; animation-delay: -0.15s; background: linear-gradient(90deg, transparent, var(--bf-yellow)); }
-@keyframes bf-speed { from { transform: translateX(40%); opacity: 0; } 30% { opacity: 1; } to { transform: translateX(-70%); opacity: 0; } }
+.bf-hero-speed i:nth-child(4) { top: 92%; width: 85%; animation-delay: -0.15s; background: linear-gradient(90deg, var(--bf-yellow), transparent); }
+@keyframes bf-speed { from { transform: translateX(-40%); opacity: 0; } 30% { opacity: 1; } to { transform: translateX(70%); opacity: 0; } }
 
-.bf-hero-tags { position: absolute; inset: 0; pointer-events: none; }
+/* White price tags popping out of the basket; sizes follow the rider's width (cqw) */
+.bf-hero-chips { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .bf-hero-tag {
   position: absolute; display: grid; grid-template-columns: auto auto; grid-template-areas: 'e s' 'e b'; align-items: center; column-gap: 10px;
   padding: 9px 18px 9px 12px; border-radius: 14px;
   background: var(--bf-ink); color: #111; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.8);
-  animation: bf-bob 5s ease-in-out infinite;
 }
 .bf-hero-tag::before { content: ''; position: absolute; left: -7px; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: #000; }
 .bf-hero-tag-emoji { grid-area: e; font-size: clamp(22px, 2.6vw, 34px); line-height: 1; }
@@ -137,9 +131,15 @@ button.bf-top-user { padding: 6px 18px; }
   position: absolute; top: -11px; right: -11px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
   font-style: normal; font-family: var(--bf-display); font-size: 16px; color: #111; background: var(--bf-yellow); box-shadow: 0 0 0 3px #000;
 }
-.bf-hero-tag.t1 { left: 3.5%; top: 9%; transform: rotate(-7deg); }
-.bf-hero-tag.t2 { left: 5%; bottom: 10%; transform: rotate(6deg); animation-delay: -2.2s; }
-@keyframes bf-bob { 50% { translate: 0 -8px; } }
+.bf-hero-tag.is-spill {
+  left: var(--sx); top: calc(var(--sy) * var(--k)); transform: translate(-50%, -50%) rotate(var(--rot));
+  padding: 1.3cqw 2.8cqw 1.3cqw 2cqw; column-gap: 1.5cqw; border-radius: 2.2cqw;
+}
+.bf-hero-tag.is-spill::before { left: -1cqw; width: 2cqw; height: 2cqw; margin-top: -1cqw; }
+.bf-hero-tag.is-spill .bf-hero-tag-emoji { font-size: max(16px, 5cqw); }
+.bf-hero-tag.is-spill s { font-size: max(9px, 2.2cqw); }
+.bf-hero-tag.is-spill b { font-size: max(14px, 4.4cqw); }
+.bf-hero-tag.is-spill em { top: -1.6cqw; right: -1.6cqw; width: max(16px, 3.8cqw); height: max(16px, 3.8cqw); font-size: max(10px, 2.4cqw); box-shadow: 0 0 0 2px #000; }
 
 /* ---------- Tapes (marquee) ---------- */
 .bf-tape-track { display: flex; width: max-content; animation: bf-marquee 26s linear infinite; }
@@ -349,23 +349,21 @@ button.bf-top-user { padding: 6px 18px; }
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .bf-hero { aspect-ratio: 16 / 9; }
-  .bf-hero-logo { left: 5%; width: 52%; }
-  .bf-hero-glow { left: 31%; width: 64%; }
-  .bf-hero-rider { width: 47%; right: 0; }
-  .bf-hero-x { width: 52%; }
-  .bf-hero-tag.t2 { display: none; }
-  .bf-hero-tag.t1 { left: 3%; top: 6%; }
+  .bf-hero-logo { left: 3%; width: 50%; }
+  .bf-hero-glow { left: 28%; width: 64%; }
+  .bf-hero-rider { width: 44%; right: 5%; }
+  .bf-hero-x { right: -24%; }
 }
 @media (max-width: 640px) {
   .bf-top { padding: 14px 16px; }
   .bf-top-chip { display: none; }
   .bf-hero { width: calc(100% - 32px); aspect-ratio: 4 / 5; border-radius: 22px; }
-  .bf-hero-logo { left: 6%; top: 6%; width: 88%; translate: none; }
+  .bf-hero-logo { left: 10%; top: 5%; width: 80%; translate: none; }
+  .bf-hero-tag.is-spill:nth-child(even) { display: none; }
   .bf-hero-glow { left: 50%; top: 28%; width: 110%; }
-  .bf-hero-rider { width: 90%; right: 1%; bottom: 3%; }
-  .bf-hero-speed { left: -6%; width: 30%; }
-  .bf-hero-x { right: -36%; top: 20%; width: 100%; height: 110%; }
-  .bf-hero-tags { display: none; }
+  .bf-hero-rider { width: 82%; right: 12%; bottom: 4%; --k: 0.6; }
+  .bf-hero-speed { width: 26%; }
+  .bf-hero-x { right: -46%; top: 30%; height: 74%; }
   .bf-intro { padding: 40px 16px 6px; }
   .bf-btn-xl { width: min(320px, 100%); padding: 16px 24px; font-size: 18px; }
   .bf-cta-row { width: 100%; }

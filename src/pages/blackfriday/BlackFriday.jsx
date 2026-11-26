@@ -20,7 +20,15 @@ const WIN_AT = Math.ceil(ROUND * 0.7)
 
 // Key visual pieces (public/blackfriday/): the "Black Friday Madness" logo, cut out so it blends over the page,
 // and the cart rider. The hero rebuilds the campaign banner from them so it works at every screen size.
-const KV = { logo: '/blackfriday/madness-logo.webp', rider: '/blackfriday/madness-rider.webp' }
+const KV = { logo: '/blackfriday/madness-logo.webp', rider: '/blackfriday/madness-rider-left.webp' }
+// White price tags spilling out of the basket. x/y: centre of each tag as a share of the rider image
+// (negative y = above it), r: tilt
+const SPILL_TAGS = [
+  { emoji: '📱', was: '$1,199', now: '$99', x: '15%', y: '-6%', r: '-14deg' },
+  { emoji: '👟', was: '$180', now: '$19', x: '35%', y: '-19%', r: '7deg' },
+  { emoji: '📺', was: '$1,999', now: '$299', x: '56%', y: '-8%', r: '15deg' },
+  { emoji: '🎧', was: '$249', now: '$12', x: '77%', y: '4%', r: '22deg' },
+]
 
 const FLOATERS = [
   { t: '-70%', x: '6%', d: '26s', s: 1, r: '-8deg' },
@@ -408,20 +416,22 @@ function HeroBanner() {
             <i />
             <i />
           </span>
-          <img src={KV.rider} alt="" width="1200" height="811" />
+          <img src={KV.rider} alt="" width="696" height="484" />
+          {/* white price tags spilling out of the basket */}
+          <span className="bf-hero-chips" aria-hidden="true">
+            {SPILL_TAGS.map((t) => (
+              <HeroTag key={t.now} {...t} className="is-spill" style={{ '--sx': t.x, '--sy': t.y, '--rot': t.r }} />
+            ))}
+          </span>
         </motion.div>
-        <div className="bf-hero-tags" aria-hidden="true">
-          <HeroTag emoji="📱" now="$99" was="$1,199" className="t1" />
-          <HeroTag emoji="👟" now="$19" was="$180" className="t2" />
-        </div>
       </div>
     </motion.section>
   )
 }
 
-function HeroTag({ emoji, now, was, className }) {
+function HeroTag({ emoji, now, was, className, style }) {
   return (
-    <span className={`bf-hero-tag ${className}`}>
+    <span className={`bf-hero-tag ${className}`} style={style}>
       <span className="bf-hero-tag-emoji">{emoji}</span>
       <s>{was}</s>
       <b>{now}</b>
