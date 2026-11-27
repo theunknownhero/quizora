@@ -2,6 +2,7 @@
 // Nothing on the site links here, and the quiz is a hidden game (supabase/011_blackfriday_fake_or_real.sql),
 // so it never appears in the library, categories or search. Rounds are scored on the server like every quiz.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react'
 import {
@@ -118,6 +119,7 @@ export default function BlackFriday() {
   const { user, openAuth, reloadUser } = useApp()
   const announce = useAnnounce()
   const stageRef = useRef(null)
+  const rootRef = useRef(null)
   const [phase, setPhase] = useState('intro') // intro | question | done
   const [round, setRound] = useState(null)
   const [i, setI] = useState(0)
@@ -223,6 +225,13 @@ export default function BlackFriday() {
     }
   }
 
+  // After the last offer, go straight to the result: no "See my rank" click
+  useEffect(() => {
+    if (phase !== 'question' || !res || i + 1 < total || busy) return
+    const t = setTimeout(() => next(), 1500)
+    return () => clearTimeout(t)
+  }, [phase, res, i, total, busy]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ← fake, → real, Enter for the next offer
   useEffect(() => {
     if (phase !== 'question') return
@@ -237,7 +246,7 @@ export default function BlackFriday() {
   })
 
   return (
-    <div className="bf">
+    <div className="bf" ref={rootRef}>
       <Backdrop />
       <header className="bf-top">
         <Link to="/" className="bf-logo" aria-label="QuizBit home">
@@ -361,9 +370,15 @@ export default function BlackFriday() {
                       {res.correct ? PRAISE[i % PRAISE.length] : res.answer ? 'That one was real!' : 'Gotcha! It was fake.'}
                     </b>
                     {res.fact && <p>{res.fact}</p>}
-                    <button type="button" className="bf-btn bf-btn-hot" onClick={next} disabled={busy} autoFocus>
-                      {busy ? <Loader2 size={18} className="spin" /> : null} {i + 1 < total ? 'Next offer' : 'See my rank'} <ArrowRight size={18} />
-                    </button>
+                    {i + 1 < total ? (
+                      <button type="button" className="bf-btn bf-btn-hot" onClick={next} disabled={busy} autoFocus>
+                        {busy ? <Loader2 size={18} className="spin" /> : null} Next offer <ArrowRight size={18} />
+                      </button>
+                    ) : (
+                      <span className="bf-revealing">
+                        <Loader2 size={18} className="spin" /> Revealing your result…
+                      </span>
+                    )}
                   </motion.div>
                 ) : (
                   <div className="bf-choices">
@@ -387,7 +402,7 @@ export default function BlackFriday() {
               </motion.div>
             )}
 
-            {phase === 'done' && outcome && <Results key="done" outcome={outcome} results={results} round={round} onReplay={begin} busy={busy} openAuth={openAuth} reward={reward} rewardState={rewardState} onRetryReward={() => fetchReward(round)} />}
+            {phase === 'done' && outcome && <Results key="done" outcome={outcome} results={results} round={round} onReplay={begin} busy={busy} openAuth={openAuth} reward={reward} rewardState={rewardState} onRetryReward={() => fetchReward(round)} portalTarget={rootRef.current} />}
           </AnimatePresence>
         </section>
 
@@ -650,9 +665,97 @@ function DealCard({ q, result, locked, pending, onDecide }) {
   )
 }
 
-function Results({ outcome, results, round, onReplay, busy, openAuth, reward, rewardState, onRetryReward }) {
+function PrizePanel({ reward, rewardState, onRetry, codeCopied, onCopy, autoFocusClaim }) {
+  if (rewardState === 'ready' && reward?.code) {
+    return (
+      <>
+        <small className="bf-prize-label">Your promo code</small>
+        <button type="button" className={`bf-code ${codeCopied ? 'is-copied' : ''}`} onClick={onCopy} aria-label={`Promo code ${reward.code}. Copy it`}>
+          <span className="bf-code-text">{reward.code}</span>
+          <span className="bf-code-copy">
+            {codeCopied ? <Check size={16} strokeWidth={3} /> : <Copy size={16} />} {codeCopied ? 'Copied' : 'Copy'}
+          </span>
+        </button>
+        <a className="bf-btn bf-btn-claim" href={reward.url} target="_blank" rel="noopener noreferrer" onClick={onCopy} autoFocus={autoFocusClaim}>
+          <Gift size={22} /> {reward.label || 'Claim the Prize'} <ArrowRight size={20} />
+        </a>
+        <p className="bf-prize-note">Use the code when you claim. Tapping Claim the Prize copies it for you.</p>
+      </>
+    )
+  }
+  if (rewardState === 'error' || (rewardState === 'ready' && !reward?.code)) {
+    return (
+      <p className="bf-prize-note">
+        We couldn’t load your prize just now.{' '}
+        <button type="button" className="bf-link" onClick={onRetry}>
+          Try again
+        </button>
+      </p>
+    )
+  }
+  return (
+    <span className="bf-prize-wait">
+      <Loader2 size={26} className="spin" /> Unwrapping your prize…
+    </span>
+  )
+}
+
+// Winners see this first, over everything: the code and the Claim the Prize button
+function PrizePopup({ outcome, onClose, onReplay, children }) {
+  useEffect(() => {
+    const prev = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+    const onKey = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.documentElement.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [onClose])
+  return (
+    <motion.div
+      className="bf-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bf-modal-title"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div className="bf-modal-card" initial={{ scale: 0.82, y: 40 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.94, opacity: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 20 }}>
+        <Confetti />
+        <button type="button" className="bf-modal-close" onClick={onClose} aria-label="Close and see my results">
+          <X size={18} />
+        </button>
+        <span className="bf-modal-trophy">
+          <Trophy size={34} />
+        </span>
+        <h2 id="bf-modal-title" className="bf-modal-title">
+          You won!
+        </h2>
+        <p className="bf-modal-sub">
+          {outcome.correct}/{outcome.total} right. Here’s your Black Friday prize.
+        </p>
+        <div className="bf-prize is-popup">{children}</div>
+        <div className="bf-modal-links">
+          <button type="button" onClick={onReplay}>
+            <RotateCcw size={15} /> Play again
+          </button>
+          <button type="button" onClick={onClose}>
+            See my results <ArrowRight size={15} />
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+function Results({ outcome, results, round, onReplay, busy, openAuth, reward, rewardState, onRetryReward, portalTarget }) {
   const [copied, setCopied] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
+  const [showPrize, setShowPrize] = useState(outcome.won)
+  const closePrize = useCallback(() => setShowPrize(false), [])
   const rank = rankFor(outcome.correct, outcome.total)
   const won = outcome.won
   const share = async () => {
@@ -678,8 +781,22 @@ function Results({ outcome, results, round, onReplay, busy, openAuth, reward, re
       /* clipboard blocked: the code is on screen to copy by hand */
     }
   }
+  const panel = (popup) => (
+    <PrizePanel reward={reward} rewardState={rewardState} onRetry={onRetryReward} codeCopied={codeCopied} onCopy={copyCode} autoFocusClaim={popup} />
+  )
   return (
     <motion.div className={`bf-results ${won ? 'is-won' : ''}`} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+      {portalTarget &&
+        createPortal(
+          <AnimatePresence>
+            {won && showPrize && (
+              <PrizePopup outcome={outcome} onClose={closePrize} onReplay={onReplay}>
+                {panel(true)}
+              </PrizePopup>
+            )}
+          </AnimatePresence>,
+          portalTarget
+        )}
       {won && <Confetti />}
       <motion.span className="bf-rank-ico" initial={{ rotate: -20, scale: 0.4 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 14, delay: 0.1 }}>
         <rank.Icon size={40} />
@@ -697,32 +814,7 @@ function Results({ outcome, results, round, onReplay, busy, openAuth, reward, re
           <span className="bf-prize-badge">
             <Gift size={16} aria-hidden="true" /> Prize unlocked
           </span>
-          {rewardState === 'ready' && reward?.code ? (
-            <>
-              <small className="bf-prize-label">Your promo code</small>
-              <button type="button" className={`bf-code ${codeCopied ? 'is-copied' : ''}`} onClick={copyCode} aria-label={`Promo code ${reward.code}. Copy it`}>
-                <span className="bf-code-text">{reward.code}</span>
-                <span className="bf-code-copy">
-                  {codeCopied ? <Check size={16} strokeWidth={3} /> : <Copy size={16} />} {codeCopied ? 'Copied' : 'Copy'}
-                </span>
-              </button>
-              <a className="bf-btn bf-btn-claim" href={reward.url} target="_blank" rel="noopener noreferrer" onClick={copyCode}>
-                <Gift size={22} /> {reward.label || 'Claim the Prize'} <ArrowRight size={20} />
-              </a>
-              <p className="bf-prize-note">Use the code when you claim. Tapping Claim the Prize copies it for you.</p>
-            </>
-          ) : rewardState === 'error' || (rewardState === 'ready' && !reward?.code) ? (
-            <p className="bf-prize-note">
-              We couldn’t load your prize just now.{' '}
-              <button type="button" className="bf-link" onClick={onRetryReward}>
-                Try again
-              </button>
-            </p>
-          ) : (
-            <span className="bf-prize-wait">
-              <Loader2 size={26} className="spin" /> Unwrapping your prize…
-            </span>
-          )}
+          {panel(false)}
         </motion.div>
       ) : (
         <p className="bf-prize-hint">

@@ -394,6 +394,38 @@ button.bf-top-user { padding: 6px 18px; }
 .bf-prize-hint { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 10px 16px; border-radius: 14px; font-size: 14px; color: var(--bf-ink); background: rgba(252, 208, 28, 0.08); border: 1px solid rgba(252, 208, 28, 0.3); }
 .bf-prize-hint svg { flex: none; color: var(--bf-yellow); }
 
+/* "Revealing your result…" after the last offer (the result opens on its own) */
+.bf-revealing { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; font-family: var(--font-display); font-weight: 700; color: var(--bf-yellow); }
+
+/* Winner's prize popup: the first thing a winner sees */
+.bf-modal {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; overflow-y: auto;
+  background: rgba(3, 3, 3, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.bf-modal-card {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; width: min(480px, 100%); padding: 34px 26px 22px; border-radius: 28px; text-align: center;
+  background: radial-gradient(120% 70% at 50% 0%, rgba(252, 208, 28, 0.26), transparent 62%), #121008;
+  border: 2px solid var(--bf-yellow); box-shadow: 0 40px 120px -20px rgba(252, 208, 28, 0.5), 0 0 0 8px rgba(252, 208, 28, 0.08);
+}
+.bf-modal-card > * { position: relative; z-index: 1; }
+.bf-modal-card > .bf-confetti { position: absolute; z-index: 0; }
+.bf-modal-close {
+  position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  color: var(--bf-ink); background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14); transition: background 0.2s;
+}
+.bf-modal-close:hover { background: rgba(255, 255, 255, 0.16); }
+.bf-modal-trophy { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; color: #111; background: linear-gradient(135deg, var(--bf-yellow), var(--bf-amber)); box-shadow: 0 14px 36px -10px rgba(252, 208, 28, 0.8), 4px 4px 0 var(--bf-red); }
+.bf-modal-title { margin-top: 14px; font-family: var(--bf-wide); font-stretch: 125%; font-weight: 900; font-size: clamp(36px, 9vw, 52px); line-height: 1; text-transform: uppercase; color: var(--bf-yellow); text-shadow: 0 0 34px rgba(252, 208, 28, 0.45); }
+.bf-modal-sub { margin-top: 8px; font-size: 15px; color: var(--bf-muted); }
+.bf-prize.is-popup { margin-top: 6px; padding: 0; border: 0; background: none; box-shadow: none; max-width: none; }
+.bf-modal-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+.bf-modal-links button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 42px; padding: 9px 16px; border-radius: 12px;
+  font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--bf-ink); background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.bf-modal-links button:hover { background: rgba(255, 255, 255, 0.11); }
+.bf-modal-close:focus-visible, .bf-modal-links button:focus-visible { outline: 3px solid var(--bf-yellow); outline-offset: 2px; }
+
 /* Win confetti */
 .bf-confetti { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .bf-confetti i { position: absolute; top: -20px; left: var(--x); width: 9px; height: 15px; border-radius: 2px; background: var(--c); opacity: 0; animation: bf-confetti var(--t) cubic-bezier(0.3, 0.6, 0.5, 1) var(--d) 2 forwards; }
@@ -428,6 +460,9 @@ button.bf-top-user { padding: 6px 18px; }
   .bf-hero-x { right: -24%; }
 }
 @media (max-width: 640px) {
+  .bf-modal { padding: 12px; }
+  .bf-modal-card { padding: 28px 16px 18px; border-radius: 24px; }
+  .bf-modal-trophy { width: 60px; height: 60px; border-radius: 18px; }
   .bf-win-badge { padding: 13px 22px 12px; gap: 10px; }
   .bf-prize { padding: 22px 16px 18px; }
   .bf-code { padding: 16px 10px 12px; }
