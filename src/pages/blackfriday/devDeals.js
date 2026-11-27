@@ -157,6 +157,9 @@ export const deals = [
   }
 ]
 
+// Placeholder prize for local testing only. The real promo code lives in the database (supabase/013), never in this repo.
+export const devReward = { code: 'DEV-PROMO', url: 'https://fortunejack.com', label: 'Claim the Prize' }
+
 export function pickDeals(n = 10) {
   const shuffle = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map((p) => p[1])
   const real = shuffle(deals.filter((d) => d.answer))

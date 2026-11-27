@@ -5,21 +5,36 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react'
 import {
-  ArrowRight, BadgePercent, Check, CreditCard, Fish, Flame, Gift, Globe, Link2, Loader2, Mail, Megaphone, MessageSquare,
-  Newspaper, Play, RotateCcw, ScanSearch, Share2, ShieldCheck, ShoppingBag, Smartphone, Store, Tag, Timer, X, Zap,
+  ArrowRight, Check, Copy, CreditCard, Fish, Flame, Gift, Globe, Link2, Loader2, Mail, Megaphone, MessageSquare,
+  Newspaper, Play, RotateCcw, ScanSearch, Share2, ShieldCheck, ShoppingBag, Smartphone, Sparkles, Store, Tag, Timer, Trophy, X,
 } from 'lucide-react'
 import { useApp } from '../../state/AppState.jsx'
 import { useAnnounce } from '../../components/Toaster.jsx'
 import { startRound, submitAnswer, finishRound } from '../../state/playService.js'
-import { getSettings } from '../../lib/siteConfig.js'
+import { supabase } from '../../lib/supabase.js'
 import './blackfriday.css'
 
 export const BF_SLUG = 'black-friday-fake-or-real'
 const ROUND = 10
 const WIN_AT = Math.ceil(ROUND * 0.7)
 
+// The prize (promo code + claim link) lives in the database and is only handed out for a finished round the
+// server scored as a win (supabase/013_campaign_rewards.sql), so it never ships in the page's code.
+async function loadReward(round) {
+  if (round.mode !== 'server') {
+    if (!import.meta.env.DEV) return null
+    const { devReward } = await import('./devDeals.js')
+    return devReward
+  }
+  const { data, error } = await supabase.rpc('claim_campaign_reward', { p_session: round.sessionId, p_guest_token: round.guestToken })
+  if (error) throw error
+  return data
+}
+
 // Key visual pieces (public/blackfriday/): the "Black Friday Madness" logo, cut out so it blends over the page,
 // and the cart rider. The hero rebuilds the campaign banner from them so it works at every screen size.
+// FortuneJack co-branding
+const FJ = { logo: '/brand/fortunejack.svg', url: 'https://fortunejack.com' }
 const KV = { logo: '/blackfriday/madness-logo.webp', rider: '/blackfriday/madness-rider-left.webp' }
 // White price tags spilling out of the basket. x/y: centre of each tag as a share of the rider image
 // (negative y = above it), r: tilt
@@ -111,6 +126,18 @@ export default function BlackFriday() {
   const [error, setError] = useState('')
   const [outcome, setOutcome] = useState(null)
   const [exitDir, setExitDir] = useState(1)
+  const [reward, setReward] = useState(null)
+  const [rewardState, setRewardState] = useState('idle') // idle | loading | ready | error
+
+  const fetchReward = async (r) => {
+    setRewardState('loading')
+    try {
+      setReward(await loadReward(r))
+      setRewardState('ready')
+    } catch {
+      setRewardState('error')
+    }
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -142,6 +169,8 @@ export default function BlackFriday() {
       setResults([])
       setI(0)
       setOutcome(null)
+      setReward(null)
+      setRewardState('idle')
       setPhase('question')
       toStage()
     } catch (e) {
@@ -182,6 +211,7 @@ export default function BlackFriday() {
       setOutcome(o)
       setPhase('done')
       toStage()
+      if (o.won) fetchReward(round)
       if (o.saved) {
         reloadUser()
         announce(o.new_achievements || [])
@@ -218,9 +248,7 @@ export default function BlackFriday() {
           </span>
           QuizBit
         </Link>
-        <span className="bf-top-chip">
-          <Zap size={14} aria-hidden="true" /> Black Friday Madness
-        </span>
+        <PoweredBy className="is-top" />
         {user ? (
           <Link to="/profile" className="bf-top-user">
             <span>{user.username[0].toUpperCase()}</span>
@@ -235,10 +263,20 @@ export default function BlackFriday() {
 
       <main>
         <HeroBanner />
+        <div className="bf-pb-strip">
+          <PoweredBy className="is-strip" />
+        </div>
 
         <section className="bf-intro">
-          <motion.p className="bf-eyebrow" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <BadgePercent size={15} aria-hidden="true" /> One game. Ten offers. No mercy.
+          <motion.p
+            className="bf-win-badge"
+            initial={{ opacity: 0, y: 12, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.15, type: 'spring', stiffness: 260, damping: 16 }}
+          >
+            <Trophy size={22} strokeWidth={2.4} aria-hidden="true" />
+            Win a real prize
+            <Sparkles size={18} aria-hidden="true" className="bf-win-spark" />
           </motion.p>
           <motion.h1 className="bf-title" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, type: 'spring', stiffness: 160, damping: 18 }}>
             <span className="bf-glitch is-fake" data-text="Fake">
@@ -349,7 +387,7 @@ export default function BlackFriday() {
               </motion.div>
             )}
 
-            {phase === 'done' && outcome && <Results key="done" outcome={outcome} results={results} round={round} onReplay={begin} busy={busy} user={user} openAuth={openAuth} />}
+            {phase === 'done' && outcome && <Results key="done" outcome={outcome} results={results} round={round} onReplay={begin} busy={busy} openAuth={openAuth} reward={reward} rewardState={rewardState} onRetryReward={() => fetchReward(round)} />}
           </AnimatePresence>
         </section>
 
@@ -363,6 +401,32 @@ export default function BlackFriday() {
         </footer>
       </main>
     </div>
+  )
+}
+
+const CONFETTI = Array.from({ length: 26 }, (_, k) => ({
+  x: (k * 37) % 100,
+  delay: (k % 7) * 0.12,
+  dur: 1.8 + ((k * 13) % 10) / 10,
+  rot: (k * 53) % 360,
+  color: ['#fcd01c', '#d24629', '#54a7a3', '#fffdf5'][k % 4],
+}))
+function Confetti() {
+  return (
+    <span className="bf-confetti" aria-hidden="true">
+      {CONFETTI.map((c, k) => (
+        <i key={k} style={{ '--x': `${c.x}%`, '--d': `${c.delay}s`, '--t': `${c.dur}s`, '--r': `${c.rot}deg`, '--c': c.color }} />
+      ))}
+    </span>
+  )
+}
+
+function PoweredBy({ className = '' }) {
+  return (
+    <a className={`bf-pb ${className}`} href={FJ.url} target="_blank" rel="noopener noreferrer">
+      <span className="bf-pb-label">Powered by</span>
+      <img src={FJ.logo} alt="FortuneJack" width="1100" height="128" />
+    </a>
   )
 }
 
@@ -554,7 +618,7 @@ function DealCard({ q, result, locked, pending, onDecide }) {
 
       <div className="bf-barcode" aria-hidden="true">
         <span />
-        <small>BF-{String(q.id ?? 0).padStart(6, '0')}</small>
+        <img className="bf-card-fj" src={FJ.logo} alt="" width="1100" height="128" />
       </div>
 
       <motion.span className="bf-swipe is-real" style={{ opacity: realOpacity }} aria-hidden="true">
@@ -586,10 +650,11 @@ function DealCard({ q, result, locked, pending, onDecide }) {
   )
 }
 
-function Results({ outcome, results, round, onReplay, busy, user, openAuth }) {
+function Results({ outcome, results, round, onReplay, busy, openAuth, reward, rewardState, onRetryReward }) {
   const [copied, setCopied] = useState(false)
+  const [codeCopied, setCodeCopied] = useState(false)
   const rank = rankFor(outcome.correct, outcome.total)
-  const prize = getSettings().prize || {}
+  const won = outcome.won
   const share = async () => {
     const url = `${window.location.origin}/blackfriday`
     const text = `I spotted ${outcome.correct}/${outcome.total} Black Friday fakes and got "${rank.title}". Can you beat me?`
@@ -603,18 +668,68 @@ function Results({ outcome, results, round, onReplay, busy, user, openAuth }) {
       /* cancelled */
     }
   }
+  const copyCode = async () => {
+    if (!reward?.code) return
+    try {
+      await navigator.clipboard.writeText(reward.code)
+      setCodeCopied(true)
+      setTimeout(() => setCodeCopied(false), 2400)
+    } catch {
+      /* clipboard blocked: the code is on screen to copy by hand */
+    }
+  }
   return (
-    <motion.div className="bf-results" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+    <motion.div className={`bf-results ${won ? 'is-won' : ''}`} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+      {won && <Confetti />}
       <motion.span className="bf-rank-ico" initial={{ rotate: -20, scale: 0.4 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 14, delay: 0.1 }}>
         <rank.Icon size={40} />
       </motion.span>
-      <small className="bf-rank-label">Your rank</small>
+      <small className="bf-rank-label">{won ? 'You won! Your rank' : 'Your rank'}</small>
       <h2 className="bf-rank">{rank.title}</h2>
       <p className="bf-rank-line">{rank.line}</p>
       <p className="bf-score">
         {outcome.correct}
         <em>/{outcome.total}</em>
       </p>
+
+      {won ? (
+        <motion.div className="bf-prize" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, type: 'spring', stiffness: 200, damping: 20 }}>
+          <span className="bf-prize-badge">
+            <Gift size={16} aria-hidden="true" /> Prize unlocked
+          </span>
+          {rewardState === 'ready' && reward?.code ? (
+            <>
+              <small className="bf-prize-label">Your promo code</small>
+              <button type="button" className={`bf-code ${codeCopied ? 'is-copied' : ''}`} onClick={copyCode} aria-label={`Promo code ${reward.code}. Copy it`}>
+                <span className="bf-code-text">{reward.code}</span>
+                <span className="bf-code-copy">
+                  {codeCopied ? <Check size={16} strokeWidth={3} /> : <Copy size={16} />} {codeCopied ? 'Copied' : 'Copy'}
+                </span>
+              </button>
+              <a className="bf-btn bf-btn-claim" href={reward.url} target="_blank" rel="noopener noreferrer" onClick={copyCode}>
+                <Gift size={22} /> {reward.label || 'Claim the Prize'} <ArrowRight size={20} />
+              </a>
+              <p className="bf-prize-note">Use the code when you claim. Tapping Claim the Prize copies it for you.</p>
+            </>
+          ) : rewardState === 'error' || (rewardState === 'ready' && !reward?.code) ? (
+            <p className="bf-prize-note">
+              We couldn’t load your prize just now.{' '}
+              <button type="button" className="bf-link" onClick={onRetryReward}>
+                Try again
+              </button>
+            </p>
+          ) : (
+            <span className="bf-prize-wait">
+              <Loader2 size={26} className="spin" /> Unwrapping your prize…
+            </span>
+          )}
+        </motion.div>
+      ) : (
+        <p className="bf-prize-hint">
+          <Gift size={18} aria-hidden="true" /> Get {WIN_AT} or more right to unlock the Black Friday prize code.
+        </p>
+      )}
+
       {outcome.saved ? (
         <span className="bf-xp">+{outcome.xp_earned} XP</span>
       ) : (
@@ -626,19 +741,14 @@ function Results({ outcome, results, round, onReplay, busy, user, openAuth }) {
         </p>
       )}
       <div className="bf-actions">
-        {outcome.won && prize.url && (
-          <a className="bf-btn bf-btn-hot" href={prize.url} target="_blank" rel="noopener noreferrer">
-            <Gift size={18} /> {prize.label || 'Claim the Prize'}
-          </a>
-        )}
-        <button type="button" className={`bf-btn ${outcome.won && prize.url ? 'bf-btn-ghost' : 'bf-btn-hot'}`} onClick={onReplay} disabled={busy}>
+        <button type="button" className={`bf-btn ${won ? 'bf-btn-ghost' : 'bf-btn-hot'}`} onClick={onReplay} disabled={busy}>
           {busy ? <Loader2 size={18} className="spin" /> : <RotateCcw size={18} />} Play again
         </button>
         <button type="button" className="bf-btn bf-btn-ghost" onClick={share}>
           {copied ? <Check size={18} /> : <Share2 size={18} />} {copied ? 'Link copied' : 'Challenge a friend'}
         </button>
       </div>
-      {!user && outcome.won && !prize.url && <p className="bf-muted small">Nice work! Log in next time to keep your XP.</p>}
+      <PoweredBy className="is-results" />
       <ol className="bf-review">
         {round.questions.map((qq, k) => {
           const r = results[k]
